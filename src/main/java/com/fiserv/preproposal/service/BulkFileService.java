@@ -13,8 +13,6 @@ public class BulkFileService {
 
     public void readBulk(){
         System.out.println("Hello World");
-        System.out.println("Hello World 2");
     }
-
 
 }
