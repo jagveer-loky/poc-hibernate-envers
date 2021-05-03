@@ -15,5 +15,4 @@ public class BulkFileService {
         System.out.println("Hello World");
     }
 
-
 }
