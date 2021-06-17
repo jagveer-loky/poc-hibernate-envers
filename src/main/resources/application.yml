@@ -1,0 +1,30 @@
+#put specific configuration in this file
+
+application:
+  name: pre-proposal-api
+  description: @project.description@
+  version: @project.version@
+  path.pkg: com.fiserv.preproposalApi
+  jenkins.build.version: @build.number@
+
+spring:
+  profiles:
+    active: @spring.profiles.active@
+
+springdoc:
+  show-actuator: true
+  default-produces-media-type: application/json
+  writer-with-default-pretty-printer: true
+  swagger-ui:
+    disable-swagger-default-url: true
+    path: /swagger-ui.html
+
+management:
+  endpoint:
+    info:
+      enabled: true
+  endpoints:
+    enabled-by-default: false
+    web:
+      base-path: /_monitor
+
