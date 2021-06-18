@@ -4,7 +4,7 @@ application:
   name: pre-proposal-api
   description: @project.description@
   version: @project.version@
-  path.pkg: com.fiserv.preproposalApi
+  path.pkg: com.fiserv.preproposal.api
   jenkins.build.version: @build.number@
 
 spring:
@@ -28,3 +28,4 @@ management:
     web:
       base-path: /_monitor
 
+layout: 'src/main/resources/io/cef/output/layout.xml'

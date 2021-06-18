@@ -27,51 +27,20 @@
         <springdoc-openapi.version>1.5.4</springdoc-openapi.version>
         <git-commit-id-plugin.version>2.2.1</git-commit-id-plugin.version>
 
-        <!--jasper reports-->
-        <jasperreports.version>6.7.0</jasperreports.version>
-        <jasperreports-fonts.version>6.0.0</jasperreports-fonts.version>
-        <dynamic-jasper-core-fonts.version>1.0</dynamic-jasper-core-fonts.version>
+        <beanio.version>2.1.0</beanio.version>
     </properties>
 
     <dependencies>
-        <!--jasper reports-->
-        <!-- https://mvnrepository.com/artifact/com.lowagie/itext -->
         <dependency>
-            <groupId>com.lowagie</groupId>
-            <artifactId>itext</artifactId>
-            <version>4.2.2</version>
-            <type>pom</type>
+            <groupId>org.beanio</groupId>
+            <artifactId>beanio</artifactId>
+            <version>${beanio.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.sf.jasperreports</groupId>
-            <artifactId>jasperreports</artifactId>
-            <version>6.7.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.lowagie</groupId>
-                    <artifactId>itext</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>4.1</version>
         </dependency>
-
-        <dependency>
-            <groupId>net.sf.jasperreports</groupId>
-            <artifactId>jasperreports-fonts</artifactId>
-            <version>6.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>ar.com.fdvs</groupId>
-            <artifactId>DynamicJasper-core-fonts</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <!--apache commons-->
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -82,11 +51,6 @@
             <groupId>com.oracle.ojdbc</groupId>
             <artifactId>ojdbc8</artifactId>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -266,15 +230,25 @@
     <profiles>
         <profile>
             <id>dev</id>
-            <properties>
-                <spring.profiles.active>dev</spring.profiles.active>
-            </properties>
-        </profile>
-        <profile>
-            <id>uat</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+            <properties>
+                <project.description>aa</project.description>
+                <project.version>aaa</project.version>
+                <build.number>aaaa</build.number>
+                <spring.profiles.active>dev</spring.profiles.active>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </dependency>
+            </dependencies>
+
+        </profile>
+        <profile>
+            <id>uat</id>
             <properties>
                 <spring.profiles.active>uat</spring.profiles.active>
             </properties>
