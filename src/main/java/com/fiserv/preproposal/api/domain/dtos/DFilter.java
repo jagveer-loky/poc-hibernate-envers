@@ -22,11 +22,18 @@ public class DFilter {
     private List<String> status;
 
 
-    public void validateFilter(){
-        if(Objects.nonNull(status) && status.isEmpty()){
+    public void validateFilter() {
+        if (Objects.nonNull(status) && status.isEmpty()) {
             status = null;
         }
 
+    }
+
+    /**
+     * @return String[]
+     */
+    public String[] getArrayStatus() {
+        return status.toArray(new String[status.size()]);
     }
 
 }

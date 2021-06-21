@@ -113,57 +113,69 @@ public class ReportResource {
     }
 
     @PostMapping("/" + DReport3.NAME)
-    public List<DReport3> getReport3() {
+    public List<DReport3> getReport3(@RequestBody DFilter dFilter) {
         LOG.info("Get Report 3");
-        return proposalService.getReport3();
+        return proposalService.getReport3(dFilter);
     }
 
     /**
      * @return ResponseEntity<byte [ ]>
      */
     @GetMapping(DReport3.NAME + "/csv")
-    public ResponseEntity<byte[]> geCSVtReport3() {
+    public ResponseEntity<byte[]> geCSVtReport3(@RequestParam final String institution,
+                                                @RequestParam final String serviceContract,
+                                                @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
+                                                @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
+                                                @RequestParam(required = false) final Set<String> status) {
         return ResponseEntity
                 .ok()
                 .header("Content-Disposition", "attachment;filename=" + DReport3.NAME + ".csv")
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportService.getReport3());
+                .body(reportService.getReport3(institution, serviceContract, initialDate, finalDate, status));
     }
 
     @PostMapping("/" + DReport4.NAME)
-    public List<DReport4> getReport4() {
+    public List<DReport4> getReport4(@RequestBody DFilter dFilter) {
         LOG.info("Get Report 4");
-        return proposalService.getReport4();
+        return proposalService.getReport4(dFilter);
     }
 
     /**
      * @return ResponseEntity<byte [ ]>
      */
     @GetMapping(DReport4.NAME + "/csv")
-    public ResponseEntity<byte[]> getCSVReport4() {
+    public ResponseEntity<byte[]> getCSVReport4(@RequestParam final String institution,
+                                                @RequestParam final String serviceContract,
+                                                @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
+                                                @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
+                                                @RequestParam(required = false) final Set<String> status) {
         return ResponseEntity
                 .ok()
                 .header("Content-Disposition", "attachment;filename=" + DReport4.NAME + ".csv")
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportService.getReport4());
+                .body(reportService.getReport4(institution, serviceContract, initialDate, finalDate, status));
     }
 
     @PostMapping("/" + DReport5.NAME)
-    public List<DReport5> getReport5() {
+    public List<DReport5> getReport5(@RequestBody DFilter dFilter) {
         LOG.info("Get Report 5");
-        return proposalService.getReport5();
+        return proposalService.getReport5(dFilter);
     }
 
     /**
      * @return ResponseEntity<byte [ ]>
      */
     @GetMapping(DReport5.NAME + "/csv")
-    public ResponseEntity<byte[]> getCSVReport5() {
+    public ResponseEntity<byte[]> getCSVReport5(@RequestParam final String institution,
+                                                @RequestParam final String serviceContract,
+                                                @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
+                                                @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
+                                                @RequestParam(required = false) final Set<String> status) {
         return ResponseEntity
                 .ok()
                 .header("Content-Disposition", "attachment;filename=" + DReport5.NAME + ".csv")
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportService.getReport5());
+                .body(reportService.getReport5(institution, serviceContract, initialDate, finalDate, status));
     }
 
 }

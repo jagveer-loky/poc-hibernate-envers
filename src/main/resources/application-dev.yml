@@ -5,6 +5,25 @@ spring:
     password: PPS#01923
     driver-class-name: oracle.jdbc.OracleDriver
 
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        order_inserts: true
+        show_sql: true
+        use_sql_comments: true
+
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+        SQL: DEBUG
+#logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+
 fdsecurity:
   url: https://cat-webfarm.1dc.com/fd-security/permission-check
 

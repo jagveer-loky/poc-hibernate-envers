@@ -22,26 +22,29 @@ public class ProposalService {
 
     private final ProposalRepository proposalRepository;
 
-    public List<DReport1> getReport1(DFilter dFilter) {
+    public List<DReport1> getReport1(final DFilter dFilter) {
         dFilter.validateFilter();
         return proposalRepository.getReport1(dFilter.getInstitution(),dFilter.getServiceContract(),dFilter.getInitialDate(),dFilter.getFinalDate(),dFilter.getStatus());
     }
 
-    public List<DReport2> getReport2(DFilter dFilter) {
+    public List<DReport2> getReport2(final DFilter dFilter) {
         //TODO Validar os filtros nas subqueries
         dFilter.validateFilter();
         return proposalRepository.getReport2(dFilter.getInstitution(),dFilter.getServiceContract(),dFilter.getInitialDate(),dFilter.getFinalDate(),dFilter.getStatus());
     }
 
-    public List<DReport3> getReport3() {
-        return proposalRepository.getReport3();
+    public List<DReport3> getReport3(final DFilter dFilter) {
+        dFilter.validateFilter();
+        return proposalRepository.getReport3(dFilter.getInstitution(),dFilter.getServiceContract(),dFilter.getInitialDate(),dFilter.getFinalDate(),dFilter.getStatus());
     }
 
-    public List<DReport4> getReport4() {
-        return proposalRepository.getReport4();
+    public List<DReport4> getReport4(final DFilter dFilter) {
+        dFilter.validateFilter();
+        return proposalRepository.getReport4(dFilter.getInstitution(),dFilter.getServiceContract(),dFilter.getInitialDate(),dFilter.getFinalDate(),dFilter.getStatus());
     }
 
-    public List<DReport5> getReport5() {
-        return proposalRepository.getReport5();
+    public List<DReport5> getReport5(final DFilter dFilter) {
+        dFilter.validateFilter();
+        return proposalRepository.getReport5(dFilter.getInstitution(),dFilter.getServiceContract(),dFilter.getInitialDate(),dFilter.getFinalDate(),dFilter.getStatus());
     }
 }

@@ -234,9 +234,6 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <project.description>aa</project.description>
-                <project.version>aaa</project.version>
-                <build.number>aaaa</build.number>
                 <spring.profiles.active>dev</spring.profiles.active>
             </properties>
             <dependencies>

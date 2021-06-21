@@ -303,10 +303,12 @@ import javax.persistence.Table;
                 "       LEFT JOIN tb_capture_solution TCS ON tcs.id_proposal_data = TPD.ID\n" +
                 "       LEFT JOIN tb_pre_proposal_status tpps on tpps.id = tpd.status_id\n" +
                 "       LEFT JOIN tb_proposal_cx_status tpcs on tpcs.status_id = tpps.id\n" +
-                "WHERE tfc.INSTITUTION = ?1 \n" +
-                "       AND tfc.SERVICE_CONTRACT = ?2 \n" +
-                "       AND tpd.INSERTION_DATE BETWEEN ?3 AND ?4 \n" +
-                "       AND (?5 IS NULL OR tpps.CODE IN ?5)", resultSetMapping = "report1Mapping"),
+                "  WHERE tfc.INSTITUTION = :institution \n" +
+                "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
+                "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
+                "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))"
+                ,
+                resultSetMapping = "report1Mapping"),
         @NamedNativeQuery(name = "getReport2", query = "  SELECT  \n" +
                 "            tfc.file_name AS \"FILENAME\",\n" +
                 "            tfc.INSTITUTION AS \"INSTITUTION\", \n" +
@@ -367,10 +369,10 @@ import javax.persistence.Table;
                 "       from TB_FILE_CONTROL TFC\n" +
                 "  left join tb_proposal_data tpd ON TFC.ID = tpd.id_file_control\n" +
                 "  left join tb_pre_proposal_status tpps on tpps.id = tpd.status_id\n" +
-                "  WHERE tfc.INSTITUTION = ?1 \n" +
-                "       AND tfc.SERVICE_CONTRACT = ?2 \n" +
-                "       AND tpd.INSERTION_DATE BETWEEN ?3 AND ?4 \n" +
-                "       AND (?5 IS NULL OR tpps.CODE IN ?5) \n" +
+                "  WHERE tfc.INSTITUTION = :institution \n" +
+                "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
+                "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
+                "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))" +
                 "   group by tfc.file_name,tfc.INSTITUTION,tfc.SERVICE_CONTRACT,tfc.READ_DATE,tfc.IS_VALID, TFC.id", resultSetMapping = "report2Mapping"),
         @NamedNativeQuery(name = "getReport3", query = "SELECT   \n" +
                 "    tfc.file_name AS \"FILENAME\",\n" +
@@ -390,6 +392,11 @@ import javax.persistence.Table;
                 "Left join TB_PRE_PROPOSAL_HISTORY_ERROR tpphe on tpph.id = tpphe.id_proposal_history\n" +
                 "Left join tb_proposal_data tpd on tpd.id = tpph.id_proposal_data\n" +
                 "Left join TB_FILE_CONTROL TFC ON TFC.ID = tpd.id_file_control\n" +
+                "  left join tb_pre_proposal_status tpps on tpps.id = tpd.status_id\n" +
+                "  WHERE tfc.INSTITUTION = :institution \n" +
+                "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
+                "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
+                "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))" +
                 "group by tfc.file_name,tfc.INSTITUTION,tfc.SERVICE_CONTRACT,tpd.AGENT_CHANNEL,tpd.AGENT_CPF_CNPJ,tpd.id,proposal_number,merchant_id,tfc.READ_DATE,tfc.IS_VALID,tpphe.field,tpphe.field_description,tpphe.message,tpphe.message_detail", resultSetMapping = "report3Mapping"),
         @NamedNativeQuery(name = "getReport4", query = "SELECT  \n" +
                 "       tpd.id AS \"PREPROPOSALID\",\n" +
@@ -465,7 +472,12 @@ import javax.persistence.Table;
                 "  LEFT join TB_FILE_CONTROL TFC ON TFC.ID = tpd.id_file_control\n" +
                 "  LEFT join tb_capture_solution TCS ON tcs.id_proposal_data = TPD.ID\n" +
                 "  LEFT join tb_pre_proposal_status tpps on tpps.id = tpd.status_id\n" +
-                "  LEFT join tb_proposal_cx_status tpcs on tpcs.status_id = tpps.id", resultSetMapping = "report4Mapping"),
+                "  LEFT join tb_proposal_cx_status tpcs on tpcs.status_id = tpps.id" +
+                "  WHERE tfc.INSTITUTION = :institution \n" +
+                "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
+                "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
+                "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))"
+                , resultSetMapping = "report4Mapping"),
         @NamedNativeQuery(name = "getReport5",query = "SELECT  \n" +
                 "       tpd.id AS \"PREPROPOSALID\",\n" +
                 "      tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
@@ -593,7 +605,12 @@ import javax.persistence.Table;
                 "  LEFT JOIN TB_CONTACT tc on tc.ID_PROPOSAL_DATA = tpd.ID\n" +
                 "  LEFT JOIN TB_ACCOUNT_FREE taf on taf.ID_FILE_PROPOSAL_DTA = tpd.ID\n" +
                 "  LEFT JOIN TB_BANK_ACCOUNT tba on tba.ID_FILE_PROPOSAL_DTA = tpd.ID\n" +
-                "  left join TB_PRE_WORKING_DAY tpwa on tpwa.ID_PROPOSAL_DATA = tpd.ID",resultSetMapping = "report5Mapping")
+                "  left join TB_PRE_WORKING_DAY tpwa on tpwa.ID_PROPOSAL_DATA = tpd.ID" +
+                "  WHERE tfc.INSTITUTION = :institution \n" +
+                "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
+                "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
+                "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))"
+                ,resultSetMapping = "report5Mapping")
 })
 public class EProposalData {
 

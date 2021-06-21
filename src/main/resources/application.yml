@@ -1,12 +1,5 @@
 #put specific configuration in this file
 
-application:
-  name: pre-proposal-api
-  description: @project.description@
-  version: @project.version@
-  path.pkg: com.fiserv.preproposal.api
-  jenkins.build.version: @build.number@
-
 spring:
   profiles:
     active: @spring.profiles.active@
