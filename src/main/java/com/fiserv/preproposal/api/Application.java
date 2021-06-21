@@ -14,15 +14,15 @@ import org.springframework.web.client.RestTemplate;
  */
 
 @SpringBootApplication
-public class ApplicationConfig extends SpringBootServletInitializer {
+public class Application extends SpringBootServletInitializer {
 	
 	 @Override
      protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-         return application.sources(ApplicationConfig.class);
+         return application.sources(Application.class);
      }
 
     public static void main(String[] args) {
-        SpringApplication.run(ApplicationConfig.class, args);
+        SpringApplication.run(Application.class, args);
     }
     
     @Bean

@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDate;
 
 @SpringBootTest
-class ApplicationConfigTests {
+class ApplicationTests {
 
 	@Autowired
 	ReportService reportService;

@@ -1,9 +1,32 @@
 <beanio xmlns="http://www.beanio.org/2012/03">
-    <stream name="report1" minOccurs="0" maxOccurs="unbounded" format='csv'>
+    <stream name="report1" format='csv'>
         <parser>
             <property name="delimiter" value=";"/>
         </parser>
-        <record name="report1" minOccurs="0" maxOccurs="unbounded"
+
+        <record name="header" order="1" occurs="1">
+
+            <field name="cpfCnpj" default="Header1"/>
+            <field name="fantasyName" default="Header1"/>
+            <field name="socialReason" default="Header1"/>
+            <field name="voucherName" default="Header1"/>
+            <field name="userId" default="Header1"/>
+            <field name="agentCpfCnpj" default="Header1"/>
+            <field name="institution" default="Header1"/>
+            <field name="serviceContract" default="Header1"/>
+            <field name="subChannel" default="Header1"/>
+            <field name="tecnology" default="Header1"/>
+            <field name="includeDate" default="Header1"/>
+            <field name="conclusionDate" default="Header1"/>
+            <field name="proposalNumber" default="Header1"/>
+            <field name="fiservStatus" default="Header1"/>
+            <field name="cefStatus" default="Header1"/>
+            <field name="cefMessage" default="Header1"/>
+            <field name="submissionDate" default="Header1"/>
+
+        </record>
+
+        <record name="report1" order="2" occurs="0+"
                 class="com.fiserv.preproposal.api.domain.dtos.DReport1">
 
             <field name="cpfCnpj"/>
@@ -31,6 +54,7 @@
         <parser>
             <property name="delimiter" value=";"/>
         </parser>
+
         <record name="report2" minOccurs="0" maxOccurs="unbounded"
                 class="com.fiserv.preproposal.api.domain.dtos.DReport2">
 
