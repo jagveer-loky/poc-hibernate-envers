@@ -1,0 +1,274 @@
+<beanio xmlns="http://www.beanio.org/2012/03">
+    <stream name="report1" format='csv'>
+        <parser>
+            <property name="delimiter" value=";"/>
+        </parser>
+
+        <record name="header" order="1" occurs="1">
+
+            <field name="cpfCnpj" default="Header1"/>
+            <field name="fantasyName" default="Header1"/>
+            <field name="socialReason" default="Header1"/>
+            <field name="voucherName" default="Header1"/>
+            <field name="userId" default="Header1"/>
+            <field name="agentCpfCnpj" default="Header1"/>
+            <field name="institution" default="Header1"/>
+            <field name="serviceContract" default="Header1"/>
+            <field name="subChannel" default="Header1"/>
+            <field name="tecnology" default="Header1"/>
+            <field name="includeDate" default="Header1"/>
+            <field name="conclusionDate" default="Header1"/>
+            <field name="proposalNumber" default="Header1"/>
+            <field name="fiservStatus" default="Header1"/>
+            <field name="cefStatus" default="Header1"/>
+            <field name="cefMessage" default="Header1"/>
+            <field name="submissionDate" default="Header1"/>
+
+        </record>
+
+        <record name="report1" order="2" occurs="0+"
+                class="com.fiserv.preproposal.api.domain.dtos.DReport1">
+
+            <field name="cpfCnpj"/>
+            <field name="fantasyName"/>
+            <field name="socialReason"/>
+            <field name="voucherName"/>
+            <field name="userId"/>
+            <field name="agentCpfCnpj"/>
+            <field name="institution"/>
+            <field name="serviceContract"/>
+            <field name="subChannel"/>
+            <field name="tecnology"/>
+            <field name="includeDate"/>
+            <field name="conclusionDate"/>
+            <field name="proposalNumber"/>
+            <field name="fiservStatus"/>
+            <field name="cefStatus"/>
+            <field name="cefMessage"/>
+            <field name="submissionDate"/>
+
+        </record>
+    </stream>
+
+    <stream name="report2" minOccurs="0" maxOccurs="unbounded" format='csv'>
+        <parser>
+            <property name="delimiter" value=";"/>
+        </parser>
+
+        <record name="report2" minOccurs="0" maxOccurs="unbounded"
+                class="com.fiserv.preproposal.api.domain.dtos.DReport2">
+
+            <field name="filename"/>
+            <field name="institution"/>
+            <field name="processingDate"/>
+            <field name="fileStatus"/>
+            <field name="proposals"/>
+            <field name="onlineRejected"/>
+            <field name="pendingInFiservOnline"/>
+            <field name="pendingComplement"/>
+            <field name="preproposalError"/>
+            <field name="finished"/>
+            <field name="tmpCanceled"/>
+            <field name="credOnline"/>
+
+        </record>
+    </stream>
+
+    <stream name="report3" minOccurs="0" maxOccurs="unbounded" format='csv'>
+        <parser>
+            <property name="delimiter" value=";"/>
+        </parser>
+        <record name="report3" minOccurs="0" maxOccurs="unbounded"
+                class="com.fiserv.preproposal.api.domain.dtos.DReport3">
+
+            <field name="filename"/>
+            <field name="institution"/>
+            <field name="serviceContract"/>
+            <field name="userId"/>
+            <field name="agentCpfCnpj"/>
+            <field name="preproposalId"/>
+            <field name="proposalNumber"/>
+            <field name="merchant"/>
+            <field name="processingDate"/>
+            <field name="error"/>
+            <field name="errorDescription"/>
+            <field name="errorMessage"/>
+            <field name="detail"/>
+
+        </record>
+
+    </stream>
+
+    <stream name="report4" minOccurs="0" maxOccurs="unbounded" format='csv'>
+        <parser>
+            <property name="delimiter" value=";"/>
+        </parser>
+        <record name="report4" minOccurs="0" maxOccurs="unbounded"
+                class="com.fiserv.preproposal.api.domain.dtos.DReport4">
+
+            <field name="preproposalId"/>
+            <field name="proposalNumber"/>
+            <field name="merchant"/>
+            <field name="userId"/>
+            <field name="agentCpfCnpj"/>
+            <field name="institution"/>
+            <field name="serviceContract"/>
+            <field name="subChannel"/>
+            <field name="tecnology"/>
+            <field name="fiservStatus"/>
+            <field name="caixaStatus"/>
+            <field name="caixaMessage"/>
+            <field name="inclusionDate"/>
+            <field name="conclusionDate1"/>
+            <field name="onlineSubmitionDate"/>
+            <field name="persionType"/>
+            <field name="cpfCnpj"/>
+            <field name="fantasyName"/>
+            <field name="socialReason"/>
+            <field name="vouncherName"/>
+            <field name="montlyBilling"/>
+            <field name="birthDate"/>
+            <field name="gnere"/>
+            <field name="treatmentPronoun"/>
+            <field name="birthPlace"/>
+            <field name="nacionality"/>
+            <field name="fullName"/>
+            <field name="municipalRegistration"/>
+            <field name="stateRegistration"/>
+            <field name="constitutionForm"/>
+            <field name="openDate"/>
+            <field name="anualBillingVol"/>
+            <field name="anualVolCash"/>
+            <field name="anualVolSalesCard"/>
+            <field name="anualVolSalesCardGroup"/>
+            <field name="averageTicket"/>
+            <field name="bacenPermission"/>
+            <field name="campaingCode"/>
+            <field name="cnae"/>
+            <field name="eCommerce"/>
+            <field name="foreignCard"/>
+            <field name="manualPrepaymentEnabled"/>
+            <field name="boardingBranching"/>
+            <field name="percCardNotPresent"/>
+            <field name="percCardPresent"/>
+            <field name="percInternet"/>
+            <field name="prepaymentIndicator"/>
+            <field name="recurringTransaction"/>
+            <field name="serviceDay0"/>
+            <field name="serviceDay1530"/>
+            <field name="serviceDay17"/>
+            <field name="serviceDay814"/>
+            <field name="serviceDayOver30"/>
+            <field name="pendingBwDate"/>
+            <field name="conclusionDate"/>
+
+        </record>
+        
+    </stream>
+
+    <stream name="report5" minOccurs="0" maxOccurs="unbounded" format='csv'>
+        <parser>
+            <property name="delimiter" value=";"/>
+        </parser>
+        <record name="report5" minOccurs="0" maxOccurs="unbounded"
+                class="com.fiserv.preproposal.api.domain.dtos.DReport5">
+
+
+            <field name="preproposalId"/>
+            <field name="proposalNumber"/>
+            <field name="merchant"/>
+            <field name="userId"/>
+            <field name="agentCpfCnpj"/>
+            <field name="institution"/>
+            <field name="serviceContract"/>
+            <field name="subChannel"/>
+            <field name="technology"/>
+            <field name="terminalsNumber"/>
+            <field name="unitaryValue"/>
+            <field name="fiservStatus"/>
+            <field name="caixaStatus"/>
+            <field name="caixaMessage"/>
+            <field name="includeIn"/>
+            <field name="finishedIn"/>
+            <field name="submissionOnlineDate"/>
+            <field name="personType"/>
+            <field name="cpfCnpj"/>
+            <field name="fantasyName"/>
+            <field name="socialReason"/>
+            <field name="plateletName"/>
+            <field name="montlyBilling"/>
+            <field name="birthDate"/>
+            <field name="gnere"/>
+            <field name="treatmentPronoun"/>
+            <field name="birthPlace"/>
+            <field name="nacionality"/>
+            <field name="fullName"/>
+            <field name="municipalRegistration"/>
+            <field name="stateRegistration"/>
+            <field name="constitutionForm"/>
+            <field name="openDate"/>
+            <field name="annualBillingVol"/>
+            <field name="annualVolCash"/>
+            <field name="annualVolSalesCard"/>
+            <field name="annualVolSalesCardGroup"/>
+            <field name="averageTicket"/>
+            <field name="bacenPermission"/>
+            <field name="campaingId"/>
+            <field name="cnae"/>
+            <field name="eCommerce"/>
+            <field name="foreignCard"/>
+            <field name="manualPrepaymentEnabled"/>
+            <field name="boardingBranching"/>
+            <field name="percCardNotPresent"/>
+            <field name="percCardPresent"/>
+            <field name="percInternet"/>
+            <field name="prepaymentIndicator"/>
+            <field name="recurringTransaction"/>
+            <field name="serviceDay0"/>
+            <field name="serviceDay1530"/>
+            <field name="serviceDay17"/>
+            <field name="serviceDay814"/>
+            <field name="serviceDayOver30"/>
+            <field name="pendingBwDate"/>
+            <field name="installationDate"/>
+            <field name="addressType"/>
+            <field name="cep"/>
+            <field name="street"/>
+            <field name="number"/>
+            <field name="district"/>
+            <field name="complement"/>
+            <field name="city"/>
+            <field name="state"/>
+            <field name="partnerType"/>
+            <field name="cpfCnpjPartner"/>
+            <field name="partnerBirthdate"/>
+            <field name="constitutionType"/>
+            <field name="contract"/>
+            <field name="partnerName"/>
+            <field name="pronounTreatmentPartner"/>
+            <field name="partnerNacionality"/>
+            <field name="partnerFunction"/>
+            <field name="percPartner"/>
+            <field name="contactBirthdate"/>
+            <field name="contactCpf"/>
+            <field name="contactEmail"/>
+            <field name="contactName"/>
+            <field name="contactPhone"/>
+            <field name="contactCellphone"/>
+            <field name="description"/>
+            <field name="discountFee"/>
+            <field name="fee"/>
+            <field name="feeIdNumber"/>
+            <field name="bankCode"/>
+            <field name="agency"/>
+            <field name="accountDigit"/>
+            <field name="accountNumber"/>
+            <field name="accountOwner"/>
+            <field name="accountType"/>
+            <field name="workdays"/>
+
+        </record>
+
+    </stream>
+    
+</beanio>
