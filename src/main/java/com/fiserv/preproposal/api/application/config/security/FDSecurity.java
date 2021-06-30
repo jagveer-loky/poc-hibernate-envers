@@ -1,4 +1,4 @@
-package com.fiserv.preproposal.api.application.security;
+package com.fiserv.preproposal.api.application.config.security;
 
 import javax.servlet.http.HttpServletRequest;
 

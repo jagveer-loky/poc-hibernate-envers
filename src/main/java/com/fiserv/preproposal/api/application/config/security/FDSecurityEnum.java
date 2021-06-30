@@ -1,4 +1,4 @@
-package com.fiserv.preproposal.api.application.security;
+package com.fiserv.preproposal.api.application.config.security;
 
 public enum FDSecurityEnum {
 

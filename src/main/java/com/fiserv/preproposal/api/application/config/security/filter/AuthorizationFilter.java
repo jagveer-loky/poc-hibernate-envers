@@ -1,4 +1,4 @@
-package com.fiserv.preproposal.api.application.security.filter;
+package com.fiserv.preproposal.api.application.config.security.filter;
 
 import java.io.IOException;
 
@@ -9,7 +9,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fiserv.preproposal.api.application.security.FDSecurity;
+import com.fiserv.preproposal.api.application.config.security.FDSecurity;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +17,7 @@ import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import com.fiserv.preproposal.api.application.exceptions.FDSecurityException;
-import com.fiserv.preproposal.api.application.security.FDSecurityEnum;
+import com.fiserv.preproposal.api.application.config.security.FDSecurityEnum;
 import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ApplicationEnum;
 import com.fiserv.preproposal.api.infrastrucutre.aid.enums.EventActivityEnum;
 import com.fiserv.preproposal.api.application.pagination.DSecurity;
