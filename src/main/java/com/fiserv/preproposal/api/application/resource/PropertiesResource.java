@@ -22,7 +22,7 @@ import org.springframework.web.context.annotation.RequestScope;
 
 @RestController
 @RequestScope
-@RequestMapping(value = "/preproposal/properties", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/properties", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class PropertiesResource {
 

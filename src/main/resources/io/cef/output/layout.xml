@@ -1,5 +1,5 @@
 <beanio xmlns="http://www.beanio.org/2012/03">
-    <stream name="report1" format='csv'>
+    <stream name="1" format='csv'>
         <parser>
             <property name="delimiter" value=";"/>
         </parser>
@@ -26,7 +26,7 @@
 
         </record>
 
-        <record name="report1" order="2" occurs="0+"
+        <record name="1" order="2" occurs="0+"
                 class="com.fiserv.preproposal.api.domain.dtos.DReport1">
 
             <field name="cpfCnpj"/>
@@ -50,12 +50,12 @@
         </record>
     </stream>
 
-    <stream name="report2" minOccurs="0" maxOccurs="unbounded" format='csv'>
+    <stream name="2" minOccurs="0" maxOccurs="unbounded" format='csv'>
         <parser>
             <property name="delimiter" value=";"/>
         </parser>
 
-        <record name="report2" minOccurs="0" maxOccurs="unbounded"
+        <record name="2" minOccurs="0" maxOccurs="unbounded"
                 class="com.fiserv.preproposal.api.domain.dtos.DReport2">
 
             <field name="filename"/>
@@ -74,11 +74,11 @@
         </record>
     </stream>
 
-    <stream name="report3" minOccurs="0" maxOccurs="unbounded" format='csv'>
+    <stream name="3" minOccurs="0" maxOccurs="unbounded" format='csv'>
         <parser>
             <property name="delimiter" value=";"/>
         </parser>
-        <record name="report3" minOccurs="0" maxOccurs="unbounded"
+        <record name="3" minOccurs="0" maxOccurs="unbounded"
                 class="com.fiserv.preproposal.api.domain.dtos.DReport3">
 
             <field name="filename"/>
@@ -99,11 +99,11 @@
 
     </stream>
 
-    <stream name="report4" minOccurs="0" maxOccurs="unbounded" format='csv'>
+    <stream name="4" minOccurs="0" maxOccurs="unbounded" format='csv'>
         <parser>
             <property name="delimiter" value=";"/>
         </parser>
-        <record name="report4" minOccurs="0" maxOccurs="unbounded"
+        <record name="4" minOccurs="0" maxOccurs="unbounded"
                 class="com.fiserv.preproposal.api.domain.dtos.DReport4">
 
             <field name="preproposalId"/>
@@ -166,11 +166,11 @@
         
     </stream>
 
-    <stream name="report5" minOccurs="0" maxOccurs="unbounded" format='csv'>
+    <stream name="5" minOccurs="0" maxOccurs="unbounded" format='csv'>
         <parser>
             <property name="delimiter" value=";"/>
         </parser>
-        <record name="report5" minOccurs="0" maxOccurs="unbounded"
+        <record name="5" minOccurs="0" maxOccurs="unbounded"
                 class="com.fiserv.preproposal.api.domain.dtos.DReport5">
 
 

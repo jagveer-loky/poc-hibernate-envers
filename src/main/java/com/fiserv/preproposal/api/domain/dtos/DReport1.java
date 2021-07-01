@@ -12,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DReport1 {
 
-    public static final String NAME = "report1";
+    public static final String NAME = "1";
 
     @Schema(
             description = "CPF/CNPJ da Proposta",

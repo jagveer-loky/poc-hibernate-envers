@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DReport4 {
 
-    public static final String NAME = "report4";
+    public static final String NAME = "4";
 
     private Long preproposalId;
     private String proposalNumber;

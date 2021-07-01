@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DReport2 {
 
-    public static final String NAME = "report2";
+    public static final String NAME = "2";
 
     private String filename;
     private String institution;

@@ -9,10 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +23,26 @@ public class ReportService {
      */
     private final ProposalRepository proposalRepository;
 
+    public List<DReport1> getReport1(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Collection<String> status) {
+        return proposalRepository.getReport1(institution, serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+    }
+
+    public List<DReport2> getReport2(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Collection<String> status) {
+        return proposalRepository.getReport2(institution, serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+    }
+
+    public List<DReport3> getReport3(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Collection<String> status) {
+        return proposalRepository.getReport3(institution, serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+    }
+
+    public List<DReport4> getReport4(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Collection<String> status) {
+        return proposalRepository.getReport4(institution, serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+    }
+
+    public List<DReport5> getReport5(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Collection<String> status) {
+        return proposalRepository.getReport5(institution, serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+    }
+
     /**
      * @param institution     String
      * @param serviceContract String
@@ -34,7 +51,7 @@ public class ReportService {
      * @param status          String[]
      * @return byte[]
      */
-    public byte[] getReport1(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Set<String> status) {
+    public byte[] getCSVReport1(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Set<String> status) {
         final List<DReport1> list = proposalRepository.getReport1(institution, serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
         return new IOService<DReport1>().writeInMemory(list.stream(), layout, DReport1.NAME);
     }
@@ -47,7 +64,7 @@ public class ReportService {
      * @param status          String[]
      * @return byte[]
      */
-    public byte[] getReport2(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Set<String> status) {
+    public byte[] getCSVReport2(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Set<String> status) {
         final List<DReport2> list = proposalRepository.getReport2(institution, serviceContract, initialDate, finalDate, (Objects.nonNull(status) && status.isEmpty()) ? null : status);
         return new IOService<DReport2>().writeInMemory(list.stream(), layout, DReport2.NAME);
     }
@@ -55,7 +72,7 @@ public class ReportService {
     /**
      * @return byte[]
      */
-    public byte[] getReport3(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Set<String> status) {
+    public byte[] getCSVReport3(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Set<String> status) {
         final List<DReport3> list = proposalRepository.getReport3(institution, serviceContract, initialDate, finalDate, (Objects.nonNull(status) && status.isEmpty()) ? null : status);
         return new IOService<DReport3>().writeInMemory(list.stream(), layout, DReport3.NAME);
     }
@@ -63,7 +80,7 @@ public class ReportService {
     /**
      * @return byte[]
      */
-    public byte[] getReport4(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Set<String> status) {
+    public byte[] getCSVReport4(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Set<String> status) {
         final List<DReport4> list = proposalRepository.getReport4(institution, serviceContract, initialDate, finalDate, (Objects.nonNull(status) && status.isEmpty()) ? null : status);
         return new IOService<DReport4>().writeInMemory(list.stream(), layout, DReport4.NAME);
     }
@@ -71,7 +88,7 @@ public class ReportService {
     /**
      * @return byte[]
      */
-    public byte[] getReport5(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Set<String> status) {
+    public byte[] getCSVReport5(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Set<String> status) {
         final List<DReport5> list = proposalRepository.getReport5(institution, serviceContract, initialDate, finalDate, (Objects.nonNull(status) && status.isEmpty()) ? null : status);
         return new IOService<DReport5>().writeInMemory(list.stream(), layout, DReport5.NAME);
     }

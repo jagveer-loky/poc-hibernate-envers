@@ -1,5 +1,6 @@
 package com.fiserv.preproposal.api.application.config.security;
 
+import com.fiserv.preproposal.api.application.config.security.filter.AuthorizationFilter;
 import com.fiserv.preproposal.api.application.properties.CorsProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,6 +11,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
@@ -44,7 +47,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             http.cors().and().authorizeRequests(r -> r.requestMatchers(CorsUtils::isPreFlightRequest).permitAll());
 
         http.authorizeRequests(r ->
-                r.antMatchers("/**").permitAll());
+                r.antMatchers("/v3/api-docs/**", "/v3/api-docs.yaml**", "/swagger-ui/**", "/swagger-ui.html**", "/actuator/**").permitAll()
+                        .antMatchers("/v*/token/**").anonymous()
+                        .antMatchers("/isAlive**").permitAll()
+                        .antMatchers("/v*/**").permitAll()
+                        .anyRequest().permitAll().and().addFilterBefore(new AuthorizationFilter(fdSecurity, resolver), UsernamePasswordAuthenticationFilter.class))
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//        r.antMatchers("/**").permitAll());
 //			 .anyRequest().permitAll().and().addFilterBefore(new AuthorizationFilter(fdSecurity, resolver), UsernamePasswordAuthenticationFilter.class))
 //			 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
