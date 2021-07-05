@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class ReportResource {
 
-    private static final String DATE_TIME_PATTERN = "dd-MM-yyyy";
+    private static final String DATE_TIME_PATTERN = "dd/MM/yyyy";
 
     private static final Logger LOG = LogManager.getLogger(ReportResource.class);
 
@@ -57,9 +57,8 @@ public class ReportResource {
                                      @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
                                      @RequestParam(required = false) final Set<String> status) {
         LOG.info("Get Report 1");
-        return reportService.getReport1(institution, serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+        return reportService.getReport1(format(institution), serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
-
 
     @GetMapping(DReport2.NAME)
     public List<DReport2> getReport2(@RequestParam final String institution,
@@ -68,7 +67,7 @@ public class ReportResource {
                                      @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
                                      @RequestParam(required = false) final Set<String> status) {
         LOG.info("Get Report 2");
-        return reportService.getReport2(institution, serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+        return reportService.getReport2(format(institution), serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
     @GetMapping(DReport3.NAME)
@@ -78,7 +77,7 @@ public class ReportResource {
                                      @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
                                      @RequestParam(required = false) final Set<String> status) {
         LOG.info("Get Report 3");
-        return reportService.getReport3(institution, serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+        return reportService.getReport3(format(institution), serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
     @GetMapping(DReport4.NAME)
@@ -88,7 +87,7 @@ public class ReportResource {
                                      @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
                                      @RequestParam(required = false) final Set<String> status) {
         LOG.info("Get Report 4");
-        return reportService.getReport4(institution, serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+        return reportService.getReport4(format(institution), serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
     @GetMapping(DReport5.NAME)
@@ -98,7 +97,7 @@ public class ReportResource {
                                      @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
                                      @RequestParam(required = false) final Set<String> status) {
         LOG.info("Get Report 5");
-        return reportService.getReport5(institution, serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+        return reportService.getReport5(format(institution), serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
     /**
@@ -119,7 +118,7 @@ public class ReportResource {
                 .ok()
                 .header("Content-Disposition", "attachment;filename=" + DReport1.NAME + ".csv")
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportService.getCSVReport1(institution, serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status));
+                .body(reportService.getCSVReport1(format(institution), serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status));
     }
 
     /**
@@ -140,7 +139,7 @@ public class ReportResource {
                 .ok()
                 .header("Content-Disposition", "attachment;filename=" + DReport2.NAME + ".csv")
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportService.getCSVReport2(institution, serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status));
+                .body(reportService.getCSVReport2(format(institution), serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status));
     }
 
 
@@ -157,7 +156,7 @@ public class ReportResource {
                 .ok()
                 .header("Content-Disposition", "attachment;filename=" + DReport3.NAME + ".csv")
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportService.getCSVReport3(institution, serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status));
+                .body(reportService.getCSVReport3(format(institution), serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status));
     }
 
 
@@ -174,7 +173,7 @@ public class ReportResource {
                 .ok()
                 .header("Content-Disposition", "attachment;filename=" + DReport4.NAME + ".csv")
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportService.getCSVReport4(institution, serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status));
+                .body(reportService.getCSVReport4(format(institution), serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status));
     }
 
     /**
@@ -190,7 +189,14 @@ public class ReportResource {
                 .ok()
                 .header("Content-Disposition", "attachment;filename=" + DReport5.NAME + ".csv")
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportService.getCSVReport5(institution, serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status));
+                .body(reportService.getCSVReport5(format(institution), serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status));
     }
 
+    /**
+     * @param value Object
+     * @return String
+     */
+    public String format(final Object value) {
+        return String.format("%0" + 8 + "d", Long.valueOf((String) value));
+    }
 }
