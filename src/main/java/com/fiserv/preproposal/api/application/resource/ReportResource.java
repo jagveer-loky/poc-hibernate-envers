@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 @Tag(name = "REPORT", description = "Resource with the requests that allow to query the information referring to pre proposal reports.")
 public class ReportResource {
 
-    private static final String DATE_TIME_PATTERN = "dd-MM-yyyy";
+    private static final String DATE_TIME_PATTERN = "dd/MM/yyyy";
 
     private static final Logger LOG = LogManager.getLogger(ReportResource.class);
 
@@ -303,6 +303,7 @@ public class ReportResource {
                                                 @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
                                                 @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
                                                 @RequestParam(required = false) final Set<String> status) {
+        System.out.println(institution);
         return ResponseEntity
                 .ok()
                 .header("Content-Disposition", "attachment;filename=" + DReport1.NAME + ".csv")
