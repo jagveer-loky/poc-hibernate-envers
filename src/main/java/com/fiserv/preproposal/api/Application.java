@@ -1,5 +1,7 @@
 package com.fiserv.preproposal.api;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -14,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
  */
 
 @SpringBootApplication
+@OpenAPIDefinition(info = @Info(title = "Pre Proposal Api", description = "API used to consult reports of preproposals and update preproposal properties."))
 public class Application extends SpringBootServletInitializer {
 	
 	 @Override

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,6 +25,7 @@ import org.springframework.web.context.annotation.RequestScope;
 @RequestScope
 @RequestMapping(value = "/properties", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
+@Tag(name = "PROPERTIES", description = "Resource with the requests that allow to manipulate pre proprosal properties.")
 public class PropertiesResource {
 
     private static final Logger LOG = LogManager.getLogger(PropertiesResource.class);

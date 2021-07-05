@@ -105,10 +105,32 @@ public class DReport1 {
     )
     private String proposalNumber;
 
-
+    @Schema(
+            description = "Fiserv Status",
+            example = "PRE1-Pendente análise pré proposta",
+            type = "String"
+    )
     private String fiservStatus;
+
+    @Schema(
+            description = "Caixa Status",
+            example = "1-Efetivada",
+            type = "String"
+    )
     private String cefStatus;
+
+    @Schema(
+            description = "Caixa Mensagem",
+            example = "Concluido",
+            type = "String"
+    )
     private String cefMessage;
+
+    @Schema(
+            description = "Data de Submissao",
+            example = "28/06/2021 12:06",
+            type = "String"
+    )
     private String submissionDate;
 
 }
