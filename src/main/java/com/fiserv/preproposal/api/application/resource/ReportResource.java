@@ -67,7 +67,7 @@ public class ReportResource {
                             name = "initialDate",
                             required = true,
                             description = "Filter Initial Date",
-                            example = "2020-10-10"
+                            example = "10/10/2020"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
@@ -75,7 +75,7 @@ public class ReportResource {
                             required = true,
                             description = "Filter Final Date",
                             allowEmptyValue = true,
-                            example = "2021-09-11"
+                            example = "09/11/2021"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
@@ -128,7 +128,7 @@ public class ReportResource {
                             name = "initialDate",
                             required = true,
                             description = "Filter Initial Date",
-                            example = "2020-10-10"
+                            example = "10/10/2020"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
@@ -136,7 +136,7 @@ public class ReportResource {
                             required = true,
                             description = "Filter Final Date",
                             allowEmptyValue = true,
-                            example = "2021-09-11"
+                            example = "09/11/2021"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
@@ -189,7 +189,7 @@ public class ReportResource {
                             name = "initialDate",
                             required = true,
                             description = "Filter Initial Date",
-                            example = "2020-10-10"
+                            example = "10/10/2020"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
@@ -197,7 +197,7 @@ public class ReportResource {
                             required = true,
                             description = "Filter Final Date",
                             allowEmptyValue = true,
-                            example = "2021-09-11"
+                            example = "09/11/2021"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
@@ -270,7 +270,7 @@ public class ReportResource {
                             name = "initialDate",
                             required = true,
                             description = "Filter Initial Date",
-                            example = "2020-10-10"
+                            example = "10/10/2020"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
@@ -278,7 +278,7 @@ public class ReportResource {
                             required = true,
                             description = "Filter Final Date",
                             allowEmptyValue = true,
-                            example = "2021-09-11"
+                            example = "09/11/2021"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
@@ -335,7 +335,7 @@ public class ReportResource {
                             name = "initialDate",
                             required = true,
                             description = "Filter Initial Date",
-                            example = "2020-10-10"
+                            example = "10/10/2020"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
@@ -343,7 +343,7 @@ public class ReportResource {
                             required = true,
                             description = "Filter Final Date",
                             allowEmptyValue = true,
-                            example = "2021-09-11"
+                            example = "09/11/2021"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
@@ -400,7 +400,7 @@ public class ReportResource {
                             name = "initialDate",
                             required = true,
                             description = "Filter Initial Date",
-                            example = "2020-10-10"
+                            example = "10/10/2020"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
@@ -408,7 +408,7 @@ public class ReportResource {
                             required = true,
                             description = "Filter Final Date",
                             allowEmptyValue = true,
-                            example = "2021-09-11"
+                            example = "09/11/2021"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
@@ -465,7 +465,7 @@ public class ReportResource {
                             name = "initialDate",
                             required = true,
                             description = "Filter Initial Date",
-                            example = "2020-10-10"
+                            example = "10/10/2020"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
@@ -473,7 +473,7 @@ public class ReportResource {
                             required = true,
                             description = "Filter Final Date",
                             allowEmptyValue = true,
-                            example = "2021-09-11"
+                            example = "09/11/2021"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
@@ -529,7 +529,7 @@ public class ReportResource {
                             name = "initialDate",
                             required = true,
                             description = "Filter Initial Date",
-                            example = "2020-10-10"
+                            example = "10/10/2020"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
@@ -537,7 +537,7 @@ public class ReportResource {
                             required = true,
                             description = "Filter Final Date",
                             allowEmptyValue = true,
-                            example = "2021-09-11"
+                            example = "09/11/2021"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
