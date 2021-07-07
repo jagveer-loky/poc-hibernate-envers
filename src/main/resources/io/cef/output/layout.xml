@@ -27,7 +27,7 @@
         </record>
 
         <record name="1" order="2" occurs="0+"
-                class="com.fiserv.preproposal.api.domain.dtos.DReport1">
+                class="com.fiserv.preproposal.api.domain.dtos.BasicReport">
 
             <field name="cpfCnpj"/>
             <field name="fantasyName"/>

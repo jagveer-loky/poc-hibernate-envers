@@ -74,13 +74,18 @@ public class ReportResource {
                             name = "finalDate",
                             required = true,
                             description = "Filter Final Date",
-                            allowEmptyValue = true,
                             example = "2021-09-11"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
-                            name = "status",
+                            name = "responsesTypes",
                             required = true,
+                            description = "Filter Responses Types List",
+                            example = "[FISERV_ONLINE,LEAD]"
+                    ),
+                    @Parameter(
+                            in = ParameterIn.QUERY,
+                            name = "status",
                             description = "Filter Status List",
                             allowEmptyValue = true,
                             example = "[PRE1,PRE2]"
@@ -91,17 +96,18 @@ public class ReportResource {
             @ApiResponse(
                     responseCode = "200",
                     description = "Sucessful Operation",
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = DReport1.class)))
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = BasicReport.class)))
             )
     })
-    @GetMapping(DReport1.NAME)
-    public List<DReport1> getReport1(@RequestParam final String institution,
-                                     @RequestParam final String serviceContract,
-                                     @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
-                                     @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
-                                     @RequestParam(required = false) final Set<String> status) {
+    @GetMapping(BasicReport.NAME)
+    public List<BasicReport> getBasicReport(@RequestParam final String institution,
+                                            @RequestParam final String serviceContract,
+                                            @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
+                                            @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
+                                            @RequestParam(required = false) final Set<String> responsesTypes,
+                                            @RequestParam(required = false) final Set<String> status) {
         LOG.info("Get Report 1");
-        return reportService.getReport1(format(institution), serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+        return reportService.getBasicReport(format(institution), serviceContract, initialDate, finalDate, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
     @Operation(
@@ -277,13 +283,18 @@ public class ReportResource {
                             name = "finalDate",
                             required = true,
                             description = "Filter Final Date",
-                            allowEmptyValue = true,
                             example = "2021-09-11"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
-                            name = "status",
+                            name = "responsesTypes",
                             required = true,
+                            description = "Filter Responses Types List",
+                            example = "[FISERV_ONLINE,LEAD]"
+                    ),
+                    @Parameter(
+                            in = ParameterIn.QUERY,
+                            name = "status",
                             description = "Filter Status List",
                             allowEmptyValue = true,
                             example = "[PRE1,PRE2]"
@@ -297,18 +308,19 @@ public class ReportResource {
                     content = @Content(schema = @Schema(type = "string", format = "binary"))
             )
     })
-    @GetMapping(DReport1.NAME + "/csv")
-    public ResponseEntity<byte[]> getCSVReport1(@RequestParam final String institution,
-                                                @RequestParam final String serviceContract,
-                                                @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
-                                                @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
-                                                @RequestParam(required = false) final Set<String> status) {
+    @GetMapping(BasicReport.NAME + "/csv")
+    public ResponseEntity<byte[]> getBasicCSVReport(@RequestParam final String institution,
+                                                    @RequestParam final String serviceContract,
+                                                    @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
+                                                    @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
+                                                    @RequestParam(required = false) final Set<String> responsesTypes,
+                                                    @RequestParam(required = false) final Set<String> status) {
         System.out.println(institution);
         return ResponseEntity
                 .ok()
-                .header("Content-Disposition", "attachment;filename=" + DReport1.NAME + ".csv")
+                .header("Content-Disposition", "attachment;filename=" + BasicReport.NAME + ".csv")
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportService.getCSVReport1(format(institution), serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status));
+                .body(reportService.getBasicCSVReport(format(institution), serviceContract, initialDate, finalDate, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status));
     }
 
     @Operation(

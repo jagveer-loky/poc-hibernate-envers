@@ -14,12 +14,13 @@ import java.util.List;
 @Repository
 public interface ProposalRepository extends JpaRepository<EProposalData, Long> {
 
-    @Query(name = "getReport1", nativeQuery = true)
-    List<DReport1> getReport1(@Param("institution") final String institution,
-                              @Param("serviceContract") final String serviceContract,
-                              @Param("initialDate") final LocalDate initialDate,
-                              @Param("finalDate") final LocalDate finalDate,
-                              @Param("status") final Collection<String> status);
+    @Query(name = "getBasicReport", nativeQuery = true)
+    List<BasicReport> getBasicReport(@Param("institution") final String institution,
+                                     @Param("serviceContract") final String serviceContract,
+                                     @Param("initialDate") final LocalDate initialDate,
+                                     @Param("finalDate") final LocalDate finalDate,
+                                     @Param("responsesTypes") final Collection<String> responsesTypes,
+                                     @Param("status") final Collection<String> status);
 
     @Query(name = "getReport2", nativeQuery = true)
     List<DReport2> getReport2(@Param("institution") final String institution,

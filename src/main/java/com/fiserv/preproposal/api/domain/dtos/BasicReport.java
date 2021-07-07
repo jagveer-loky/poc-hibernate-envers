@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DReport1 {
+public class BasicReport {
 
     public static final String NAME = "1";
 
@@ -132,5 +132,12 @@ public class DReport1 {
             type = "String"
     )
     private String submissionDate;
+
+    @Schema(
+            description = "Tipo da resposta",
+            example = "FISERV_ONLINE",
+            type = "String"
+    )
+    private String responseType;
 
 }

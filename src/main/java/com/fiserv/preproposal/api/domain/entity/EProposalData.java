@@ -1,6 +1,6 @@
 package com.fiserv.preproposal.api.domain.entity;
 
-import com.fiserv.preproposal.api.domain.dtos.DReport1;
+import com.fiserv.preproposal.api.domain.dtos.BasicReport;
 import com.fiserv.preproposal.api.domain.dtos.DReport2;
 import com.fiserv.preproposal.api.domain.dtos.DReport3;
 import com.fiserv.preproposal.api.domain.dtos.DReport4;
@@ -31,10 +31,10 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @SqlResultSetMappings(value = {
         @SqlResultSetMapping(
-                name="report1Mapping",
+                name="basicReportMapping",
                 classes={
                         @ConstructorResult(
-                                targetClass= DReport1.class,
+                                targetClass= BasicReport.class,
                                 columns={
                                         @ColumnResult(name="CPFCNPJ", type = String.class),
                                         @ColumnResult(name="FANTASYNAME", type = String.class),
@@ -52,7 +52,8 @@ import javax.persistence.Table;
                                         @ColumnResult(name="FISERVSTATUS", type = String.class),
                                         @ColumnResult(name="CEFSTATUS", type = String.class),
                                         @ColumnResult(name="CEFMESSAGE", type = String.class),
-                                        @ColumnResult(name="SUBMITIONDATE", type = String.class)
+                                        @ColumnResult(name="SUBMITIONDATE", type = String.class),
+                                        @ColumnResult(name="RESPONSETYPE", type = String.class),
 
                                 }
                         )
@@ -273,7 +274,7 @@ import javax.persistence.Table;
 
 })
 @NamedNativeQueries(value = {
-        @NamedNativeQuery(name = "getReport1", query = "SELECT\n" +
+        @NamedNativeQuery(name = "getBasicReport", query = "SELECT\n" +
                 "       CASE tpd.proposal_type WHEN 'F' THEN tppp.CPF\n" +
                 "       ELSE tpplp.CNPJ END AS \"CPFCNPJ\",\n" +
                 "       CASE tpd.proposal_type WHEN 'F' THEN tppp.FANTASY_NAME\n" +
@@ -282,6 +283,7 @@ import javax.persistence.Table;
                 "       ELSE tpplp.SOCIAL_REASON END AS \"SOCIALREASON\",\n" +
                 "       CASE tpd.proposal_type WHEN 'F' THEN tppp.PLATE_NAME\n" +
                 "       ELSE tpplp.PLATE_NAME END AS \"VOUCHERNAME\",\n" +
+                "       tpd.RESPONSE_TYPE AS \"RESPONSETYPE\",\n" +
                 "       tpd.AGENT_CHANNEL AS \"USERID\",\n" +
                 "       tpd.AGENT_CPF_CNPJ AS \"AGENTCPFCNPJ\",\n" +
                 "       tfc.institution AS \"INSTITUTION\",\n" +
@@ -306,9 +308,10 @@ import javax.persistence.Table;
                 "  WHERE tfc.INSTITUTION = :institution \n" +
                 "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
                 "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
+                "       AND (COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type in (:responsesTypes))" +
                 "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))"
                 ,
-                resultSetMapping = "report1Mapping"),
+                resultSetMapping = "basicReportMapping"),
         @NamedNativeQuery(name = "getReport2", query = "  SELECT  \n" +
                 "            tfc.file_name AS \"FILENAME\",\n" +
                 "            tfc.INSTITUTION AS \"INSTITUTION\", \n" +
