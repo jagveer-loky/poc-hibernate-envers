@@ -1,4 +1,7 @@
 #put specific configuration in this file
+server:
+  servlet:
+    context-path: /pre-proposal-api
 
 spring:
   profiles:
