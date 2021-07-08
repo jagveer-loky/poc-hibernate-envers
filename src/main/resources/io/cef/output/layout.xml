@@ -1,28 +1,28 @@
 <beanio xmlns="http://www.beanio.org/2012/03">
-    <stream name="1" format='csv'>
+    <stream name="basic-report" format='csv'>
         <parser>
             <property name="delimiter" value=";"/>
         </parser>
 
         <record name="header" order="1" occurs="1">
 
-            <field name="cpfCnpj" default="Header1"/>
-            <field name="fantasyName" default="Header1"/>
-            <field name="socialReason" default="Header1"/>
-            <field name="voucherName" default="Header1"/>
-            <field name="userId" default="Header1"/>
-            <field name="agentCpfCnpj" default="Header1"/>
-            <field name="institution" default="Header1"/>
-            <field name="serviceContract" default="Header1"/>
-            <field name="subChannel" default="Header1"/>
-            <field name="tecnology" default="Header1"/>
-            <field name="includeDate" default="Header1"/>
-            <field name="conclusionDate" default="Header1"/>
-            <field name="proposalNumber" default="Header1"/>
-            <field name="fiservStatus" default="Header1"/>
-            <field name="cefStatus" default="Header1"/>
-            <field name="cefMessage" default="Header1"/>
-            <field name="submissionDate" default="Header1"/>
+            <field name="cpfCnpj" default="cpfCnpj"/>
+            <field name="fantasyName" default="fantasyName"/>
+            <field name="socialReason" default="socialReason"/>
+            <field name="voucherName" default="voucherName"/>
+            <field name="userId" default="userId"/>
+            <field name="agentCpfCnpj" default="agentCpfCnpj"/>
+            <field name="institution" default="institution"/>
+            <field name="serviceContract" default="serviceContract"/>
+            <field name="subChannel" default="subChannel"/>
+            <field name="tecnology" default="tecnology"/>
+            <field name="includeDate" default="includeDate"/>
+            <field name="conclusionDate" default="conclusionDate"/>
+            <field name="proposalNumber" default="proposalNumber"/>
+            <field name="fiservStatus" default="fiservStatus"/>
+            <field name="cefStatus" default="cefStatus"/>
+            <field name="cefMessage" default="cefMessage"/>
+            <field name="submissionDate" default="submissionDate"/>
 
         </record>
 

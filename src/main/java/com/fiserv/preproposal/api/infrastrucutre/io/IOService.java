@@ -22,6 +22,11 @@ import java.util.stream.Stream;
 public class IOService<T> {
 
     /**
+     * Header name
+     */
+    private static final String HEADER_NAME = "header";
+
+    /**
      * @param layout     String
      * @param input      String
      * @param streamName String
@@ -102,7 +107,10 @@ public class IOService<T> {
         return out;
     }
 
-
+    /**
+     * @param layout String
+     * @return StreamFactory
+     */
     private static StreamFactory createStreamFactoryFromLayout(final String layout) {
         try {
             final StreamFactory factory = StreamFactory.newInstance();
@@ -118,7 +126,37 @@ public class IOService<T> {
     }
 
     /**
-     * @param objects    List<T>
+     * @param objects    Stream<T>
+     * @param layout     String
+     * @param streamName String
+     * @param headerName String
+     */
+    public byte[] writeInMemory(@NonNull final Stream<T> objects, final @NonNull String layout, @NonNull final String streamName, final String headerName) {
+        final StreamFactory factory = createStreamFactoryFromLayout(layout);
+
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        try {
+
+            final Writer writer = new OutputStreamWriter(outputStream);
+
+            final BeanWriter beanWriter = factory.createWriter(streamName, writer);
+
+            beanWriter.write(headerName, null);
+
+            objects.forEach(beanWriter::write);
+
+            beanWriter.flush();
+            beanWriter.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return outputStream.toByteArray();
+    }
+
+    /**
+     * @param objects    Stream<T>
      * @param layout     String
      * @param streamName String
      */

@@ -12,7 +12,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class BasicReport {
 
-    public static final String NAME = "1";
+    public static final String HEADER_NAME = "header";
+
+    public static final String NAME = "basic-report";
 
     @Schema(
             description = "CPF/CNPJ da Proposta",

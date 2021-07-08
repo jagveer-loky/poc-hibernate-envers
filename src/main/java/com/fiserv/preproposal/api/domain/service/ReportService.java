@@ -62,7 +62,7 @@ public class ReportService {
      */
     public byte[] getBasicCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Collection<String> responsesTypes, final Collection<String> status) {
         final List<BasicReport> list = this.getBasicReport(institution, serviceContract, initialDate, finalDate, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
-        return new IOService<BasicReport>().writeInMemory(list.stream(), layout, BasicReport.NAME);
+        return new IOService<BasicReport>().writeInMemory(list.stream(), layout, BasicReport.NAME, BasicReport.HEADER_NAME);
     }
 
     /**
