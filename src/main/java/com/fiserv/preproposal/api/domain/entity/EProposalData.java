@@ -22,7 +22,6 @@ import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 
 
-
 @Entity
 @Table(name = "TB_PROPOSAL_DATA")
 @Getter
@@ -31,242 +30,242 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @SqlResultSetMappings(value = {
         @SqlResultSetMapping(
-                name="basicReportMapping",
-                classes={
+                name = "basicReportMapping",
+                classes = {
                         @ConstructorResult(
-                                targetClass= BasicReport.class,
-                                columns={
-                                        @ColumnResult(name="CPFCNPJ", type = String.class),
-                                        @ColumnResult(name="FANTASYNAME", type = String.class),
-                                        @ColumnResult(name="SOCIALREASON", type = String.class),
-                                        @ColumnResult(name="VOUCHERNAME", type = String.class),
-                                        @ColumnResult(name="USERID", type = String.class),
-                                        @ColumnResult(name="AGENTCPFCNPJ", type = String.class),
-                                        @ColumnResult(name="INSTITUTION", type = String.class),
-                                        @ColumnResult(name="SERVICECONTRACT", type = String.class),
-                                        @ColumnResult(name="SUBCHANNEL", type = String.class),
-                                        @ColumnResult(name="TECNOLOGY", type = String.class),
-                                        @ColumnResult(name="INCLUDEDATE", type = String.class),
-                                        @ColumnResult(name="CONCLUSIONDATE", type = String.class),
-                                        @ColumnResult(name="PROPOSALNUMBER", type = String.class),
-                                        @ColumnResult(name="FISERVSTATUS", type = String.class),
-                                        @ColumnResult(name="CEFSTATUS", type = String.class),
-                                        @ColumnResult(name="CEFMESSAGE", type = String.class),
-                                        @ColumnResult(name="SUBMITIONDATE", type = String.class),
-                                        @ColumnResult(name="RESPONSETYPE", type = String.class),
+                                targetClass = BasicReport.class,
+                                columns = {
+                                        @ColumnResult(name = "CPFCNPJ", type = String.class),
+                                        @ColumnResult(name = "FANTASYNAME", type = String.class),
+                                        @ColumnResult(name = "SOCIALREASON", type = String.class),
+                                        @ColumnResult(name = "VOUCHERNAME", type = String.class),
+                                        @ColumnResult(name = "USERID", type = String.class),
+                                        @ColumnResult(name = "AGENTCPFCNPJ", type = String.class),
+                                        @ColumnResult(name = "INSTITUTION", type = String.class),
+                                        @ColumnResult(name = "SERVICECONTRACT", type = String.class),
+                                        @ColumnResult(name = "SUBCHANNEL", type = String.class),
+                                        @ColumnResult(name = "TECNOLOGY", type = String.class),
+                                        @ColumnResult(name = "INCLUDEDATE", type = String.class),
+                                        @ColumnResult(name = "CONCLUSIONDATE", type = String.class),
+                                        @ColumnResult(name = "PROPOSALNUMBER", type = String.class),
+                                        @ColumnResult(name = "FISERVSTATUS", type = String.class),
+                                        @ColumnResult(name = "CEFSTATUS", type = String.class),
+                                        @ColumnResult(name = "CEFMESSAGE", type = String.class),
+                                        @ColumnResult(name = "SUBMITIONDATE", type = String.class),
+                                        @ColumnResult(name = "RESPONSETYPE", type = String.class),
 
                                 }
                         )
                 }
         ),
         @SqlResultSetMapping(
-                name="report2Mapping",
-                classes={
+                name = "quantitativeReportMapping",
+                classes = {
                         @ConstructorResult(
-                                targetClass= QuantitativeReport.class,
-                                columns={
-                                        @ColumnResult(name="FILENAME", type = String.class),
-                                        @ColumnResult(name="INSTITUTION", type = String.class),
-                                        @ColumnResult(name="PROCESSINGDATE", type = String.class),
-                                        @ColumnResult(name="FILESTATUS", type = String.class),
-                                        @ColumnResult(name="NUMPROPOSALS", type = Long.class),
-                                        @ColumnResult(name="NUMONLINEREJECT", type = Long.class),
-                                        @ColumnResult(name="NUMPENDINGINONLINE", type = Long.class),
-                                        @ColumnResult(name="NUMPENDINGCOMPLEMENT", type = Long.class),
-                                        @ColumnResult(name="NUMERRORPREPROPOSAL", type = Long.class),
-                                        @ColumnResult(name="NUMFINISHED", type = Long.class),
-                                        @ColumnResult(name="NUMTMPCANCELED", type = Long.class),
-                                        @ColumnResult(name="NUMCREDONLINE", type = Long.class)
+                                targetClass = QuantitativeReport.class,
+                                columns = {
+                                        @ColumnResult(name = "FILENAME", type = String.class),
+                                        @ColumnResult(name = "INSTITUTION", type = String.class),
+                                        @ColumnResult(name = "PROCESSINGDATE", type = String.class),
+                                        @ColumnResult(name = "FILESTATUS", type = String.class),
+                                        @ColumnResult(name = "NUMPROPOSALS", type = Long.class),
+                                        @ColumnResult(name = "NUMONLINEREJECT", type = Long.class),
+                                        @ColumnResult(name = "NUMPENDINGINONLINE", type = Long.class),
+                                        @ColumnResult(name = "NUMPENDINGCOMPLEMENT", type = Long.class),
+                                        @ColumnResult(name = "NUMERRORPREPROPOSAL", type = Long.class),
+                                        @ColumnResult(name = "NUMFINISHED", type = Long.class),
+                                        @ColumnResult(name = "NUMTMPCANCELED", type = Long.class),
+                                        @ColumnResult(name = "NUMCREDONLINE", type = Long.class)
                                 }
                         )
                 }
         ),
         @SqlResultSetMapping(
-                name="report3Mapping",
-                classes={
+                name = "report3Mapping",
+                classes = {
                         @ConstructorResult(
-                                targetClass= DReport3.class,
-                                columns={
-                                        @ColumnResult(name="FILENAME", type = String.class),
-                                        @ColumnResult(name="INSTITUTION", type = String.class),
-                                        @ColumnResult(name="SERVICECONTRACT", type = Integer.class),
-                                        @ColumnResult(name="USERID", type = String.class),
-                                        @ColumnResult(name="AGENTCPFCNPJ", type = String.class),
-                                        @ColumnResult(name="PREPROPOSALID", type = Long.class),
-                                        @ColumnResult(name="PROPOSALNUMBER", type = String.class),
-                                        @ColumnResult(name="MERCHANT", type = String.class),
-                                        @ColumnResult(name="PROCESSINGDATE", type = String.class),
-                                        @ColumnResult(name="ERROR", type = String.class),
-                                        @ColumnResult(name="ERRORDESCRIPTION", type = String.class),
-                                        @ColumnResult(name="ERRORMESSAGE", type = String.class),
-                                        @ColumnResult(name="DETAIL", type = String.class)
+                                targetClass = DReport3.class,
+                                columns = {
+                                        @ColumnResult(name = "FILENAME", type = String.class),
+                                        @ColumnResult(name = "INSTITUTION", type = String.class),
+                                        @ColumnResult(name = "SERVICECONTRACT", type = Integer.class),
+                                        @ColumnResult(name = "USERID", type = String.class),
+                                        @ColumnResult(name = "AGENTCPFCNPJ", type = String.class),
+                                        @ColumnResult(name = "PREPROPOSALID", type = Long.class),
+                                        @ColumnResult(name = "PROPOSALNUMBER", type = String.class),
+                                        @ColumnResult(name = "MERCHANT", type = String.class),
+                                        @ColumnResult(name = "PROCESSINGDATE", type = String.class),
+                                        @ColumnResult(name = "ERROR", type = String.class),
+                                        @ColumnResult(name = "ERRORDESCRIPTION", type = String.class),
+                                        @ColumnResult(name = "ERRORMESSAGE", type = String.class),
+                                        @ColumnResult(name = "DETAIL", type = String.class)
                                 }
                         )
                 }
         ),
         @SqlResultSetMapping(
-                name="report4Mapping",
-                classes={
+                name = "report4Mapping",
+                classes = {
                         @ConstructorResult(
-                                targetClass= DReport4.class,
-                                columns={
-                                        @ColumnResult(name="PREPROPOSALID", type = Long.class),
-                                        @ColumnResult(name="PROPOSALNUMBER", type = String.class),
-                                        @ColumnResult(name="MERCHANT", type = String.class),
-                                        @ColumnResult(name="USERID", type = String.class),
-                                        @ColumnResult(name="AGENTCPFCNPJ", type = String.class),
-                                        @ColumnResult(name="INSTITUTION", type = String.class),
-                                        @ColumnResult(name="SERVICECONTRACT", type = Integer.class),
-                                        @ColumnResult(name="SUBCHANNEL", type = String.class),
-                                        @ColumnResult(name="TECNOLOGY", type = String.class),
-                                        @ColumnResult(name="FISERVSTATUS", type = String.class),
-                                        @ColumnResult(name="CAIXASTATUS", type = String.class),
-                                        @ColumnResult(name="CAIXAMESSAGE", type = String.class),
-                                        @ColumnResult(name="INCLUSIONDATE", type = String.class),
-                                        @ColumnResult(name="CONCLUSIONDATE1", type = String.class),
-                                        @ColumnResult(name="ONLINESUBMITIONDATE", type = String.class),
-                                        @ColumnResult(name="PERSONTYPE", type = String.class),
-                                        @ColumnResult(name="CPFCNPJ", type = String.class),
-                                        @ColumnResult(name="FANTASYNAME", type = String.class),
-                                        @ColumnResult(name="SOCIALREASON", type = String.class),
-                                        @ColumnResult(name="VOUNCHERNAME", type = String.class),
-                                        @ColumnResult(name="MONTHLYBILLING", type = String.class),
-                                        @ColumnResult(name="BIRTHDATE", type = String.class),
-                                        @ColumnResult(name="GNERE", type = String.class),
-                                        @ColumnResult(name="TREATMENTPRONOUN", type = String.class),
-                                        @ColumnResult(name="BIRTHPLACE", type = String.class),
-                                        @ColumnResult(name="NACIONALITY", type = String.class),
-                                        @ColumnResult(name="FULLNAME", type = String.class),
-                                        @ColumnResult(name="MUNICIPALREGISTRATION", type = String.class),
-                                        @ColumnResult(name="STATEREGISTRATION", type = String.class),
-                                        @ColumnResult(name="CONSTITUTIONFORM", type = String.class),
-                                        @ColumnResult(name="OPENDATE", type = String.class),
-                                        @ColumnResult(name="ANNUAL_BILLING_VOL", type = String.class),
-                                        @ColumnResult(name="ANNUAL_VOL_CASH", type = String.class),
-                                        @ColumnResult(name="ANNUAL_VOL_SALES_CARD", type = String.class),
-                                        @ColumnResult(name="ANNUAL_VOL_SALES_CARD_GROUP", type = String.class),
-                                        @ColumnResult(name="AVERAGE_TICKET", type = String.class),
-                                        @ColumnResult(name="BACENPERMISSION", type = String.class),
-                                        @ColumnResult(name="CAMPAINGCODE", type = String.class),
-                                        @ColumnResult(name="CNAE", type = String.class),
-                                        @ColumnResult(name="ECOMMERCE", type = String.class),
-                                        @ColumnResult(name="FOREIGNCARD", type = String.class),
-                                        @ColumnResult(name="MANUAL_PREPAYMENT_ENABLED", type = String.class),
-                                        @ColumnResult(name="BOARDING_BRANCHING", type = String.class),
-                                        @ColumnResult(name="PERC_CARD_NOT_PRESENT", type = String.class),
-                                        @ColumnResult(name="PERC_CARD_PRESENT", type = String.class),
-                                        @ColumnResult(name="PERC_INTERNET", type = String.class),
-                                        @ColumnResult(name="PREPAYMENT_INDICATOR", type = String.class),
-                                        @ColumnResult(name="RECURRINGTRANSACTION", type = String.class),
-                                        @ColumnResult(name="SERVICE_DAY_0", type = String.class),
-                                        @ColumnResult(name="SERVICE_DAY_15_30", type = String.class),
-                                        @ColumnResult(name="SERVICE_DAY_1_7", type = String.class),
-                                        @ColumnResult(name="SERVICE_DAY_8_14", type = String.class),
-                                        @ColumnResult(name="SERVICE_DAY_OVER_30", type = String.class),
-                                        @ColumnResult(name="PENDINGBWDATE", type = String.class),
-                                        @ColumnResult(name="CONCLUSIONDATE", type = String.class),
+                                targetClass = DReport4.class,
+                                columns = {
+                                        @ColumnResult(name = "PREPROPOSALID", type = Long.class),
+                                        @ColumnResult(name = "PROPOSALNUMBER", type = String.class),
+                                        @ColumnResult(name = "MERCHANT", type = String.class),
+                                        @ColumnResult(name = "USERID", type = String.class),
+                                        @ColumnResult(name = "AGENTCPFCNPJ", type = String.class),
+                                        @ColumnResult(name = "INSTITUTION", type = String.class),
+                                        @ColumnResult(name = "SERVICECONTRACT", type = Integer.class),
+                                        @ColumnResult(name = "SUBCHANNEL", type = String.class),
+                                        @ColumnResult(name = "TECNOLOGY", type = String.class),
+                                        @ColumnResult(name = "FISERVSTATUS", type = String.class),
+                                        @ColumnResult(name = "CAIXASTATUS", type = String.class),
+                                        @ColumnResult(name = "CAIXAMESSAGE", type = String.class),
+                                        @ColumnResult(name = "INCLUSIONDATE", type = String.class),
+                                        @ColumnResult(name = "CONCLUSIONDATE1", type = String.class),
+                                        @ColumnResult(name = "ONLINESUBMITIONDATE", type = String.class),
+                                        @ColumnResult(name = "PERSONTYPE", type = String.class),
+                                        @ColumnResult(name = "CPFCNPJ", type = String.class),
+                                        @ColumnResult(name = "FANTASYNAME", type = String.class),
+                                        @ColumnResult(name = "SOCIALREASON", type = String.class),
+                                        @ColumnResult(name = "VOUNCHERNAME", type = String.class),
+                                        @ColumnResult(name = "MONTHLYBILLING", type = String.class),
+                                        @ColumnResult(name = "BIRTHDATE", type = String.class),
+                                        @ColumnResult(name = "GNERE", type = String.class),
+                                        @ColumnResult(name = "TREATMENTPRONOUN", type = String.class),
+                                        @ColumnResult(name = "BIRTHPLACE", type = String.class),
+                                        @ColumnResult(name = "NACIONALITY", type = String.class),
+                                        @ColumnResult(name = "FULLNAME", type = String.class),
+                                        @ColumnResult(name = "MUNICIPALREGISTRATION", type = String.class),
+                                        @ColumnResult(name = "STATEREGISTRATION", type = String.class),
+                                        @ColumnResult(name = "CONSTITUTIONFORM", type = String.class),
+                                        @ColumnResult(name = "OPENDATE", type = String.class),
+                                        @ColumnResult(name = "ANNUAL_BILLING_VOL", type = String.class),
+                                        @ColumnResult(name = "ANNUAL_VOL_CASH", type = String.class),
+                                        @ColumnResult(name = "ANNUAL_VOL_SALES_CARD", type = String.class),
+                                        @ColumnResult(name = "ANNUAL_VOL_SALES_CARD_GROUP", type = String.class),
+                                        @ColumnResult(name = "AVERAGE_TICKET", type = String.class),
+                                        @ColumnResult(name = "BACENPERMISSION", type = String.class),
+                                        @ColumnResult(name = "CAMPAINGCODE", type = String.class),
+                                        @ColumnResult(name = "CNAE", type = String.class),
+                                        @ColumnResult(name = "ECOMMERCE", type = String.class),
+                                        @ColumnResult(name = "FOREIGNCARD", type = String.class),
+                                        @ColumnResult(name = "MANUAL_PREPAYMENT_ENABLED", type = String.class),
+                                        @ColumnResult(name = "BOARDING_BRANCHING", type = String.class),
+                                        @ColumnResult(name = "PERC_CARD_NOT_PRESENT", type = String.class),
+                                        @ColumnResult(name = "PERC_CARD_PRESENT", type = String.class),
+                                        @ColumnResult(name = "PERC_INTERNET", type = String.class),
+                                        @ColumnResult(name = "PREPAYMENT_INDICATOR", type = String.class),
+                                        @ColumnResult(name = "RECURRINGTRANSACTION", type = String.class),
+                                        @ColumnResult(name = "SERVICE_DAY_0", type = String.class),
+                                        @ColumnResult(name = "SERVICE_DAY_15_30", type = String.class),
+                                        @ColumnResult(name = "SERVICE_DAY_1_7", type = String.class),
+                                        @ColumnResult(name = "SERVICE_DAY_8_14", type = String.class),
+                                        @ColumnResult(name = "SERVICE_DAY_OVER_30", type = String.class),
+                                        @ColumnResult(name = "PENDINGBWDATE", type = String.class),
+                                        @ColumnResult(name = "CONCLUSIONDATE", type = String.class),
                                 }
                         )
                 }
         ),
         @SqlResultSetMapping(
-                name="report5Mapping",
-                classes={
+                name = "report5Mapping",
+                classes = {
                         @ConstructorResult(
-                                targetClass= DReport5.class,
-                                columns={
-                                        @ColumnResult(name="PREPROPOSALID", type = Long.class),
-                                        @ColumnResult(name="PROPOSALNUMBER", type = String.class),
-                                        @ColumnResult(name="MERCHANT", type = String.class),
-                                        @ColumnResult(name="USERID", type = String.class),
-                                        @ColumnResult(name="AGENTCPFCNPJ", type = String.class),
-                                        @ColumnResult(name="INSTITUTION", type = String.class),
-                                        @ColumnResult(name="SERVICECONTRACT", type = Integer.class),
-                                        @ColumnResult(name="SUBCHANNEL", type = String.class),
-                                        @ColumnResult(name="TECHNOLOGY", type = String.class),
-                                        @ColumnResult(name="TERMINALSNUMBER", type = Long.class),
-                                        @ColumnResult(name="UNITARYVALUE", type = String.class),
-                                        @ColumnResult(name="FISERVSTATUS", type = String.class),
-                                        @ColumnResult(name="CAIXASTATUS", type = String.class),
-                                        @ColumnResult(name="CAIXAMESSAGE", type = String.class),
-                                        @ColumnResult(name="INCLUDEIN", type = String.class),
-                                        @ColumnResult(name="FINISHEDIN", type = String.class),
-                                        @ColumnResult(name="SUBMISSIONONLINEDATE", type = String.class),
-                                        @ColumnResult(name="PERSONTYPE", type = String.class),
-                                        @ColumnResult(name="CPFCNPJ", type = String.class),
-                                        @ColumnResult(name="FANTASYNAME", type = String.class),
-                                        @ColumnResult(name="SOCIALREASON", type = String.class),
-                                        @ColumnResult(name="PLATELETNAME", type = String.class),
-                                        @ColumnResult(name="MONTHLYBILLING", type = String.class),
-                                        @ColumnResult(name="BIRTHDATE", type = String.class),
-                                        @ColumnResult(name="GNERE", type = String.class),
-                                        @ColumnResult(name="TREATMENTPRONOUN", type = String.class),
-                                        @ColumnResult(name="BIRTHPLACE", type = String.class),
-                                        @ColumnResult(name="NACIONALITY", type = String.class),
-                                        @ColumnResult(name="FULLNAME", type = String.class),
-                                        @ColumnResult(name="MUNICIPALREGISTRATION", type = String.class),
-                                        @ColumnResult(name="STATEREGISTRATION", type = String.class),
-                                        @ColumnResult(name="CONSTITUTIONFORM", type = String.class),
-                                        @ColumnResult(name="OPENDATE", type = String.class),
-                                        @ColumnResult(name="ANNUAL_BILLING_VOL", type = String.class),
-                                        @ColumnResult(name="ANNUAL_VOL_CASH", type = String.class),
-                                        @ColumnResult(name="ANNUAL_VOL_SALES_CARD", type = String.class),
-                                        @ColumnResult(name="ANNUAL_VOL_SALES_CARD_GROUP", type = String.class),
-                                        @ColumnResult(name="AVERAGE_TICKET", type = String.class),
-                                        @ColumnResult(name="BACENPERMISSION", type = String.class),
-                                        @ColumnResult(name="CAMPAINGID", type = String.class),
-                                        @ColumnResult(name="CNAE", type = String.class),
-                                        @ColumnResult(name="ECOMMERCE", type = String.class),
-                                        @ColumnResult(name="FOREIGNCARD", type = String.class),
-                                        @ColumnResult(name="MANUAL_PREPAYMENT_ENABLED", type = String.class),
-                                        @ColumnResult(name="BOARDING_BRANCHING", type = String.class),
-                                        @ColumnResult(name="PERC_CARD_NOT_PRESENT", type = String.class),
-                                        @ColumnResult(name="PERC_CARD_PRESENT", type = String.class),
-                                        @ColumnResult(name="PERC_INTERNET", type = String.class),
-                                        @ColumnResult(name="PREPAYMENT_INDICATOR", type = String.class),
-                                        @ColumnResult(name="RECURRINGTRANSACTION", type = String.class),
-                                        @ColumnResult(name="SERVICE_DAY_0", type = String.class),
-                                        @ColumnResult(name="SERVICE_DAY_15_30", type = String.class),
-                                        @ColumnResult(name="SERVICE_DAY_1_7", type = String.class),
-                                        @ColumnResult(name="SERVICE_DAY_8_14", type = String.class),
-                                        @ColumnResult(name="SERVICE_DAY_OVER_30", type = String.class),
-                                        @ColumnResult(name="PENDINGBWDATE", type = String.class),
-                                        @ColumnResult(name="INSTALLATIONDATE", type = String.class),
-                                        @ColumnResult(name="ADDRESSTYPE", type = String.class),
-                                        @ColumnResult(name="CEP", type = String.class),
-                                        @ColumnResult(name="STREET", type = String.class),
-                                        @ColumnResult(name="NUMBER", type = String.class),
-                                        @ColumnResult(name="DISTRICT", type = String.class),
-                                        @ColumnResult(name="COMPLEMENT", type = String.class),
-                                        @ColumnResult(name="CITY", type = String.class),
-                                        @ColumnResult(name="STATE", type = String.class),
-                                        @ColumnResult(name="PARTNERTYPE", type = String.class),
-                                        @ColumnResult(name="CPFCNPJPARTNER", type = String.class),
-                                        @ColumnResult(name="PARTNERBIRTHDATE", type = String.class),
-                                        @ColumnResult(name="CONSTITUTIONTYPE", type = String.class),
-                                        @ColumnResult(name="CONTRACT", type = String.class),
-                                        @ColumnResult(name="PARTNERNAME", type = String.class),
-                                        @ColumnResult(name="PRONOUNTREATMENTPARTNER", type = String.class),
-                                        @ColumnResult(name="PARTNERNACIONALITY", type = String.class),
-                                        @ColumnResult(name="PARTNERFUNCTION", type = String.class),
-                                        @ColumnResult(name="PERCPARTNER", type = String.class),
-                                        @ColumnResult(name="CONTACTBIRTHDATE", type = String.class),
-                                        @ColumnResult(name="CONTACTCPF", type = String.class),
-                                        @ColumnResult(name="CONTACTEMAIL", type = String.class),
-                                        @ColumnResult(name="CONTACTNAME", type = String.class),
-                                        @ColumnResult(name="CONTACTPHONE", type = String.class),
-                                        @ColumnResult(name="CONTACTCELLPHONE", type = String.class),
-                                        @ColumnResult(name="DESCRIPTION", type = String.class),
-                                        @ColumnResult(name="DISCOUNT_FEE", type = String.class),
-                                        @ColumnResult(name="FEE", type = String.class),
-                                        @ColumnResult(name="FEE_ID_NUMBER", type = String.class),
-                                        @ColumnResult(name="BANKCODE", type = String.class),
-                                        @ColumnResult(name="AGENCY", type = String.class),
-                                        @ColumnResult(name="ACCOUNTDIGIT", type = String.class),
-                                        @ColumnResult(name="ACCOUNTNUMBER", type = String.class),
-                                        @ColumnResult(name="ACCOUNTOWNER", type = String.class),
-                                        @ColumnResult(name="ACCOUNTTYPE", type = String.class),
-                                        @ColumnResult(name="WORKDAYS", type = String.class)
+                                targetClass = DReport5.class,
+                                columns = {
+                                        @ColumnResult(name = "PREPROPOSALID", type = Long.class),
+                                        @ColumnResult(name = "PROPOSALNUMBER", type = String.class),
+                                        @ColumnResult(name = "MERCHANT", type = String.class),
+                                        @ColumnResult(name = "USERID", type = String.class),
+                                        @ColumnResult(name = "AGENTCPFCNPJ", type = String.class),
+                                        @ColumnResult(name = "INSTITUTION", type = String.class),
+                                        @ColumnResult(name = "SERVICECONTRACT", type = Integer.class),
+                                        @ColumnResult(name = "SUBCHANNEL", type = String.class),
+                                        @ColumnResult(name = "TECHNOLOGY", type = String.class),
+                                        @ColumnResult(name = "TERMINALSNUMBER", type = Long.class),
+                                        @ColumnResult(name = "UNITARYVALUE", type = String.class),
+                                        @ColumnResult(name = "FISERVSTATUS", type = String.class),
+                                        @ColumnResult(name = "CAIXASTATUS", type = String.class),
+                                        @ColumnResult(name = "CAIXAMESSAGE", type = String.class),
+                                        @ColumnResult(name = "INCLUDEIN", type = String.class),
+                                        @ColumnResult(name = "FINISHEDIN", type = String.class),
+                                        @ColumnResult(name = "SUBMISSIONONLINEDATE", type = String.class),
+                                        @ColumnResult(name = "PERSONTYPE", type = String.class),
+                                        @ColumnResult(name = "CPFCNPJ", type = String.class),
+                                        @ColumnResult(name = "FANTASYNAME", type = String.class),
+                                        @ColumnResult(name = "SOCIALREASON", type = String.class),
+                                        @ColumnResult(name = "PLATELETNAME", type = String.class),
+                                        @ColumnResult(name = "MONTHLYBILLING", type = String.class),
+                                        @ColumnResult(name = "BIRTHDATE", type = String.class),
+                                        @ColumnResult(name = "GNERE", type = String.class),
+                                        @ColumnResult(name = "TREATMENTPRONOUN", type = String.class),
+                                        @ColumnResult(name = "BIRTHPLACE", type = String.class),
+                                        @ColumnResult(name = "NACIONALITY", type = String.class),
+                                        @ColumnResult(name = "FULLNAME", type = String.class),
+                                        @ColumnResult(name = "MUNICIPALREGISTRATION", type = String.class),
+                                        @ColumnResult(name = "STATEREGISTRATION", type = String.class),
+                                        @ColumnResult(name = "CONSTITUTIONFORM", type = String.class),
+                                        @ColumnResult(name = "OPENDATE", type = String.class),
+                                        @ColumnResult(name = "ANNUAL_BILLING_VOL", type = String.class),
+                                        @ColumnResult(name = "ANNUAL_VOL_CASH", type = String.class),
+                                        @ColumnResult(name = "ANNUAL_VOL_SALES_CARD", type = String.class),
+                                        @ColumnResult(name = "ANNUAL_VOL_SALES_CARD_GROUP", type = String.class),
+                                        @ColumnResult(name = "AVERAGE_TICKET", type = String.class),
+                                        @ColumnResult(name = "BACENPERMISSION", type = String.class),
+                                        @ColumnResult(name = "CAMPAINGID", type = String.class),
+                                        @ColumnResult(name = "CNAE", type = String.class),
+                                        @ColumnResult(name = "ECOMMERCE", type = String.class),
+                                        @ColumnResult(name = "FOREIGNCARD", type = String.class),
+                                        @ColumnResult(name = "MANUAL_PREPAYMENT_ENABLED", type = String.class),
+                                        @ColumnResult(name = "BOARDING_BRANCHING", type = String.class),
+                                        @ColumnResult(name = "PERC_CARD_NOT_PRESENT", type = String.class),
+                                        @ColumnResult(name = "PERC_CARD_PRESENT", type = String.class),
+                                        @ColumnResult(name = "PERC_INTERNET", type = String.class),
+                                        @ColumnResult(name = "PREPAYMENT_INDICATOR", type = String.class),
+                                        @ColumnResult(name = "RECURRINGTRANSACTION", type = String.class),
+                                        @ColumnResult(name = "SERVICE_DAY_0", type = String.class),
+                                        @ColumnResult(name = "SERVICE_DAY_15_30", type = String.class),
+                                        @ColumnResult(name = "SERVICE_DAY_1_7", type = String.class),
+                                        @ColumnResult(name = "SERVICE_DAY_8_14", type = String.class),
+                                        @ColumnResult(name = "SERVICE_DAY_OVER_30", type = String.class),
+                                        @ColumnResult(name = "PENDINGBWDATE", type = String.class),
+                                        @ColumnResult(name = "INSTALLATIONDATE", type = String.class),
+                                        @ColumnResult(name = "ADDRESSTYPE", type = String.class),
+                                        @ColumnResult(name = "CEP", type = String.class),
+                                        @ColumnResult(name = "STREET", type = String.class),
+                                        @ColumnResult(name = "NUMBER", type = String.class),
+                                        @ColumnResult(name = "DISTRICT", type = String.class),
+                                        @ColumnResult(name = "COMPLEMENT", type = String.class),
+                                        @ColumnResult(name = "CITY", type = String.class),
+                                        @ColumnResult(name = "STATE", type = String.class),
+                                        @ColumnResult(name = "PARTNERTYPE", type = String.class),
+                                        @ColumnResult(name = "CPFCNPJPARTNER", type = String.class),
+                                        @ColumnResult(name = "PARTNERBIRTHDATE", type = String.class),
+                                        @ColumnResult(name = "CONSTITUTIONTYPE", type = String.class),
+                                        @ColumnResult(name = "CONTRACT", type = String.class),
+                                        @ColumnResult(name = "PARTNERNAME", type = String.class),
+                                        @ColumnResult(name = "PRONOUNTREATMENTPARTNER", type = String.class),
+                                        @ColumnResult(name = "PARTNERNACIONALITY", type = String.class),
+                                        @ColumnResult(name = "PARTNERFUNCTION", type = String.class),
+                                        @ColumnResult(name = "PERCPARTNER", type = String.class),
+                                        @ColumnResult(name = "CONTACTBIRTHDATE", type = String.class),
+                                        @ColumnResult(name = "CONTACTCPF", type = String.class),
+                                        @ColumnResult(name = "CONTACTEMAIL", type = String.class),
+                                        @ColumnResult(name = "CONTACTNAME", type = String.class),
+                                        @ColumnResult(name = "CONTACTPHONE", type = String.class),
+                                        @ColumnResult(name = "CONTACTCELLPHONE", type = String.class),
+                                        @ColumnResult(name = "DESCRIPTION", type = String.class),
+                                        @ColumnResult(name = "DISCOUNT_FEE", type = String.class),
+                                        @ColumnResult(name = "FEE", type = String.class),
+                                        @ColumnResult(name = "FEE_ID_NUMBER", type = String.class),
+                                        @ColumnResult(name = "BANKCODE", type = String.class),
+                                        @ColumnResult(name = "AGENCY", type = String.class),
+                                        @ColumnResult(name = "ACCOUNTDIGIT", type = String.class),
+                                        @ColumnResult(name = "ACCOUNTNUMBER", type = String.class),
+                                        @ColumnResult(name = "ACCOUNTOWNER", type = String.class),
+                                        @ColumnResult(name = "ACCOUNTTYPE", type = String.class),
+                                        @ColumnResult(name = "WORKDAYS", type = String.class)
                                 }
                         )
                 }
@@ -311,7 +310,7 @@ import javax.persistence.Table;
                 "       AND (" +
                 "               (" +
                 "                   (:notIn = 0) " +
-                "                      AND (" +
+                "                       AND (" +
                 "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
                 "                       )" +
                 "               )" +
@@ -334,53 +333,158 @@ import javax.persistence.Table;
                 "            CASE tfc.IS_VALID WHEN 0 THEN 'Não foi possivel ler o arquivo - Erro de formatação'\n" +
                 "            ELSE 'Lido com sucesso' END AS \"FILESTATUS\",\n" +
                 "            COUNT(tpd.id) AS \"NUMPROPOSALS\",\n" +
-                "            (SELECT COUNT(tpd2.id) \n" +
+                "            (SELECT COUNT(tpd.id) \n" +
                 "              from TB_FILE_CONTROL TFC2\n" +
-                "              join tb_proposal_data tpd2 ON TFC2.ID = tpd2.id_file_control\n" +
-                "              join tb_pre_proposal_status tpps2 on tpps2.id = tpd2.status_id\n" +
-                "             Where tpps2.CODE in ('01','02','03','04','06','-1','14','15','16','17','20','23','24','25','27','34','37','500','768','880')\n" +
+                "              join tb_proposal_data tpd ON TFC2.ID = tpd.id_file_control\n" +
+                "              join tb_pre_proposal_status tpps2 on tpps2.id = tpd.status_id\n" +
+                "             Where tpps2.CODE in ('01','02','03','04','06','-1','14','15','16','17','20','23','24','25','27','34','37','500','768','880') " +
+                "               AND (" +
+                "                       (" +
+                "                           (:notIn = 0) " +
+                "                               AND (" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                               )" +
+                "                       )" +
+                "                   OR" +
+                "                       (" +
+                "                           (:notIn = 1) " +
+                "                               AND (" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                               )" +
+                "                       )" +
+                "               )" +
                 "             and TFC.id = TFC2.id\n" +
                 "            ) AS \"NUMONLINEREJECT\",\n" +
-                "            (SELECT COUNT(tpd2.id) \n" +
+                "            (SELECT COUNT(tpd.id) \n" +
                 "              from TB_FILE_CONTROL TFC2\n" +
-                "              join tb_proposal_data tpd2 ON TFC2.ID = tpd2.id_file_control\n" +
-                "              join tb_pre_proposal_status tpps2 on tpps2.id = tpd2.status_id\n" +
-                "             Where tpps2.CODE in ('PRE4','11','12','13','18','21','22','33','38','30','05','07','08','09','19','888','870','765','860','077','260','769','270','31','32','26','28','35','36')\n" +
+                "              join tb_proposal_data tpd ON TFC2.ID = tpd.id_file_control\n" +
+                "              join tb_pre_proposal_status tpps2 on tpps2.id = tpd.status_id\n" +
+                "             Where tpps2.CODE in ('PRE4','11','12','13','18','21','22','33','38','30','05','07','08','09','19','888','870','765','860','077','260','769','270','31','32','26','28','35','36') " +
+                "               AND (" +
+                "                       (" +
+                "                           (:notIn = 0) " +
+                "                               AND (" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                               )" +
+                "                       )" +
+                "                   OR" +
+                "                       (" +
+                "                           (:notIn = 1) " +
+                "                               AND (" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                               )" +
+                "                       )" +
+                "               )" +
                 "             and TFC.id = TFC2.id\n" +
                 "            ) AS \"NUMPENDINGINONLINE\",\n" +
-                "            (SELECT COUNT(tpd2.id) \n" +
+                "            (SELECT COUNT(tpd.id) \n" +
                 "              from TB_FILE_CONTROL TFC2\n" +
-                "              join tb_proposal_data tpd2 ON TFC2.ID = tpd2.id_file_control\n" +
-                "              join tb_pre_proposal_status tpps2 on tpps2.id = tpd2.status_id\n" +
-                "             Where tpps2.CODE in ('PRE1')\n" +
+                "              join tb_proposal_data tpd ON TFC2.ID = tpd.id_file_control\n" +
+                "              join tb_pre_proposal_status tpps2 on tpps2.id = tpd.status_id\n" +
+                "             Where tpps2.CODE in ('PRE1') " +
+                "               AND (" +
+                "                       (" +
+                "                           (:notIn = 0) " +
+                "                               AND (" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                               )" +
+                "                       )" +
+                "                   OR" +
+                "                       (" +
+                "                           (:notIn = 1) " +
+                "                               AND (" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                               )" +
+                "                       )" +
+                "               )" +
                 "             and TFC.id = TFC2.id\n" +
                 "            ) AS \"NUMPENDINGCOMPLEMENT\",\n" +
-                "            (SELECT COUNT(tpd2.id) \n" +
+                "            (SELECT COUNT(tpd.id) \n" +
                 "              from TB_FILE_CONTROL TFC2\n" +
-                "              join tb_proposal_data tpd2 ON TFC2.ID = tpd2.id_file_control\n" +
-                "              join tb_pre_proposal_status tpps2 on tpps2.id = tpd2.status_id\n" +
-                "             Where tpps2.CODE in ('PRE2')\n" +
+                "              join tb_proposal_data tpd ON TFC2.ID = tpd.id_file_control\n" +
+                "              join tb_pre_proposal_status tpps2 on tpps2.id = tpd.status_id\n" +
+                "             Where tpps2.CODE in ('PRE2') " +
+                "               AND (" +
+                "                       (" +
+                "                           (:notIn = 0) " +
+                "                               AND (" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                               )" +
+                "                       )" +
+                "                   OR" +
+                "                       (" +
+                "                           (:notIn = 1) " +
+                "                               AND (" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                               )" +
+                "                       )" +
+                "               )" +
                 "             and TFC.id = TFC2.id\n" +
                 "            ) AS \"NUMERRORPREPROPOSAL\",\n" +
-                "            (SELECT COUNT(tpd2.id) \n" +
+                "            (SELECT COUNT(tpd.id) \n" +
                 "              from TB_FILE_CONTROL TFC2\n" +
-                "              join tb_proposal_data tpd2 ON TFC2.ID = tpd2.id_file_control\n" +
-                "              join tb_pre_proposal_status tpps2 on tpps2.id = tpd2.status_id\n" +
-                "             Where tpps2.CODE in ('PRE3')\n" +
+                "              join tb_proposal_data tpd ON TFC2.ID = tpd.id_file_control\n" +
+                "              join tb_pre_proposal_status tpps2 on tpps2.id = tpd.status_id\n" +
+                "             Where tpps2.CODE in ('PRE3') " +
+                "               AND (" +
+                "                       (" +
+                "                           (:notIn = 0) " +
+                "                               AND (" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                               )" +
+                "                       )" +
+                "                   OR" +
+                "                       (" +
+                "                           (:notIn = 1) " +
+                "                               AND (" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                               )" +
+                "                       )" +
+                "               )" +
                 "             and TFC.id = TFC2.id\n" +
                 "            ) AS \"NUMFINISHED\",\n" +
-                "            (SELECT COUNT(tpd2.id) \n" +
+                "            (SELECT COUNT(tpd.id) \n" +
                 "              from TB_FILE_CONTROL TFC2\n" +
-                "              join tb_proposal_data tpd2 ON TFC2.ID = tpd2.id_file_control\n" +
-                "              join tb_pre_proposal_status tpps2 on tpps2.id = tpd2.status_id\n" +
-                "             Where tpps2.CODE in ('MCT126','MCT128','MCT127','MCT131','MCT130','MCT129','MCT133','MCT134','MCT132')\n" +
+                "              join tb_proposal_data tpd ON TFC2.ID = tpd.id_file_control\n" +
+                "              join tb_pre_proposal_status tpps2 on tpps2.id = tpd.status_id\n" +
+                "             Where tpps2.CODE in ('MCT126','MCT128','MCT127','MCT131','MCT130','MCT129','MCT133','MCT134','MCT132') " +
+                "               AND (" +
+                "                       (" +
+                "                           (:notIn = 0) " +
+                "                               AND (" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                               )" +
+                "                       )" +
+                "                   OR" +
+                "                       (" +
+                "                           (:notIn = 1) " +
+                "                               AND (" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                               )" +
+                "                       )" +
+                "               )" +
                 "             and TFC.id = TFC2.id\n" +
                 "            ) AS \"NUMTMPCANCELED\",\n" +
-                "            (SELECT COUNT(tpd2.id) \n" +
+                "            (SELECT COUNT(tpd.id) \n" +
                 "              from TB_FILE_CONTROL TFC2\n" +
-                "              join tb_proposal_data tpd2 ON TFC2.ID = tpd2.id_file_control\n" +
-                "              join tb_pre_proposal_status tpps2 on tpps2.id = tpd2.status_id\n" +
-                "             Where tpps2.CODE in ('39','39','400','00','40','41')\n" +
+                "              join tb_proposal_data tpd ON TFC2.ID = tpd.id_file_control\n" +
+                "              join tb_pre_proposal_status tpps2 on tpps2.id = tpd.status_id\n" +
+                "             Where tpps2.CODE in ('39','39','400','00','40','41') " +
+                "               AND (" +
+                "                       (" +
+                "                           (:notIn = 0) " +
+                "                               AND (" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                               )" +
+                "                       )" +
+                "                   OR" +
+                "                       (" +
+                "                           (:notIn = 1) " +
+                "                               AND (" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                               )" +
+                "                       )" +
+                "               )" +
                 "             and TFC.id = TFC2.id\n" +
                 "            ) AS \"NUMCREDONLINE\"\n" +
                 "       from TB_FILE_CONTROL TFC\n" +
@@ -389,8 +493,23 @@ import javax.persistence.Table;
                 "  WHERE tfc.INSTITUTION = :institution \n" +
                 "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
                 "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
+                "       AND (" +
+                "               (" +
+                "                   (:notIn = 0) " +
+                "                       AND (" +
+                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                       )" +
+                "               )" +
+                "           OR" +
+                "               (" +
+                "                   (:notIn = 1) " +
+                "                       AND (" +
+                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                       )" +
+                "               )" +
+                "       )" +
                 "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))" +
-                "   group by tfc.file_name,tfc.INSTITUTION,tfc.SERVICE_CONTRACT,tfc.READ_DATE,tfc.IS_VALID, TFC.id", resultSetMapping = "report2Mapping"),
+                "   group by tfc.file_name,tfc.INSTITUTION,tfc.SERVICE_CONTRACT,tfc.READ_DATE,tfc.IS_VALID, TFC.id", resultSetMapping = "quantitativeReportMapping"),
         @NamedNativeQuery(name = "getReport3", query = "SELECT   \n" +
                 "    tfc.file_name AS \"FILENAME\",\n" +
                 "    tfc.INSTITUTION AS \"INSTITUTION\", \n" +
@@ -495,7 +614,7 @@ import javax.persistence.Table;
                 "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
                 "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))"
                 , resultSetMapping = "report4Mapping"),
-        @NamedNativeQuery(name = "getReport5",query = "SELECT  \n" +
+        @NamedNativeQuery(name = "getReport5", query = "SELECT  \n" +
                 "       tpd.id AS \"PREPROPOSALID\",\n" +
                 "      tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
                 "       tpd.merchant_id AS \"MERCHANT\",\n" +
@@ -627,7 +746,7 @@ import javax.persistence.Table;
                 "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
                 "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
                 "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))"
-                ,resultSetMapping = "report5Mapping")
+                , resultSetMapping = "report5Mapping")
 })
 public class EProposalData {
 
