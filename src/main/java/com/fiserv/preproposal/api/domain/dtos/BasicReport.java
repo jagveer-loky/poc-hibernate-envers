@@ -14,7 +14,7 @@ public class BasicReport {
 
     public static final String HEADER_NAME = "header";
 
-    public static final String NAME = "basic-report";
+    public static final String NAME = "basic";
 
     @Schema(
             description = "CPF/CNPJ da Proposta",

@@ -1,7 +1,7 @@
 package com.fiserv.preproposal.api.domain.entity;
 
 import com.fiserv.preproposal.api.domain.dtos.BasicReport;
-import com.fiserv.preproposal.api.domain.dtos.DReport2;
+import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
 import com.fiserv.preproposal.api.domain.dtos.DReport3;
 import com.fiserv.preproposal.api.domain.dtos.DReport4;
 import com.fiserv.preproposal.api.domain.dtos.DReport5;
@@ -63,7 +63,7 @@ import javax.persistence.Table;
                 name="report2Mapping",
                 classes={
                         @ConstructorResult(
-                                targetClass= DReport2.class,
+                                targetClass= QuantitativeReport.class,
                                 columns={
                                         @ColumnResult(name="FILENAME", type = String.class),
                                         @ColumnResult(name="INSTITUTION", type = String.class),
@@ -308,11 +308,25 @@ import javax.persistence.Table;
                 "  WHERE tfc.INSTITUTION = :institution \n" +
                 "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
                 "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
-                "       AND (COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type in (:responsesTypes))" +
+                "       AND (" +
+                "               (" +
+                "                   (:in = 1) " +
+                "                      AND (" +
+                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                       )" +
+                "               )" +
+                "           OR" +
+                "               (" +
+                "                   (:in = 0) " +
+                "                       AND (" +
+                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                       )" +
+                "               )" +
+                "       )" +
                 "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))"
                 ,
                 resultSetMapping = "basicReportMapping"),
-        @NamedNativeQuery(name = "getReport2", query = "  SELECT  \n" +
+        @NamedNativeQuery(name = "getQuantitativeReport", query = "  SELECT  \n" +
                 "            tfc.file_name AS \"FILENAME\",\n" +
                 "            tfc.INSTITUTION AS \"INSTITUTION\", \n" +
                 "            tfc.SERVICE_CONTRACT,\n" +

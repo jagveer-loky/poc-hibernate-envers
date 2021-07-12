@@ -10,9 +10,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DReport2 {
+public class QuantitativeReport {
 
-    public static final String NAME = "2";
+    public static final String HEADER_NAME = "header";
+
+    public static final String NAME = "quantitative";
 
     @Schema(
             description = "Nome do arquivo",

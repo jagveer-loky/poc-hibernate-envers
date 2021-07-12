@@ -19,15 +19,18 @@ public interface ProposalRepository extends JpaRepository<EProposalData, Long> {
                                      @Param("serviceContract") final String serviceContract,
                                      @Param("initialDate") final LocalDate initialDate,
                                      @Param("finalDate") final LocalDate finalDate,
+                                     @Param("in") final boolean in,
                                      @Param("responsesTypes") final Collection<String> responsesTypes,
                                      @Param("status") final Collection<String> status);
 
-    @Query(name = "getReport2", nativeQuery = true)
-    List<DReport2> getReport2(@Param("institution") final String institution,
-                              @Param("serviceContract") final String serviceContract,
-                              @Param("initialDate") final LocalDate initialDate,
-                              @Param("finalDate") final LocalDate finalDate,
-                              @Param("status") final Collection<String> status);
+    @Query(name = "getQuantitativeReport", nativeQuery = true)
+    List<QuantitativeReport> getQuantitativeReport(@Param("institution") final String institution,
+                                                   @Param("serviceContract") final String serviceContract,
+                                                   @Param("initialDate") final LocalDate initialDate,
+                                                   @Param("finalDate") final LocalDate finalDate,
+                                                   @Param("in") final boolean in,
+                                                   @Param("responsesTypes") final Collection<String> responsesTypes,
+                                                   @Param("status") final Collection<String> status);
 
     @Query(name = "getReport3", nativeQuery = true)
     List<DReport3> getReport3(@Param("institution") final String institution,

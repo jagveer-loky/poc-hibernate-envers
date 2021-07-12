@@ -1,5 +1,5 @@
 <beanio xmlns="http://www.beanio.org/2012/03">
-    <stream name="basic-report" format='csv'>
+    <stream name="basic" format='csv'>
         <parser>
             <property name="delimiter" value=";"/>
         </parser>
@@ -50,13 +50,13 @@
         </record>
     </stream>
 
-    <stream name="2" minOccurs="0" maxOccurs="unbounded" format='csv'>
+    <stream name="quantitative" minOccurs="0" maxOccurs="unbounded" format='csv'>
         <parser>
             <property name="delimiter" value=";"/>
         </parser>
 
         <record name="2" minOccurs="0" maxOccurs="unbounded"
-                class="com.fiserv.preproposal.api.domain.dtos.DReport2">
+                class="com.fiserv.preproposal.api.domain.dtos.QuantitativeReport">
 
             <field name="filename"/>
             <field name="institution"/>

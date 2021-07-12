@@ -16,12 +16,26 @@ class ReportServiceTests {
     @Autowired
     ReportService reportService;
 
+    /**
+     *
+     */
     @Test
     void basicReportMusBeContainOnlyFiservOnlineResponsesTypesMustPass() {
-        final List<BasicReport> basicReport = reportService.getBasicReport("00000007", "149", LocalDate.now().minusDays(30), LocalDate.now(), Collections.singleton("FISERV_ONLINE"), null);
+        final List<BasicReport> basicReport = reportService.getBasicReport("00000007", "149", LocalDate.now().minusDays(120), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null);
         Assertions.assertNotNull(basicReport);
         if (!basicReport.isEmpty())
             basicReport.forEach(report -> Assertions.assertEquals(report.getResponseType(), "FISERV_ONLINE"));
+    }
+
+    /**
+     *
+     */
+    @Test
+    void basicReportMusBeNotContainFiservOnlineResponseTypeMustPass() {
+        final List<BasicReport> basicReport = reportService.getBasicReport("00000007", "149", LocalDate.now().minusDays(120), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null);
+        Assertions.assertNotNull(basicReport);
+        if (!basicReport.isEmpty())
+            basicReport.forEach(report -> Assertions.assertNotEquals(report.getResponseType(), "FISERV_ONLINE"));
     }
 
 }
