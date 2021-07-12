@@ -1,12 +1,4 @@
 #put specific configuration in this file
-server:
-  servlet:
-    context-path: /pre-proposal-api
-
-spring:
-  profiles:
-    active: @spring.profiles.active@
-
 springdoc:
   show-actuator: true
   default-produces-media-type: application/json

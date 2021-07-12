@@ -297,8 +297,9 @@
     <profiles>
         <profile>
             <id>dev</id>
+            <activation><activeByDefault>true</activeByDefault></activation>
             <properties>
-                <spring.profiles.active>dev</spring.profiles.active>
+                <activeProfile>dev</activeProfile>
             </properties>
             <dependencies>
                 <dependency>
@@ -310,19 +311,19 @@
         <profile>
             <id>sit</id>
             <properties>
-                <spring.profiles.active>sit</spring.profiles.active>
+                <activeProfile>sit</activeProfile>
             </properties>
         </profile>
         <profile>
             <id>uat</id>
             <properties>
-                <spring.profiles.active>uat</spring.profiles.active>
+                <activeProfile>uat</activeProfile>
             </properties>
         </profile>
         <profile>
             <id>prd</id>
             <properties>
-                <spring.profiles.active>prd</spring.profiles.active>
+                <activeProfile>prd</activeProfile>
             </properties>
         </profile>
     </profiles>
