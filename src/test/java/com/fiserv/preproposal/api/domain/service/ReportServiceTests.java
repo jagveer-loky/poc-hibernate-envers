@@ -20,8 +20,8 @@ class ReportServiceTests {
      *
      */
     @Test
-    void basicReportMusBeContainOnlyFiservOnlineResponsesTypesMustPass() {
-        final List<BasicReport> basicReport = reportService.getBasicReport("00000007", "149", LocalDate.now().minusDays(120), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null);
+    void basicReportMustBeContainOnlyFiservOnlineResponsesTypesMustPass() {
+        final List<BasicReport> basicReport = reportService.getBasicReport("00000007", "149", LocalDate.now().minusDays(120), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null);
         Assertions.assertNotNull(basicReport);
         if (!basicReport.isEmpty())
             basicReport.forEach(report -> Assertions.assertEquals(report.getResponseType(), "FISERV_ONLINE"));
@@ -31,11 +31,25 @@ class ReportServiceTests {
      *
      */
     @Test
-    void basicReportMusBeNotContainFiservOnlineResponseTypeMustPass() {
-        final List<BasicReport> basicReport = reportService.getBasicReport("00000007", "149", LocalDate.now().minusDays(120), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null);
+    void basicReportMustBeNotContainFiservOnlineResponseTypeMustPass() {
+        final List<BasicReport> basicReport = reportService.getBasicReport("00000007", "149", LocalDate.now().minusDays(120), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null);
         Assertions.assertNotNull(basicReport);
         if (!basicReport.isEmpty())
             basicReport.forEach(report -> Assertions.assertNotEquals(report.getResponseType(), "FISERV_ONLINE"));
+    }
+
+    /**
+     *
+     */
+    @Test
+    void basicReportMustReturnAllResponsesTypesMustPass() {
+        final List<BasicReport> basicReport = reportService.getBasicReport("00000007", "149", LocalDate.now().minusDays(120), LocalDate.now(), null, null, null);
+        Assertions.assertNotNull(basicReport);
+        if (!basicReport.isEmpty()) {
+            Assertions.assertTrue(basicReport.stream().anyMatch(basicReport1 -> basicReport1.getResponseType().equals("FISERV_ONLINE")));
+            Assertions.assertTrue(basicReport.stream().anyMatch(basicReport1 -> basicReport1.getResponseType().equals("LEAD")));
+            Assertions.assertTrue(basicReport.stream().anyMatch(basicReport1 -> basicReport1.getResponseType().equals("LNK_PAYMENT")));
+        }
     }
 
 }

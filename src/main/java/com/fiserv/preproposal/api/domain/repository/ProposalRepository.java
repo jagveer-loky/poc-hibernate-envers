@@ -14,21 +14,41 @@ import java.util.List;
 @Repository
 public interface ProposalRepository extends JpaRepository<EProposalData, Long> {
 
+    /**
+     * @param institution     String
+     * @param serviceContract String
+     * @param initialDate     LocalDate
+     * @param finalDate       LocalDate
+     * @param notIn           Boolean
+     * @param responsesTypes  Collection<String>
+     * @param status          Collection<String>
+     * @return List<BasicReport>
+     */
     @Query(name = "getBasicReport", nativeQuery = true)
     List<BasicReport> getBasicReport(@Param("institution") final String institution,
                                      @Param("serviceContract") final String serviceContract,
                                      @Param("initialDate") final LocalDate initialDate,
                                      @Param("finalDate") final LocalDate finalDate,
-                                     @Param("in") final boolean in,
+                                     @Param("notIn") final boolean notIn,
                                      @Param("responsesTypes") final Collection<String> responsesTypes,
                                      @Param("status") final Collection<String> status);
 
+    /**
+     * @param institution     String
+     * @param serviceContract String
+     * @param initialDate     LocalDate
+     * @param finalDate       LocalDate
+     * @param notIn           Boolean
+     * @param responsesTypes  Collection<String>
+     * @param status          Collection<String>
+     * @return List<BasicReport>
+     */
     @Query(name = "getQuantitativeReport", nativeQuery = true)
     List<QuantitativeReport> getQuantitativeReport(@Param("institution") final String institution,
                                                    @Param("serviceContract") final String serviceContract,
                                                    @Param("initialDate") final LocalDate initialDate,
                                                    @Param("finalDate") final LocalDate finalDate,
-                                                   @Param("in") final boolean in,
+                                                   @Param("notIn") final boolean notIn,
                                                    @Param("responsesTypes") final Collection<String> responsesTypes,
                                                    @Param("status") final Collection<String> status);
 

@@ -310,20 +310,20 @@ import javax.persistence.Table;
                 "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
                 "       AND (" +
                 "               (" +
-                "                   (:in = 1) " +
+                "                   (:notIn = 0) " +
                 "                      AND (" +
                 "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
                 "                       )" +
                 "               )" +
                 "           OR" +
                 "               (" +
-                "                   (:in = 0) " +
+                "                   (:notIn = 1) " +
                 "                       AND (" +
                 "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
                 "                       )" +
                 "               )" +
                 "       )" +
-                "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))"
+                "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE IN (:status))"
                 ,
                 resultSetMapping = "basicReportMapping"),
         @NamedNativeQuery(name = "getQuantitativeReport", query = "  SELECT  \n" +

@@ -79,15 +79,14 @@ public class ReportResource {
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
-                            name = "in",
-                            required = true,
-                            description = "If true reponseType will filtered with clause in, else with clause not in",
+                            name = "notIn",
+                            description = "If 'false' reponseType will filtered with clause 'not in', else with clause 'in'",
                             example = "[true, false]"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
                             name = "responsesTypes",
-                            required = true,
+                            allowEmptyValue = true,
                             description = "Filter Responses Types List",
                             example = "[FISERV_ONLINE,LEAD]"
                     ),
@@ -112,11 +111,11 @@ public class ReportResource {
                                             @RequestParam final String serviceContract,
                                             @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
                                             @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
-                                            @RequestParam final boolean in,
-                                            @RequestParam final Set<String> responsesTypes,
+                                            @RequestParam(required = false) final Boolean notIn,
+                                            @RequestParam(required = false) final Set<String> responsesTypes,
                                             @RequestParam(required = false) final Set<String> status) {
-        LOG.info("Get Report 1");
-        return reportService.getBasicReport(format(institution), serviceContract, initialDate, finalDate, in, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+        LOG.info("Get Basic Report");
+        return reportService.getBasicReport(format(institution), serviceContract, initialDate, finalDate, notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
     @Operation(
@@ -155,22 +154,20 @@ public class ReportResource {
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
-                            name = "in",
-                            required = true,
-                            description = "If true reponseType will filtered with clause in, else with clause not in",
+                            name = "notIn",
+                            description = "If 'false' reponseType will filtered with clause 'not in', else with clause 'in'",
                             example = "[true, false]"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
                             name = "responsesTypes",
-                            required = true,
+                            allowEmptyValue = true,
                             description = "Filter Responses Types List",
                             example = "[FISERV_ONLINE,LEAD]"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
                             name = "status",
-                            required = true,
                             description = "Filter Status List",
                             allowEmptyValue = true,
                             example = "[PRE1,PRE2]"
@@ -189,11 +186,11 @@ public class ReportResource {
                                                           @RequestParam final String serviceContract,
                                                           @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
                                                           @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
-                                                          @RequestParam final boolean in,
-                                                          @RequestParam final Set<String> responsesTypes,
+                                                          @RequestParam(required = false) final Boolean notIn,
+                                                          @RequestParam(required = false) final Set<String> responsesTypes,
                                                           @RequestParam(required = false) final Set<String> status) {
-        LOG.info("Get Report 2");
-        return reportService.getQuantitativeReport(format(institution), serviceContract, initialDate, finalDate, in, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+        LOG.info("Get Quantitative Report");
+        return reportService.getQuantitativeReport(format(institution), serviceContract, initialDate, finalDate, notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
     @Operation(
@@ -313,9 +310,9 @@ public class ReportResource {
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
-                            name = "in",
+                            name = "notIn",
                             required = true,
-                            description = "If true reponseType will filtered with clause in, else with clause not in",
+                            description = "If 'false' reponseType will filtered with clause 'not in', else with clause 'in'",
                             example = "[true, false]"
                     ),
                     @Parameter(
@@ -346,15 +343,14 @@ public class ReportResource {
                                                     @RequestParam final String serviceContract,
                                                     @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
                                                     @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
-                                                    @RequestParam final boolean in,
+                                                    @RequestParam final boolean notIn,
                                                     @RequestParam final Set<String> responsesTypes,
                                                     @RequestParam(required = false) final Set<String> status) {
-        System.out.println(institution);
         return ResponseEntity
                 .ok()
                 .header("Content-Disposition", "attachment;filename=" + BasicReport.NAME + ".csv")
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportService.getBasicCSVReport(format(institution), serviceContract, initialDate, finalDate, in, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status));
+                .body(reportService.getBasicCSVReport(format(institution), serviceContract, initialDate, finalDate, notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status));
     }
 
     @Operation(
@@ -393,22 +389,19 @@ public class ReportResource {
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
-                            name = "in",
-                            required = true,
-                            description = "If true reponseType will filtered with clause in, else with clause not in",
+                            name = "notIn",
+                            description = "If 'false' reponseType will filtered with clause 'not in', else with clause 'in'",
                             example = "[true, false]"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
                             name = "responsesTypes",
-                            required = true,
-                            description = "Filter Responses Types List",
+                            allowEmptyValue = true, description = "Filter Responses Types List",
                             example = "[FISERV_ONLINE,LEAD]"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
                             name = "status",
-                            required = true,
                             description = "Filter Status List",
                             allowEmptyValue = true,
                             example = "[PRE1,PRE2]"
@@ -427,14 +420,14 @@ public class ReportResource {
                                                            @RequestParam final String serviceContract,
                                                            @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
                                                            @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
-                                                           @RequestParam final boolean in,
-                                                           @RequestParam final Set<String> responsesTypes,
+                                                           @RequestParam(required = false) final Boolean notIn,
+                                                           @RequestParam(required = false) final Set<String> responsesTypes,
                                                            @RequestParam(required = false) final Set<String> status) {
         return ResponseEntity
                 .ok()
                 .header("Content-Disposition", "attachment;filename=" + QuantitativeReport.NAME + ".csv")
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportService.getQuantitativeCSVReport(format(institution), serviceContract, initialDate, finalDate, in, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status));
+                .body(reportService.getQuantitativeCSVReport(format(institution), serviceContract, initialDate, finalDate, notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status));
     }
 
 

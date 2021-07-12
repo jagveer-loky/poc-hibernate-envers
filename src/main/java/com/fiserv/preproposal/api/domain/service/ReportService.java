@@ -29,14 +29,23 @@ public class ReportService {
      * @param finalDate       LocalDate
      * @param responsesTypes  String[]
      * @param status          String[]
-     * @return List<DReport1>
+     * @return List<BasicReport>
      */
-    public List<BasicReport> getBasicReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final boolean in, final Collection<String> responsesTypes, final Collection<String> status) {
-        return proposalRepository.getBasicReport(institution, serviceContract, initialDate, finalDate, in, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+    public List<BasicReport> getBasicReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status) {
+        return proposalRepository.getBasicReport(institution, serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
-    public List<QuantitativeReport> getQuantitativeReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final boolean in, final Collection<String> responsesTypes, final Collection<String> status) {
-        return proposalRepository.getQuantitativeReport(institution, serviceContract, initialDate, finalDate,in, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+    /**
+     * @param institution     String
+     * @param serviceContract String
+     * @param initialDate     LocalDate
+     * @param finalDate       LocalDate
+     * @param responsesTypes  String[]
+     * @param status          String[]
+     * @return List<QuantitativeReport>
+     */
+    public List<QuantitativeReport> getQuantitativeReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status) {
+        return proposalRepository.getQuantitativeReport(institution, serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
     public List<DReport3> getReport3(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Collection<String> status) {
@@ -74,7 +83,7 @@ public class ReportService {
      * @return byte[]
      */
     public byte[] getQuantitativeCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final boolean in, final Collection<String> responsesTypes, final Set<String> status) {
-        final List<QuantitativeReport> list = getQuantitativeReport(institution, serviceContract, initialDate, finalDate,in, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.nonNull(status) && status.isEmpty()) ? null : status);
+        final List<QuantitativeReport> list = getQuantitativeReport(institution, serviceContract, initialDate, finalDate, in, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.nonNull(status) && status.isEmpty()) ? null : status);
         return new IOService<QuantitativeReport>().writeInMemory(list.stream(), layout, QuantitativeReport.NAME);
     }
 
