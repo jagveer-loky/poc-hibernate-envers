@@ -311,15 +311,14 @@ public class ReportResource {
                     @Parameter(
                             in = ParameterIn.QUERY,
                             name = "notIn",
-                            required = true,
                             description = "If 'false' reponseType will filtered with clause 'not in', else with clause 'in'",
                             example = "[true, false]"
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
                             name = "responsesTypes",
-                            required = true,
                             description = "Filter Responses Types List",
+                            allowEmptyValue = true,
                             example = "[FISERV_ONLINE,LEAD]"
                     ),
                     @Parameter(
@@ -343,8 +342,8 @@ public class ReportResource {
                                                     @RequestParam final String serviceContract,
                                                     @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
                                                     @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
-                                                    @RequestParam final boolean notIn,
-                                                    @RequestParam final Set<String> responsesTypes,
+                                                    @RequestParam(required = false) final boolean notIn,
+                                                    @RequestParam(required = false) final Set<String> responsesTypes,
                                                     @RequestParam(required = false) final Set<String> status) {
         return ResponseEntity
                 .ok()

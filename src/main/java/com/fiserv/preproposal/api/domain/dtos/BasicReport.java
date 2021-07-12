@@ -17,6 +17,20 @@ public class BasicReport {
     public static final String NAME = "basic";
 
     @Schema(
+            description = "Id da Proposta",
+            example = "985641232457887845L",
+            type = "String"
+    )
+    private String proposalId;
+
+    @Schema(
+            description = "Número da Proposta",
+            example = "O00000001965857",
+            type = "String"
+    )
+    private String proposalNumber;
+
+    @Schema(
             description = "CPF/CNPJ da Proposta",
             example = "10167584057",
             type = "String"
@@ -43,6 +57,13 @@ public class BasicReport {
             type = "String"
     )
     private String voucherName;
+
+    @Schema(
+            description = "Tipo da resposta",
+            example = "FISERV_ONLINE",
+            type = "String"
+    )
+    private String responseType;
 
     @Schema(
             description = "ID do Usuario",
@@ -101,11 +122,11 @@ public class BasicReport {
     private String conclusionDate;
 
     @Schema(
-            description = "ID da Proposta",
-            example = "O00000001965857",
+            description = "Merchant ID",
+            example = "O01965857",
             type = "String"
     )
-    private String proposalNumber;
+    private String merchantId;
 
     @Schema(
             description = "Fiserv Status",
@@ -134,12 +155,5 @@ public class BasicReport {
             type = "String"
     )
     private String submissionDate;
-
-    @Schema(
-            description = "Tipo da resposta",
-            example = "FISERV_ONLINE",
-            type = "String"
-    )
-    private String responseType;
 
 }

@@ -58,7 +58,7 @@ class ReportServiceTests {
      *
      */
     @Test
-    void quantitativeReportMustBeContainOnlyFiservOnlineResponsesTypesMustPass() {
+    void quantitativeReportSeveralTestsTypesMustPass() {
         final List<QuantitativeReport> quantitativeReportWithOnlyFiservOnline = reportService.getQuantitativeReport("00000007", "149", LocalDate.now().minusDays(120), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null);
         final List<QuantitativeReport> quantitativeReportWithoutFiservOnline = reportService.getQuantitativeReport("00000007", "149", LocalDate.now().minusDays(120), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null);
         final List<QuantitativeReport> quantitativeReportWithAllFiservOnline = reportService.getQuantitativeReport("00000007", "149", LocalDate.now().minusDays(120), LocalDate.now(), null, null, null);
@@ -74,28 +74,6 @@ class ReportServiceTests {
             Assertions.assertEquals(quantitativeReportWithAllFiservOnline.get(i).getFinished(), quantitativeReportWithOnlyFiservOnline.get(i).getFinished() + quantitativeReportWithoutFiservOnline.get(i).getFinished());
 
         }
-    }
-
-    /**
-     *
-     */
-    @Test
-    void quantitativeReportMustBeNotContainFiservOnlineResponseTypeMustPass() {
-        final List<QuantitativeReport> quantitativeReport = reportService.getQuantitativeReport("00000007", "149", LocalDate.now().minusDays(120), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null);
-        Assertions.assertNotNull(quantitativeReport);
-        if (!quantitativeReport.isEmpty())
-            Assertions.assertEquals(6, quantitativeReport.size());
-    }
-
-    /**
-     *
-     */
-    @Test
-    void quantitativeReportMustReturnAllResponsesTypesMustPass() {
-        final List<QuantitativeReport> quantitativeReport = reportService.getQuantitativeReport("00000007", "149", LocalDate.now().minusDays(120), LocalDate.now(), null, null, null);
-        Assertions.assertNotNull(quantitativeReport);
-        if (!quantitativeReport.isEmpty())
-            Assertions.assertEquals(6, quantitativeReport.size());
     }
 
 }

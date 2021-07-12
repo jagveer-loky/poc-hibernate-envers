@@ -35,10 +35,13 @@ import javax.persistence.Table;
                         @ConstructorResult(
                                 targetClass = BasicReport.class,
                                 columns = {
+                                        @ColumnResult(name = "ID", type = String.class),
+                                        @ColumnResult(name = "PROPOSALNUMBER", type = String.class),
                                         @ColumnResult(name = "CPFCNPJ", type = String.class),
                                         @ColumnResult(name = "FANTASYNAME", type = String.class),
                                         @ColumnResult(name = "SOCIALREASON", type = String.class),
                                         @ColumnResult(name = "VOUCHERNAME", type = String.class),
+                                        @ColumnResult(name = "RESPONSETYPE", type = String.class),
                                         @ColumnResult(name = "USERID", type = String.class),
                                         @ColumnResult(name = "AGENTCPFCNPJ", type = String.class),
                                         @ColumnResult(name = "INSTITUTION", type = String.class),
@@ -47,13 +50,11 @@ import javax.persistence.Table;
                                         @ColumnResult(name = "TECNOLOGY", type = String.class),
                                         @ColumnResult(name = "INCLUDEDATE", type = String.class),
                                         @ColumnResult(name = "CONCLUSIONDATE", type = String.class),
-                                        @ColumnResult(name = "PROPOSALNUMBER", type = String.class),
+                                        @ColumnResult(name = "MERCHANTID", type = String.class),
                                         @ColumnResult(name = "FISERVSTATUS", type = String.class),
                                         @ColumnResult(name = "CEFSTATUS", type = String.class),
                                         @ColumnResult(name = "CEFMESSAGE", type = String.class),
                                         @ColumnResult(name = "SUBMITIONDATE", type = String.class),
-                                        @ColumnResult(name = "RESPONSETYPE", type = String.class),
-
                                 }
                         )
                 }
@@ -274,6 +275,8 @@ import javax.persistence.Table;
 })
 @NamedNativeQueries(value = {
         @NamedNativeQuery(name = "getBasicReport", query = "SELECT\n" +
+                "       tpd.id AS \"ID\",\n" +
+                "       tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
                 "       CASE tpd.proposal_type WHEN 'F' THEN tppp.CPF\n" +
                 "       ELSE tpplp.CNPJ END AS \"CPFCNPJ\",\n" +
                 "       CASE tpd.proposal_type WHEN 'F' THEN tppp.FANTASY_NAME\n" +
@@ -291,8 +294,7 @@ import javax.persistence.Table;
                 "       tcs.service_id || '-' || TCS.TECHNOLOGY AS \"TECNOLOGY\",\n" +
                 "       TO_CHAR(tpd.INSERTION_DATE, 'dd/MM/yyyy hh:mm')  AS \"INCLUDEDATE\",\n" +
                 "       TO_CHAR(tpd.CONCLUSION_DATE, 'dd/MM/yyyy hh:mm')  AS \"CONCLUSIONDATE\",\n" +
-                "       tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
-                "       tpd.merchant_id AS \"MERCHANT\",\n" +
+                "       tpd.merchant_id AS \"MERCHANTID\",\n" +
                 "       tpps.CODE || '-' || tpps.PT_DESCRIPTION AS \"FISERVSTATUS\",\n" +
                 "       tpcs.code || '-' || tpcs.PT_DESCRIPTION AS \"CEFSTATUS\",\n" +
                 "       tpcs.message_code || '-' || tpcs.message_description AS \"CEFMESSAGE\",\n" +

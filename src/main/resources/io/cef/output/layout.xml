@@ -6,23 +6,25 @@
 
         <record name="header" order="1" occurs="1">
 
-            <field name="cpfCnpj" default="cpfCnpj"/>
-            <field name="fantasyName" default="fantasyName"/>
-            <field name="socialReason" default="socialReason"/>
-            <field name="voucherName" default="voucherName"/>
-            <field name="userId" default="userId"/>
-            <field name="agentCpfCnpj" default="agentCpfCnpj"/>
-            <field name="institution" default="institution"/>
-            <field name="serviceContract" default="serviceContract"/>
-            <field name="subChannel" default="subChannel"/>
-            <field name="tecnology" default="tecnology"/>
-            <field name="includeDate" default="includeDate"/>
-            <field name="conclusionDate" default="conclusionDate"/>
-            <field name="proposalNumber" default="proposalNumber"/>
-            <field name="fiservStatus" default="fiservStatus"/>
-            <field name="cefStatus" default="cefStatus"/>
-            <field name="cefMessage" default="cefMessage"/>
-            <field name="submissionDate" default="submissionDate"/>
+            <field name="id" default="Id da proposta"/>
+            <field name="proposalNumber" default="Número da proposta"/>
+            <field name="cpfCnpj" default="CPF ou CNPJ"/>
+            <field name="fantasyName" default="Nome Fantasia"/>
+            <field name="socialReason" default="Razão Social"/>
+            <field name="voucherName" default="Nome Plaqueta (Comprovante)"/>
+            <field name="userId" default="UserId"/>
+            <field name="agentCpfCnpj" default="CPF ou CNPJ do agente"/>
+            <field name="institution" default="Instituição"/>
+            <field name="serviceContract" default="Service Contract"/>
+            <field name="subChannel" default="Sub Canal"/>
+            <field name="tecnology" default="Tecnologia"/>
+            <field name="includeDate" default="Inclusão em"/>
+            <field name="conclusionDate" default="Conclusão em"/>
+            <field name="merchantId" default="Merchant ID"/>
+            <field name="fiservStatus" default="Status - FISERV"/>
+            <field name="cefStatus" default="Status - CAIXA"/>
+            <field name="cefMessage" default="Mensagem Caixa"/>
+            <field name="submissionDate" default="Submissão ao Online em"/>
 
         </record>
 
