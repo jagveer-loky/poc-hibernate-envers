@@ -21,7 +21,7 @@ public class BasicReport {
             example = "985641232457887845L",
             type = "String"
     )
-    private String proposalId;
+    private String id;
 
     @Schema(
             description = "Número da Proposta",

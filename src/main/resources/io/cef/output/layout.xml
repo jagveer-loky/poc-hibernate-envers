@@ -5,7 +5,6 @@
         </parser>
 
         <record name="header" order="1" occurs="1">
-
             <field name="id" default="Id da proposta"/>
             <field name="proposalNumber" default="Número da proposta"/>
             <field name="cpfCnpj" default="CPF ou CNPJ"/>
@@ -25,12 +24,13 @@
             <field name="cefStatus" default="Status - CAIXA"/>
             <field name="cefMessage" default="Mensagem Caixa"/>
             <field name="submissionDate" default="Submissão ao Online em"/>
-
         </record>
 
-        <record name="1" order="2" occurs="0+"
+        <record name="basic" order="2" occurs="0+"
                 class="com.fiserv.preproposal.api.domain.dtos.BasicReport">
 
+            <field name="id"/>
+            <field name="proposalNumber"/>
             <field name="cpfCnpj"/>
             <field name="fantasyName"/>
             <field name="socialReason"/>
@@ -43,7 +43,7 @@
             <field name="tecnology"/>
             <field name="includeDate"/>
             <field name="conclusionDate"/>
-            <field name="proposalNumber"/>
+            <field name="merchantId"/>
             <field name="fiservStatus"/>
             <field name="cefStatus"/>
             <field name="cefMessage"/>
@@ -57,7 +57,22 @@
             <property name="delimiter" value=";"/>
         </parser>
 
-        <record name="2" minOccurs="0" maxOccurs="unbounded"
+        <record name="header" order="1" occurs="1">
+            <field name="filename" default="Nome do Arquivo"/>
+            <field name="institution" default="Instituição"/>
+            <field name="processingDate" default="Data de processamento"/>
+            <field name="fileStatus" default="Status do Arquivo"/>
+            <field name="proposals"  default="Qtd. de Propostas"/>
+            <field name="onlineRejected" default="Qtd. Rejeitado no Online"/>
+            <field name="pendingInFiservOnline" default="Qtd. Pendente no Online"/>
+            <field name="pendingComplement" default="Qtd. Pendente Complemento"/>
+            <field name="preproposalError" default="Qtd. erro pre proposta"/>
+            <field name="finished" default="Qtd. Concluida"/>
+            <field name="tmpCanceled" default="Qtd. Cancelada TMP"/>
+            <field name="credOnline" default="Qtd. Credenciada Online"/>
+        </record>
+
+        <record name="quantitative" order="2" occurs="0+"
                 class="com.fiserv.preproposal.api.domain.dtos.QuantitativeReport">
 
             <field name="filename"/>
@@ -165,7 +180,7 @@
             <field name="conclusionDate"/>
 
         </record>
-        
+
     </stream>
 
     <stream name="5" minOccurs="0" maxOccurs="unbounded" format='csv'>
@@ -272,5 +287,5 @@
         </record>
 
     </stream>
-    
+
 </beanio>

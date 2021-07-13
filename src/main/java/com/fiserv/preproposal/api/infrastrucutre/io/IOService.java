@@ -22,11 +22,6 @@ import java.util.stream.Stream;
 public class IOService<T> {
 
     /**
-     * Header name
-     */
-    private static final String HEADER_NAME = "header";
-
-    /**
      * @param layout     String
      * @param input      String
      * @param streamName String
@@ -122,7 +117,6 @@ public class IOService<T> {
             factory.load(layout);
             return factory;
         }
-
     }
 
     /**
@@ -131,7 +125,7 @@ public class IOService<T> {
      * @param streamName String
      * @param headerName String
      */
-    public byte[] writeInMemory(@NonNull final Stream<T> objects, final @NonNull String layout, @NonNull final String streamName, final String headerName) {
+    public byte[] writeInMemory(@NonNull final Stream<T> objects, final @NonNull String headerName, final @NonNull String layout, @NonNull final String streamName) {
         final StreamFactory factory = createStreamFactoryFromLayout(layout);
 
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

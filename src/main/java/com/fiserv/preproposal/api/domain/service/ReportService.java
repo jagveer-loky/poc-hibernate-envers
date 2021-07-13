@@ -71,7 +71,7 @@ public class ReportService {
      */
     public byte[] getBasicCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final boolean in, final Collection<String> responsesTypes, final Collection<String> status) {
         final List<BasicReport> list = this.getBasicReport(institution, serviceContract, initialDate, finalDate, in, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
-        return new IOService<BasicReport>().writeInMemory(list.stream(), layout, BasicReport.NAME, BasicReport.HEADER_NAME);
+        return new IOService<BasicReport>().writeInMemory(list.stream(),BasicReport.HEADER_NAME, layout, BasicReport.NAME);
     }
 
     /**
@@ -82,9 +82,9 @@ public class ReportService {
      * @param status          String[]
      * @return byte[]
      */
-    public byte[] getQuantitativeCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final boolean in, final Collection<String> responsesTypes, final Set<String> status) {
+    public byte[] getQuantitativeCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean in, final Collection<String> responsesTypes, final Set<String> status) {
         final List<QuantitativeReport> list = getQuantitativeReport(institution, serviceContract, initialDate, finalDate, in, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.nonNull(status) && status.isEmpty()) ? null : status);
-        return new IOService<QuantitativeReport>().writeInMemory(list.stream(), layout, QuantitativeReport.NAME);
+        return new IOService<QuantitativeReport>().writeInMemory(list.stream(), QuantitativeReport.HEADER_NAME, layout, QuantitativeReport.NAME);
     }
 
     /**
