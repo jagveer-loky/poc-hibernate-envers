@@ -121,7 +121,6 @@ public class ProposalDataReport {
     )
     private String onlineSubmitionDate;
 
-
     @Schema(
             description = "Tipo da resposta",
             example = "FISERV_ONLINE",

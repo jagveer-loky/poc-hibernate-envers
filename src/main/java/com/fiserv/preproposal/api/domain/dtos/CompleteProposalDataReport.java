@@ -10,10 +10,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DReport5 {
+public class CompleteProposalDataReport {
 
-    public static final String NAME = "5";
+    public static final String HEADER_NAME = "header";
 
+    public static final String NAME = "complete-proposal-data";
 
     @Schema(
             description = "ID da Pre Proposta",
@@ -651,6 +652,9 @@ public class DReport5 {
     )
     private String accountType;
 
+
+
+
     @Schema(
             description = "Dias trabalhados",
             example = "Domingo 10:00 as 22:00",
@@ -658,4 +662,10 @@ public class DReport5 {
     )
     private String workdays;
 
+    @Schema(
+            description = "Tipo da resposta",
+            example = "FISERV_ONLINE",
+            type = "String"
+    )
+    private String responseType;
 }

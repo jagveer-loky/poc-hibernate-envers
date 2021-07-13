@@ -4,7 +4,7 @@ import com.fiserv.preproposal.api.domain.dtos.BasicReport;
 import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
 import com.fiserv.preproposal.api.domain.dtos.ErrorsReport;
 import com.fiserv.preproposal.api.domain.dtos.ProposalDataReport;
-import com.fiserv.preproposal.api.domain.dtos.DReport5;
+import com.fiserv.preproposal.api.domain.dtos.CompleteProposalDataReport;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -172,10 +172,10 @@ import javax.persistence.Table;
                 }
         ),
         @SqlResultSetMapping(
-                name = "report5Mapping",
+                name = "completeProposalDataReportMapping",
                 classes = {
                         @ConstructorResult(
-                                targetClass = DReport5.class,
+                                targetClass = CompleteProposalDataReport.class,
                                 columns = {
                                         @ColumnResult(name = "PREPROPOSALID", type = Long.class),
                                         @ColumnResult(name = "PROPOSALNUMBER", type = String.class),
@@ -268,7 +268,8 @@ import javax.persistence.Table;
                                         @ColumnResult(name = "ACCOUNTNUMBER", type = String.class),
                                         @ColumnResult(name = "ACCOUNTOWNER", type = String.class),
                                         @ColumnResult(name = "ACCOUNTTYPE", type = String.class),
-                                        @ColumnResult(name = "WORKDAYS", type = String.class)
+                                        @ColumnResult(name = "WORKDAYS", type = String.class),
+                                        @ColumnResult(name = "RESPONSETYPE", type = String.class)
                                 }
                         )
                 }
@@ -650,7 +651,7 @@ import javax.persistence.Table;
                 "       )" +
                 "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))"
                 , resultSetMapping = "proposalDataReportMapping"),
-        @NamedNativeQuery(name = "getReport5", query = "SELECT  \n" +
+        @NamedNativeQuery(name = "getCompleteProposalDataReport", query = "SELECT  \n" +
                 "       tpd.id AS \"PREPROPOSALID\",\n" +
                 "      tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
                 "       tpd.merchant_id AS \"MERCHANT\",\n" +
@@ -764,7 +765,8 @@ import javax.persistence.Table;
                 "        WHEN 'Thursday' THEN ' Quinta-feira das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO\n" +
                 "        WHEN 'Friday' THEN ' Sexta-feira das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO\n" +
                 "        WHEN 'Saturday' THEN 'Sábado das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO\n" +
-                "       ELSE 'Domingo'|| tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO END AS \"WORKDAYS\"\n" +
+                "       ELSE 'Domingo'|| tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO END AS \"WORKDAYS\"," +
+                "       tpd.RESPONSE_TYPE AS \"RESPONSETYPE\"" +
                 "       from tb_proposal_data tpd\n" +
                 "  LEFT join TB_PROPOSAL_PHYSICAL_PERSON tppp on tpd.proposal_type = 'F' and tpd.id = tppp.ID_FILE_PROPOSAL_DTA\n" +
                 "  LEFT join TB_PRE_PROPOSAL_LEGAL_PERSON tpplp on tpd.proposal_type = 'J' and tpd.id = tpplp.id_file_proposal_dta\n" +
@@ -781,8 +783,23 @@ import javax.persistence.Table;
                 "  WHERE tfc.INSTITUTION = :institution \n" +
                 "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
                 "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
+                "       AND (" +
+                "               (" +
+                "                   (:notIn = 0) " +
+                "                       AND (" +
+                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                       )" +
+                "               )" +
+                "           OR" +
+                "               (" +
+                "                   (:notIn = 1) " +
+                "                       AND (" +
+                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                       )" +
+                "               )" +
+                "       )" +
                 "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))"
-                , resultSetMapping = "report5Mapping")
+                , resultSetMapping = "completeProposalDataReportMapping")
 })
 public class EProposalData {
 
