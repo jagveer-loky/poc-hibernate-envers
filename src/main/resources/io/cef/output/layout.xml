@@ -91,12 +91,29 @@
         </record>
     </stream>
 
-    <stream name="3" minOccurs="0" maxOccurs="unbounded" format='csv'>
+    <stream name="errors" minOccurs="0" maxOccurs="unbounded" format='csv'>
         <parser>
             <property name="delimiter" value=";"/>
         </parser>
-        <record name="3" minOccurs="0" maxOccurs="unbounded"
-                class="com.fiserv.preproposal.api.domain.dtos.DReport3">
+
+        <record name="header" order="1" occurs="1">
+            <field name="filename" default="Nome do arquivo"/>
+            <field name="institution" default="Instituição"/>
+            <field name="serviceContract" default="Service Contract"/>
+            <field name="userId" default="UserId"/>
+            <field name="agentCpfCnpj" default="CPF/CNPJ do agente"/>
+            <field name="preproposalId" default="Numero da pre proposta"/>
+            <field name="proposalNumber" default="ID da proposta"/>
+            <field name="merchant" default="Merchant ID"/>
+            <field name="processingDate" default="Data de processamento"/>
+            <field name="error" default="Campo de erro"/>
+            <field name="errorDescription" default="Descrição do erro"/>
+            <field name="errorMessage" default="Mensagem de erro"/>
+            <field name="detail" default="Detalhe"/>
+        </record>
+
+        <record name="errors" order="2" occurs="0+"
+                class="com.fiserv.preproposal.api.domain.dtos.ErrorsReport">
 
             <field name="filename"/>
             <field name="institution"/>

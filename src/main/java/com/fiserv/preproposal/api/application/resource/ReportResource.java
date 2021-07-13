@@ -229,8 +229,20 @@ public class ReportResource {
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
+                            name = "notIn",
+                            description = "If 'false' reponseType will filtered with clause 'not in', else with clause 'in'",
+                            example = "[true, false]"
+                    ),
+                    @Parameter(
+                            in = ParameterIn.QUERY,
+                            name = "responsesTypes",
+                            allowEmptyValue = true,
+                            description = "Filter Responses Types List",
+                            example = "[FISERV_ONLINE,LEAD]"
+                    ),
+                    @Parameter(
+                            in = ParameterIn.QUERY,
                             name = "status",
-                            required = true,
                             description = "Filter Status List",
                             allowEmptyValue = true,
                             example = "[PRE1,PRE2]"
@@ -241,17 +253,19 @@ public class ReportResource {
             @ApiResponse(
                     responseCode = "200",
                     description = "Sucessful Operation",
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = DReport3.class)))
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorsReport.class)))
             )
     })
-    @GetMapping(DReport3.NAME)
-    public List<DReport3> getReport3(@RequestParam final String institution,
-                                     @RequestParam final String serviceContract,
-                                     @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
-                                     @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
-                                     @RequestParam(required = false) final Set<String> status) {
-        LOG.info("Get Report 3");
-        return reportService.getReport3(format(institution), serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+    @GetMapping(ErrorsReport.NAME)
+    public List<ErrorsReport> getErrorsReport(@RequestParam final String institution,
+                                              @RequestParam final String serviceContract,
+                                              @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
+                                              @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
+                                              @RequestParam(required = false) final Boolean notIn,
+                                              @RequestParam(required = false) final Set<String> responsesTypes,
+                                              @RequestParam(required = false) final Set<String> status) {
+        LOG.info("Get Errors Report");
+        return reportService.getErrorsReport(format(institution), serviceContract, initialDate, finalDate, notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
     @GetMapping(DReport4.NAME)
@@ -429,7 +443,6 @@ public class ReportResource {
                 .body(reportService.getQuantitativeCSVReport(format(institution), serviceContract, initialDate, finalDate, notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status));
     }
 
-
     @Operation(
             summary = "Return the Report Three CSV",
             description = "Return the Report Three CSV",
@@ -466,8 +479,19 @@ public class ReportResource {
                     ),
                     @Parameter(
                             in = ParameterIn.QUERY,
+                            name = "notIn",
+                            description = "If 'false' reponseType will filtered with clause 'not in', else with clause 'in'",
+                            example = "[true, false]"
+                    ),
+                    @Parameter(
+                            in = ParameterIn.QUERY,
+                            name = "responsesTypes",
+                            allowEmptyValue = true, description = "Filter Responses Types List",
+                            example = "[FISERV_ONLINE,LEAD]"
+                    ),
+                    @Parameter(
+                            in = ParameterIn.QUERY,
                             name = "status",
-                            required = true,
                             description = "Filter Status List",
                             allowEmptyValue = true,
                             example = "[PRE1,PRE2]"
@@ -481,17 +505,19 @@ public class ReportResource {
                     content = @Content(schema = @Schema(type = "string", format = "binary"))
             )
     })
-    @GetMapping(DReport3.NAME + "/csv")
-    public ResponseEntity<byte[]> geCSVtReport3(@RequestParam final String institution,
-                                                @RequestParam final String serviceContract,
-                                                @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
-                                                @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
-                                                @RequestParam(required = false) final Set<String> status) {
+    @GetMapping(ErrorsReport.NAME + "/csv")
+    public ResponseEntity<byte[]> getErrorsCSVReport(@RequestParam final String institution,
+                                                     @RequestParam final String serviceContract,
+                                                     @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
+                                                     @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
+                                                     @RequestParam(required = false) final Boolean notIn,
+                                                     @RequestParam(required = false) final Set<String> responsesTypes,
+                                                     @RequestParam(required = false) final Set<String> status) {
         return ResponseEntity
                 .ok()
-                .header("Content-Disposition", "attachment;filename=" + DReport3.NAME + ".csv")
+                .header("Content-Disposition", "attachment;filename=" + ErrorsReport.NAME + ".csv")
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportService.getCSVReport3(format(institution), serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status));
+                .body(reportService.getErrorsCSVReport(format(institution), serviceContract, initialDate, finalDate, notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status));
     }
 
 

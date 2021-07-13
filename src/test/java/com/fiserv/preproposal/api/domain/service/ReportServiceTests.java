@@ -1,6 +1,7 @@
 package com.fiserv.preproposal.api.domain.service;
 
 import com.fiserv.preproposal.api.domain.dtos.BasicReport;
+import com.fiserv.preproposal.api.domain.dtos.ErrorsReport;
 import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -73,6 +74,42 @@ class ReportServiceTests {
             Assertions.assertEquals(quantitativeReportWithAllFiservOnline.get(i).getTmpCanceled(), quantitativeReportWithOnlyFiservOnline.get(i).getTmpCanceled() + quantitativeReportWithoutFiservOnline.get(i).getTmpCanceled());
             Assertions.assertEquals(quantitativeReportWithAllFiservOnline.get(i).getFinished(), quantitativeReportWithOnlyFiservOnline.get(i).getFinished() + quantitativeReportWithoutFiservOnline.get(i).getFinished());
 
+        }
+    }
+
+    /**
+     *
+     */
+    @Test
+    void errorsReportMustBeContainOnlyFiservOnlineResponsesTypesMustPass() {
+        final List<ErrorsReport> errorsReport = reportService.getErrorsReport("00000007", "149", LocalDate.now().minusDays(120), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null);
+        Assertions.assertNotNull(errorsReport);
+        if (!errorsReport.isEmpty())
+            errorsReport.forEach(report -> Assertions.assertEquals(report.getResponseType(), "FISERV_ONLINE"));
+    }
+
+    /**
+     *
+     */
+    @Test
+    void errorsReportMustBeNotContainFiservOnlineResponseTypeMustPass() {
+        final List<ErrorsReport> errorsReport = reportService.getErrorsReport("00000007", "149", LocalDate.now().minusDays(120), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null);
+        Assertions.assertNotNull(errorsReport);
+        if (!errorsReport.isEmpty())
+            errorsReport.forEach(report -> Assertions.assertNotEquals(report.getResponseType(), "FISERV_ONLINE"));
+    }
+
+    /**
+     *
+     */
+    @Test
+    void errorsReportMustReturnAllResponsesTypesMustPass() {
+        final List<ErrorsReport> errorsReport = reportService.getErrorsReport("00000007", "149", LocalDate.now().minusDays(120), LocalDate.now(), null, null, null);
+        Assertions.assertNotNull(errorsReport);
+        if (!errorsReport.isEmpty()) {
+            Assertions.assertTrue(errorsReport.stream().anyMatch(errorsReport1 -> errorsReport1.getResponseType().equals("FISERV_ONLINE")));
+            Assertions.assertTrue(errorsReport.stream().anyMatch(errorsReport1 -> errorsReport1.getResponseType().equals("LEAD")));
+            Assertions.assertTrue(errorsReport.stream().anyMatch(errorsReport1 -> errorsReport1.getResponseType().equals("LNK_PAYMENT")));
         }
     }
 

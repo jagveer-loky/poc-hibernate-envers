@@ -10,9 +10,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DReport3 {
+public class ErrorsReport {
 
-    public static final String NAME = "3";
+    public static final String HEADER_NAME = "header";
+
+    public static final String NAME = "errors";
 
     @Schema(
             description = "Nome do arquivo",
@@ -34,6 +36,13 @@ public class DReport3 {
             type = "number"
     )
     private Integer serviceContract;
+
+    @Schema(
+            description = "Tipo da resposta",
+            example = "FISERV_ONLINE",
+            type = "String"
+    )
+    private String responseType;
 
     @Schema(
             description = "ID do Usuario",

@@ -2,7 +2,7 @@ package com.fiserv.preproposal.api.domain.entity;
 
 import com.fiserv.preproposal.api.domain.dtos.BasicReport;
 import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
-import com.fiserv.preproposal.api.domain.dtos.DReport3;
+import com.fiserv.preproposal.api.domain.dtos.ErrorsReport;
 import com.fiserv.preproposal.api.domain.dtos.DReport4;
 import com.fiserv.preproposal.api.domain.dtos.DReport5;
 import lombok.AllArgsConstructor;
@@ -82,14 +82,15 @@ import javax.persistence.Table;
                 }
         ),
         @SqlResultSetMapping(
-                name = "report3Mapping",
+                name = "errorsReportMapping",
                 classes = {
                         @ConstructorResult(
-                                targetClass = DReport3.class,
+                                targetClass = ErrorsReport.class,
                                 columns = {
                                         @ColumnResult(name = "FILENAME", type = String.class),
                                         @ColumnResult(name = "INSTITUTION", type = String.class),
                                         @ColumnResult(name = "SERVICECONTRACT", type = Integer.class),
+                                        @ColumnResult(name = "RESPONSETYPE", type = String.class),
                                         @ColumnResult(name = "USERID", type = String.class),
                                         @ColumnResult(name = "AGENTCPFCNPJ", type = String.class),
                                         @ColumnResult(name = "PREPROPOSALID", type = Long.class),
@@ -512,10 +513,11 @@ import javax.persistence.Table;
                 "       )" +
                 "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))" +
                 "   group by tfc.file_name,tfc.INSTITUTION,tfc.SERVICE_CONTRACT,tfc.READ_DATE,tfc.IS_VALID, TFC.id", resultSetMapping = "quantitativeReportMapping"),
-        @NamedNativeQuery(name = "getReport3", query = "SELECT   \n" +
+        @NamedNativeQuery(name = "getErrorsReport", query = "SELECT   \n" +
                 "    tfc.file_name AS \"FILENAME\",\n" +
                 "    tfc.INSTITUTION AS \"INSTITUTION\", \n" +
                 "    tfc.SERVICE_CONTRACT AS \"SERVICECONTRACT\",\n" +
+                "    tpd.RESPONSE_TYPE AS \"RESPONSETYPE\", \n" +
                 "    tpd.AGENT_CHANNEL AS \"USERID\", \n" +
                 "    tpd.AGENT_CPF_CNPJ AS \"AGENTCPFCNPJ\",\n" +
                 "    tpd.id AS \"PREPROPOSALID\",\n" +
@@ -527,15 +529,30 @@ import javax.persistence.Table;
                 "    tpphe.message AS \"ERRORMESSAGE\",\n" +
                 "    tpphe.message_detail AS \"DETAIL\"\n" +
                 "from  tb_pre_proposal_history tpph\n" +
-                "Left join TB_PRE_PROPOSAL_HISTORY_ERROR tpphe on tpph.id = tpphe.id_proposal_history\n" +
-                "Left join tb_proposal_data tpd on tpd.id = tpph.id_proposal_data\n" +
-                "Left join TB_FILE_CONTROL TFC ON TFC.ID = tpd.id_file_control\n" +
-                "  left join tb_pre_proposal_status tpps on tpps.id = tpd.status_id\n" +
+                "   Left join TB_PRE_PROPOSAL_HISTORY_ERROR tpphe on tpph.id = tpphe.id_proposal_history\n" +
+                "   Left join tb_proposal_data tpd on tpd.id = tpph.id_proposal_data\n" +
+                "   Left join TB_FILE_CONTROL TFC ON TFC.ID = tpd.id_file_control\n" +
+                "   left join tb_pre_proposal_status tpps on tpps.id = tpd.status_id\n" +
                 "  WHERE tfc.INSTITUTION = :institution \n" +
                 "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
                 "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
+                "       AND (" +
+                "               (" +
+                "                   (:notIn = 0) " +
+                "                       AND (" +
+                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                       )" +
+                "               )" +
+                "           OR" +
+                "               (" +
+                "                   (:notIn = 1) " +
+                "                       AND (" +
+                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                       )" +
+                "               )" +
+                "       )" +
                 "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))" +
-                "group by tfc.file_name,tfc.INSTITUTION,tfc.SERVICE_CONTRACT,tpd.AGENT_CHANNEL,tpd.AGENT_CPF_CNPJ,tpd.id,proposal_number,merchant_id,tfc.READ_DATE,tfc.IS_VALID,tpphe.field,tpphe.field_description,tpphe.message,tpphe.message_detail", resultSetMapping = "report3Mapping"),
+                "group by tfc.file_name,tfc.INSTITUTION,tfc.SERVICE_CONTRACT,tpd.RESPONSE_TYPE, tpd.AGENT_CHANNEL,tpd.AGENT_CPF_CNPJ,tpd.id,proposal_number,merchant_id,tfc.READ_DATE,tfc.IS_VALID,tpphe.field,tpphe.field_description,tpphe.message,tpphe.message_detail", resultSetMapping = "errorsReportMapping"),
         @NamedNativeQuery(name = "getReport4", query = "SELECT  \n" +
                 "       tpd.id AS \"PREPROPOSALID\",\n" +
                 "       tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
