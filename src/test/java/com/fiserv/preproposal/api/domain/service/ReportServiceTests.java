@@ -2,6 +2,7 @@ package com.fiserv.preproposal.api.domain.service;
 
 import com.fiserv.preproposal.api.domain.dtos.BasicReport;
 import com.fiserv.preproposal.api.domain.dtos.ErrorsReport;
+import com.fiserv.preproposal.api.domain.dtos.ProposalDataReport;
 import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -49,7 +50,7 @@ class ReportServiceTests {
         Assertions.assertNotNull(basicReport);
         if (!basicReport.isEmpty()) {
             Assertions.assertTrue(basicReport.stream().anyMatch(basicReport1 -> basicReport1.getResponseType().equals("FISERV_ONLINE")));
-            Assertions.assertTrue(basicReport.stream().anyMatch(basicReport1 -> basicReport1.getResponseType().equals("LEAD")));
+//            Assertions.assertTrue(basicReport.stream().anyMatch(basicReport1 -> basicReport1.getResponseType().equals("LEAD")));
             Assertions.assertTrue(basicReport.stream().anyMatch(basicReport1 -> basicReport1.getResponseType().equals("LNK_PAYMENT")));
         }
     }
@@ -108,8 +109,44 @@ class ReportServiceTests {
         Assertions.assertNotNull(errorsReport);
         if (!errorsReport.isEmpty()) {
             Assertions.assertTrue(errorsReport.stream().anyMatch(errorsReport1 -> errorsReport1.getResponseType().equals("FISERV_ONLINE")));
-            Assertions.assertTrue(errorsReport.stream().anyMatch(errorsReport1 -> errorsReport1.getResponseType().equals("LEAD")));
+//            Assertions.assertTrue(errorsReport.stream().anyMatch(errorsReport1 -> errorsReport1.getResponseType().equals("LEAD")));
             Assertions.assertTrue(errorsReport.stream().anyMatch(errorsReport1 -> errorsReport1.getResponseType().equals("LNK_PAYMENT")));
+        }
+    }
+
+    /**
+     *
+     */
+    @Test
+    void proposalDataReportMustBeContainOnlyFiservOnlineResponsesTypesMustPass() {
+        final List<ProposalDataReport> proposalDataReport = reportService.getProposalDataReport("00000007", "149", LocalDate.now().minusDays(120), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null);
+        Assertions.assertNotNull(proposalDataReport);
+        if (!proposalDataReport.isEmpty())
+            proposalDataReport.forEach(report -> Assertions.assertEquals(report.getResponseType(), "FISERV_ONLINE"));
+    }
+
+    /**
+     *
+     */
+    @Test
+    void proposalDataReportMustBeNotContainFiservOnlineResponseTypeMustPass() {
+        final List<ProposalDataReport> proposalDataReport = reportService.getProposalDataReport("00000007", "149", LocalDate.now().minusDays(120), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null);
+        Assertions.assertNotNull(proposalDataReport);
+        if (!proposalDataReport.isEmpty())
+            proposalDataReport.forEach(report -> Assertions.assertNotEquals(report.getResponseType(), "FISERV_ONLINE"));
+    }
+
+    /**
+     *
+     */
+    @Test
+    void proposalDataReportMustReturnAllResponsesTypesMustPass() {
+        final List<ProposalDataReport> proposalDataReport = reportService.getProposalDataReport("00000007", "149", LocalDate.now().minusDays(120), LocalDate.now(), null, null, null);
+        Assertions.assertNotNull(proposalDataReport);
+        if (!proposalDataReport.isEmpty()) {
+            Assertions.assertTrue(proposalDataReport.stream().anyMatch(errorsReport1 -> errorsReport1.getResponseType().equals("FISERV_ONLINE")));
+//            Assertions.assertTrue(proposalDataReport.stream().anyMatch(errorsReport1 -> errorsReport1.getResponseType().equals("LEAD")));
+            Assertions.assertTrue(proposalDataReport.stream().anyMatch(errorsReport1 -> errorsReport1.getResponseType().equals("LNK_PAYMENT")));
         }
     }
 

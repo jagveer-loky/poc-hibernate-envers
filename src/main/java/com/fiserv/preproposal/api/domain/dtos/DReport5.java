@@ -188,7 +188,7 @@ public class DReport5 {
             example = "M",
             type = "String"
     )
-    private String gnere;
+    private String gender;
 
     @Schema(
             description = "Pronome de Tratamento",

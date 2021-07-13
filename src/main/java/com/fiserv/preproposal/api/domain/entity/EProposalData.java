@@ -3,7 +3,7 @@ package com.fiserv.preproposal.api.domain.entity;
 import com.fiserv.preproposal.api.domain.dtos.BasicReport;
 import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
 import com.fiserv.preproposal.api.domain.dtos.ErrorsReport;
-import com.fiserv.preproposal.api.domain.dtos.DReport4;
+import com.fiserv.preproposal.api.domain.dtos.ProposalDataReport;
 import com.fiserv.preproposal.api.domain.dtos.DReport5;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -106,10 +106,10 @@ import javax.persistence.Table;
                 }
         ),
         @SqlResultSetMapping(
-                name = "report4Mapping",
+                name = "proposalDataReportMapping",
                 classes = {
                         @ConstructorResult(
-                                targetClass = DReport4.class,
+                                targetClass = ProposalDataReport.class,
                                 columns = {
                                         @ColumnResult(name = "PREPROPOSALID", type = Long.class),
                                         @ColumnResult(name = "PROPOSALNUMBER", type = String.class),
@@ -124,8 +124,9 @@ import javax.persistence.Table;
                                         @ColumnResult(name = "CAIXASTATUS", type = String.class),
                                         @ColumnResult(name = "CAIXAMESSAGE", type = String.class),
                                         @ColumnResult(name = "INCLUSIONDATE", type = String.class),
-                                        @ColumnResult(name = "CONCLUSIONDATE1", type = String.class),
+                                        @ColumnResult(name = "CONCLUSIONDATE", type = String.class),
                                         @ColumnResult(name = "ONLINESUBMITIONDATE", type = String.class),
+                                        @ColumnResult(name = "RESPONSETYPE", type = String.class),
                                         @ColumnResult(name = "PERSONTYPE", type = String.class),
                                         @ColumnResult(name = "CPFCNPJ", type = String.class),
                                         @ColumnResult(name = "FANTASYNAME", type = String.class),
@@ -133,7 +134,7 @@ import javax.persistence.Table;
                                         @ColumnResult(name = "VOUNCHERNAME", type = String.class),
                                         @ColumnResult(name = "MONTHLYBILLING", type = String.class),
                                         @ColumnResult(name = "BIRTHDATE", type = String.class),
-                                        @ColumnResult(name = "GNERE", type = String.class),
+                                        @ColumnResult(name = "GENDER", type = String.class),
                                         @ColumnResult(name = "TREATMENTPRONOUN", type = String.class),
                                         @ColumnResult(name = "BIRTHPLACE", type = String.class),
                                         @ColumnResult(name = "NACIONALITY", type = String.class),
@@ -165,7 +166,7 @@ import javax.persistence.Table;
                                         @ColumnResult(name = "SERVICE_DAY_8_14", type = String.class),
                                         @ColumnResult(name = "SERVICE_DAY_OVER_30", type = String.class),
                                         @ColumnResult(name = "PENDINGBWDATE", type = String.class),
-                                        @ColumnResult(name = "CONCLUSIONDATE", type = String.class),
+                                        @ColumnResult(name = "CONCLUSIONBWDATE", type = String.class),
                                 }
                         )
                 }
@@ -200,7 +201,7 @@ import javax.persistence.Table;
                                         @ColumnResult(name = "PLATELETNAME", type = String.class),
                                         @ColumnResult(name = "MONTHLYBILLING", type = String.class),
                                         @ColumnResult(name = "BIRTHDATE", type = String.class),
-                                        @ColumnResult(name = "GNERE", type = String.class),
+                                        @ColumnResult(name = "GENDER", type = String.class),
                                         @ColumnResult(name = "TREATMENTPRONOUN", type = String.class),
                                         @ColumnResult(name = "BIRTHPLACE", type = String.class),
                                         @ColumnResult(name = "NACIONALITY", type = String.class),
@@ -553,7 +554,7 @@ import javax.persistence.Table;
                 "       )" +
                 "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))" +
                 "group by tfc.file_name,tfc.INSTITUTION,tfc.SERVICE_CONTRACT,tpd.RESPONSE_TYPE, tpd.AGENT_CHANNEL,tpd.AGENT_CPF_CNPJ,tpd.id,proposal_number,merchant_id,tfc.READ_DATE,tfc.IS_VALID,tpphe.field,tpphe.field_description,tpphe.message,tpphe.message_detail", resultSetMapping = "errorsReportMapping"),
-        @NamedNativeQuery(name = "getReport4", query = "SELECT  \n" +
+        @NamedNativeQuery(name = "getProposalDataReport", query = "SELECT  \n" +
                 "       tpd.id AS \"PREPROPOSALID\",\n" +
                 "       tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
                 "       tpd.merchant_id AS \"MERCHANT\",\n" +
@@ -567,8 +568,9 @@ import javax.persistence.Table;
                 "       tpcs.code || '-' || tpcs.PT_DESCRIPTION AS \"CAIXASTATUS\",\n" +
                 "       tpcs.message_code || '-' || tpcs.message_description AS \"CAIXAMESSAGE\",         \n" +
                 "       TO_CHAR(tpd.INSERTION_DATE, 'dd/MM/yyyy hh:mm')  AS \"INCLUSIONDATE\",\n" +
-                "       TO_CHAR(tpd.CONCLUSION_DATE, 'dd/MM/yyyy hh:mm')  AS \"CONCLUSIONDATE1\",\n" +
+                "       TO_CHAR(tpd.CONCLUSION_DATE, 'dd/MM/yyyy hh:mm')  AS \"CONCLUSIONDATE\",\n" +
                 "       TO_CHAR(tpd.ONLINE_DATE, 'dd/MM/yyyy hh:mm') AS \"ONLINESUBMITIONDATE\",\n" +
+                "       tpd.RESPONSE_TYPE AS \"RESPONSETYPE\", " +
                 "       CASE tpd.proposal_type WHEN 'F' THEN 'Fisica'\n" +
                 "       ELSE 'Juridica' END AS \"PERSONTYPE\",\n" +
                 "       CASE tpd.proposal_type WHEN 'F' THEN tppp.CPF\n" +
@@ -583,7 +585,7 @@ import javax.persistence.Table;
                 "       ELSE tpplp.MONTH_AVAREGE END AS \"MONTHLYBILLING\",\n" +
                 "       CASE tpd.proposal_type WHEN 'F' THEN tppp.BIRTH_DATE\n" +
                 "       ELSE tpplp.DATE_CONSTITUTION END AS \"BIRTHDATE\",\n" +
-                "       tppp.GENDER AS \"GNERE\",\n" +
+                "       tppp.GENDER AS \"GENDER\",\n" +
                 "       tppp.TREATMENT_PRONOUN AS \"TREATMENTPRONOUN\",\n" +
                 "       tppp.LOCAL_BIRTH AS \"BIRTHPLACE\",\n" +
                 "       tppp.NATIONALITY AS \"NACIONALITY\",\n" +
@@ -620,7 +622,7 @@ import javax.persistence.Table;
                 "       tpd.SERVICE_DAY_8_14, \n" +
                 "       tpd.SERVICE_DAY_OVER_30, \n" +
                 "       tpd.BW_DATE AS \"PENDINGBWDATE\", \n" +
-                "       tpd.BW_CONCLUSION_DATE AS \"CONCLUSIONDATE\"\n" +
+                "       tpd.BW_CONCLUSION_DATE AS \"CONCLUSIONBWDATE\"\n" +
                 "       from tb_proposal_data tpd\n" +
                 "  LEFT join TB_PROPOSAL_PHYSICAL_PERSON tppp on tpd.proposal_type = 'F' and tpd.id = tppp.ID_FILE_PROPOSAL_DTA\n" +
                 "  LEFT join TB_PRE_PROPOSAL_LEGAL_PERSON tpplp on tpd.proposal_type = 'J' and tpd.id = tpplp.id_file_proposal_dta\n" +
@@ -631,8 +633,23 @@ import javax.persistence.Table;
                 "  WHERE tfc.INSTITUTION = :institution \n" +
                 "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
                 "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
+                "       AND (" +
+                "               (" +
+                "                   (:notIn = 0) " +
+                "                       AND (" +
+                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                       )" +
+                "               )" +
+                "           OR" +
+                "               (" +
+                "                   (:notIn = 1) " +
+                "                       AND (" +
+                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                       )" +
+                "               )" +
+                "       )" +
                 "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))"
-                , resultSetMapping = "report4Mapping"),
+                , resultSetMapping = "proposalDataReportMapping"),
         @NamedNativeQuery(name = "getReport5", query = "SELECT  \n" +
                 "       tpd.id AS \"PREPROPOSALID\",\n" +
                 "      tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
@@ -665,7 +682,7 @@ import javax.persistence.Table;
                 "       ELSE tpplp.MONTH_AVAREGE END AS \"MONTHLYBILLING\",\n" +
                 "       CASE tpd.proposal_type WHEN 'F' THEN tppp.BIRTH_DATE\n" +
                 "       ELSE tpplp.DATE_CONSTITUTION END AS \"BIRTHDATE\",\n" +
-                "       tppp.GENDER AS \"GNERE\",\n" +
+                "       tppp.GENDER AS \"GENDER\",\n" +
                 "       tppp.TREATMENT_PRONOUN AS \"TREATMENTPRONOUN\",\n" +
                 "       tppp.LOCAL_BIRTH AS \"BIRTHPLACE\",\n" +
                 "       tppp.NATIONALITY AS \"NACIONALITY\",\n" +

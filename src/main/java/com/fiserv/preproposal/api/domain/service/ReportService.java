@@ -52,8 +52,8 @@ public class ReportService {
         return proposalRepository.getErrorsReport(institution, serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
-    public List<DReport4> getReport4(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Collection<String> status) {
-        return proposalRepository.getReport4(institution, serviceContract, initialDate, finalDate, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+    public List<ProposalDataReport> getProposalDataReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status) {
+        return proposalRepository.getProposalDataReport(institution, serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
     public List<DReport5> getReport5(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Collection<String> status) {
@@ -98,9 +98,9 @@ public class ReportService {
     /**
      * @return byte[]
      */
-    public byte[] getCSVReport4(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Set<String> status) {
-        final List<DReport4> list = proposalRepository.getReport4(institution, serviceContract, initialDate, finalDate, (Objects.nonNull(status) && status.isEmpty()) ? null : status);
-        return new IOService<DReport4>().writeInMemory(list.stream(), layout, DReport4.NAME);
+    public byte[] getCSVProposalDataReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Set<String> status) {
+        final List<ProposalDataReport> list = getProposalDataReport(institution, serviceContract, initialDate, finalDate, notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.nonNull(status) && status.isEmpty()) ? null : status);
+        return new IOService<ProposalDataReport>().writeInMemory(list.stream(), ProposalDataReport.HEADER_NAME, layout, ProposalDataReport.NAME);
     }
 
     /**

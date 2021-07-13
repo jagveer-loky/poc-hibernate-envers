@@ -10,9 +10,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DReport4 {
+public class ProposalDataReport {
 
-    public static final String NAME = "4";
+    public static final String HEADER_NAME = "header";
+
+    public static final String NAME = "proposal-data";
 
     @Schema(
             description = "ID da Pre Proposta",
@@ -110,7 +112,7 @@ public class DReport4 {
             example = "30/06/2021 12:06",
             type = "String"
     )
-    private String conclusionDate1;
+    private String conclusionDate;
 
     @Schema(
             description = "Data de Envio para o Fiserv Online",
@@ -118,6 +120,14 @@ public class DReport4 {
             type = "String"
     )
     private String onlineSubmitionDate;
+
+
+    @Schema(
+            description = "Tipo da resposta",
+            example = "FISERV_ONLINE",
+            type = "String"
+    )
+    private String responseType;
 
     @Schema(
             description = "Tipo de Pessoa",
@@ -173,7 +183,7 @@ public class DReport4 {
             example = "M",
             type = "String"
     )
-    private String gnere;
+    private String gender;
 
     @Schema(
             description = "Pronome de Tratamento",
@@ -398,6 +408,6 @@ public class DReport4 {
             example = "2021/01/01",
             type = "String"
     )
-    private String conclusionDate;
+    private String conclusionBWDate;
 
 }
