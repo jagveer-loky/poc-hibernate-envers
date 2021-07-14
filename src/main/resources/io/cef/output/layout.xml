@@ -6,24 +6,24 @@
 
         <record name="header" order="1" occurs="1">
             <field name="id" default="Id da proposta"/>
-            <field name="proposalNumber" default="Número da proposta"/>
+            <field name="proposalNumber" default="Numero da proposta"/>
             <field name="cpfCnpj" default="CPF ou CNPJ"/>
             <field name="fantasyName" default="Nome Fantasia"/>
-            <field name="socialReason" default="Razão Social"/>
+            <field name="socialReason" default="Razao Social"/>
             <field name="voucherName" default="Nome Plaqueta (Comprovante)"/>
             <field name="userId" default="UserId"/>
             <field name="agentCpfCnpj" default="CPF ou CNPJ do agente"/>
-            <field name="institution" default="Instituição"/>
+            <field name="institution" default="Instituicao"/>
             <field name="serviceContract" default="Service Contract"/>
             <field name="subChannel" default="Sub Canal"/>
             <field name="tecnology" default="Tecnologia"/>
-            <field name="includeDate" default="Inclusão em"/>
-            <field name="conclusionDate" default="Conclusão em"/>
+            <field name="includeDate" default="Inclusao em"/>
+            <field name="conclusionDate" default="Conclusao em"/>
             <field name="merchantId" default="Merchant ID"/>
             <field name="fiservStatus" default="Status - FISERV"/>
             <field name="cefStatus" default="Status - CAIXA"/>
             <field name="cefMessage" default="Mensagem Caixa"/>
-            <field name="submissionDate" default="Submissão ao Online em"/>
+            <field name="submissionDate" default="Submissao ao Online em"/>
         </record>
 
         <record name="basic" order="2" occurs="0+"
@@ -59,7 +59,7 @@
 
         <record name="header" order="1" occurs="1">
             <field name="filename" default="Nome do Arquivo"/>
-            <field name="institution" default="Instituição"/>
+            <field name="institution" default="Instituicao"/>
             <field name="processingDate" default="Data de processamento"/>
             <field name="fileStatus" default="Status do Arquivo"/>
             <field name="proposals" default="Qtd. de Propostas"/>
@@ -98,7 +98,7 @@
 
         <record name="header" order="1" occurs="1">
             <field name="filename" default="Nome do arquivo"/>
-            <field name="institution" default="Instituição"/>
+            <field name="institution" default="Instituicao"/>
             <field name="serviceContract" default="Service Contract"/>
             <field name="userId" default="UserId"/>
             <field name="agentCpfCnpj" default="CPF/CNPJ do agente"/>
@@ -107,7 +107,7 @@
             <field name="merchant" default="Merchant ID"/>
             <field name="processingDate" default="Data de processamento"/>
             <field name="error" default="Campo de erro"/>
-            <field name="errorDescription" default="Descrição do erro"/>
+            <field name="errorDescription" default="Descricao do erro"/>
             <field name="errorMessage" default="Mensagem de erro"/>
             <field name="detail" default="Detalhe"/>
         </record>
@@ -145,56 +145,56 @@
             <field name="merchant" default="Merchant ID"/>
             <field name="userId" default="UserId"/>
             <field name="agentCpfCnpj" default="CPF/CNPJ do agente"/>
-            <field name="institution" default="Instituição"/>
+            <field name="institution" default="Instituicao"/>
             <field name="serviceContract" default="Service Contract"/>
             <field name="subChannel" default="Sub Canal"/>
             <field name="tecnology" default="Tecnologia"/>
             <field name="fiservStatus" default="Status - FISERV"/>
             <field name="caixaStatus" default="Status - CAIXA"/>
             <field name="caixaMessage" default="Mensagem Caixa"/>
-            <field name="inclusionDate" default="Inclusão em"/>
-            <field name="conclusionDate" default="Conclusão em"/>
-            <field name="onlineSubmitionDate" default="Submissão ao online em"/>
+            <field name="inclusionDate" default="Inclusao em"/>
+            <field name="conclusionDate" default="Conclusao em"/>
+            <field name="onlineSubmitionDate" default="Submissao ao online em"/>
             <field name="persionType" default="Tipo de pessoa"/>
             <field name="cpfCnpj" default="CPF/CNPJ"/>
             <field name="fantasyName" default="Nome Fantasia"/>
-            <field name="socialReason" default="Razão Social"/>
+            <field name="socialReason" default="Razao Social"/>
             <field name="vouncherName" default="Nome Plaqueta (Comprovante)"/>
             <field name="montlyBilling" default="Faturamento Mensal"/>
-            <field name="birthDate" default="Nascimento/Constituição"/>
-            <field name="gender" default="Gênero"/>
+            <field name="birthDate" default="Nascimento/Constituicao"/>
+            <field name="gender" default="Genero"/>
             <field name="treatmentPronoun" default="Pronome de tratamento"/>
             <field name="birthPlace" default="Local de nascimento"/>
             <field name="nacionality" default="Nacionalidade"/>
             <field name="fullName" default="Nome completo"/>
-            <field name="municipalRegistration" default="Inscrição Municipal"/>
-            <field name="stateRegistration" default="Inscrição estadual"/>
-            <field name="constitutionForm" default="Forma de constituição"/>
+            <field name="municipalRegistration" default="Inscricao Municipal"/>
+            <field name="stateRegistration" default="Inscricao estadual"/>
+            <field name="constitutionForm" default="Forma de constituicao"/>
             <field name="openDate" default="Data de abertura"/>
             <field name="anualBillingVol" default="ANNUAL_BILLING_VOL"/>
             <field name="anualVolCash" default="ANNUAL_VOL_CASH"/>
             <field name="anualVolSalesCard" default="ANNUAL_VOL_SALES_CARD"/>
             <field name="anualVolSalesCardGroup" default="ANNUAL_VOL_SALES_CARD_GROUP"/>
             <field name="averageTicket" default="AVERAGE_TICKET"/>
-            <field name="bacenPermission" default="Permissão Bacen"/>
-            <field name="campaingCode" default="Código da campanha"/>
+            <field name="bacenPermission" default="Permissao Bacen"/>
+            <field name="campaingCode" default="Codigo da campanha"/>
             <field name="cnae" default="CNAE"/>
             <field name="eCommerce" default="ECOMMERCE"/>
-            <field name="foreignCard" default="Cartão estrangeiro"/>
+            <field name="foreignCard" default="Cartao estrangeiro"/>
             <field name="manualPrepaymentEnabled" default="MANUAL_PREPAYMENT_ENABLED"/>
             <field name="boardingBranching" default="BOARDING_BRANCHING"/>
-            <field name="percCardNotPresent" default="Porc. cartão n/ presente"/>
-            <field name="percCardPresent" default="Porc. cartão presente"/>
+            <field name="percCardNotPresent" default="Porc. cartao n/ presente"/>
+            <field name="percCardPresent" default="Porc. cartao presente"/>
             <field name="percInternet" default="Porc. Internet"/>
             <field name="prepaymentIndicator" default="PREPAYMENT_INDICATOR"/>
-            <field name="recurringTransaction" default="Transação recorrente"/>
+            <field name="recurringTransaction" default="Transacao recorrente"/>
             <field name="serviceDay0" default="SERVICE_DAY_0"/>
             <field name="serviceDay1530" default="SERVICE_DAY_15_30"/>
             <field name="serviceDay17" default="SERVICE_DAY_1_7"/>
             <field name="serviceDay814" default="SERVICE_DAY_8_14"/>
             <field name="serviceDayOver30" default="SERVICE_DAY_OVER_30"/>
             <field name="pendingBwDate" default="Pendente BW em"/>
-            <field name="conclusionBWDate" default="Data de instalação"/>
+            <field name="conclusionBWDate" default="Data de instalacao"/>
 
         </record>
 
@@ -272,51 +272,51 @@
             <field name="merchant" default="Merchant ID"/>
             <field name="userId" default="UserId"/>
             <field name="agentCpfCnpj" default="CPF_CNPJ do agente"/>
-            <field name="institution" default="Instituição"/>
+            <field name="institution" default="Instituicao"/>
             <field name="serviceContract" default="service_contract"/>
             <field name="subChannel" default="Sub Canal"/>
             <field name="technology" default="Tecnologia"/>
             <field name="terminalsNumber" default="Numero de terminais"/>
-            <field name="unitaryValue" default="Valor unitário"/>
+            <field name="unitaryValue" default="Valor unitario"/>
             <field name="fiservStatus" default="Status - FISERV"/>
             <field name="caixaStatus" default="Status - CAIXA"/>
             <field name="caixaMessage" default="Mensagem Caixa"/>
-            <field name="includeIn" default="Inclusão em"/>
-            <field name="finishedIn" default="Conclusão em"/>
-            <field name="submissionOnlineDate" default="Submissão ao online em"/>
+            <field name="includeIn" default="Inclusao em"/>
+            <field name="finishedIn" default="Conclusao em"/>
+            <field name="submissionOnlineDate" default="Submissao ao online em"/>
             <field name="personType" default="Tipo de pessoa"/>
             <field name="cpfCnpj" default="CPF/CNPJ"/>
             <field name="fantasyName" default="Nome Fantasia"/>
-            <field name="socialReason" default="Razão Social"/>
+            <field name="socialReason" default="Razao Social"/>
             <field name="plateletName" default="Nome Plaqueta (Comprovante)"/>
             <field name="montlyBilling" default="Faturamento Mensal"/>
-            <field name="birthDate" default="Nascimento/Constituição"/>
+            <field name="birthDate" default="Nascimento/Constituicao"/>
             <field name="gender" default="Genero"/>
             <field name="treatmentPronoun" default="Pronome de tratamento"/>
             <field name="birthPlace" default="Local de nascimento"/>
             <field name="nacionality" default="Nacionalidade"/>
             <field name="fullName" default="Nome completo"/>
-            <field name="municipalRegistration" default="Inscrição Municipal"/>
-            <field name="stateRegistration" default="Inscrição estadual"/>
-            <field name="constitutionForm" default="Forma de constituição"/>
+            <field name="municipalRegistration" default="Inscricao Municipal"/>
+            <field name="stateRegistration" default="Inscricao estadual"/>
+            <field name="constitutionForm" default="Forma de constituicao"/>
             <field name="openDate" default="Data de abertura"/>
             <field name="annualBillingVol" default="ANNUAL_BILLING_VOL"/>
             <field name="annualVolCash" default="ANNUAL_VOL_CASH"/>
             <field name="annualVolSalesCard" default="ANNUAL_VOL_SALES_CARD"/>
             <field name="annualVolSalesCardGroup" default="ANNUAL_VOL_SALES_CARD_GROUP"/>
             <field name="averageTicket" default="AVERAGE_TICKET"/>
-            <field name="bacenPermission" default="Permissão Bacen"/>
-            <field name="campaingId" default="Código da campanha"/>
+            <field name="bacenPermission" default="Permissao Bacen"/>
+            <field name="campaingId" default="Codigo da campanha"/>
             <field name="cnae" default="CNAE"/>
             <field name="eCommerce" default="ECOMMERCE"/>
-            <field name="foreignCard" default="Cartão estrangeiro"/>
+            <field name="foreignCard" default="Cartao estrangeiro"/>
             <field name="manualPrepaymentEnabled" default="MANUAL_PREPAYMENT_ENABLED"/>
             <field name="boardingBranching" default="BOARDING_BRANCHING"/>
-            <field name="percCardNotPresent" default="Porc. cartão n/ presente"/>
-            <field name="percCardPresent" default="Porc. cartão presente"/>
+            <field name="percCardNotPresent" default="Porc. cartao n/ presente"/>
+            <field name="percCardPresent" default="Porc. cartao presente"/>
             <field name="percInternet" default="Porc. Internet"/>
             <field name="prepaymentIndicator" default="PREPAYMENT_INDICATOR"/>
-            <field name="recurringTransaction" default="Transação recorrente"/>
+            <field name="recurringTransaction" default="Transacao recorrente"/>
             <field name="serviceDay0" default="SERVICE_DAY_0"/>
             <field name="serviceDay1530" default="SERVICE_DAY_15_30"/>
 
@@ -325,8 +325,8 @@
             <field name="serviceDayOver30" default="SERVICE_DAY_OVER_30"/>
 
             <field name="pendingBwDate" default="Pendente BW em"/>
-            <field name="installationDate" default="Data de instalação"/>
-            <field name="addressType" default="Tipo de endereço"/>
+            <field name="installationDate" default="Data de instalacao"/>
+            <field name="addressType" default="Tipo de endereco"/>
             <field name="cep" default="CEP"/>
             <field name="street" default="Rua"/>
             <field name="number" default="Numero"/>
@@ -334,16 +334,16 @@
             <field name="complement" default="Complemento"/>
             <field name="city" default="Cidade"/>
             <field name="state" default="Estado"/>
-            <field name="partnerType" default="Tipo do sócio"/>
-            <field name="cpfCnpjPartner" default="CPF/CNPJ do sócio"/>
-            <field name="partnerBirthdate" default="Dta. Nasc. do sócio"/>
-            <field name="constitutionType" default="Tipo de constituição - sócio"/>
-            <field name="contract" default="Contato - sócio"/>
-            <field name="partnerName" default="Nome do sócio"/>
-            <field name="pronounTreatmentPartner" default="Pronome de tratamento - Sócio"/>
-            <field name="partnerNacionality" default="Nacionalidade do sócio"/>
-            <field name="partnerFunction" default="Função do sócio"/>
-            <field name="percPartner" default="Perc. Participação do sócio"/>
+            <field name="partnerType" default="Tipo do socio"/>
+            <field name="cpfCnpjPartner" default="CPF/CNPJ do socio"/>
+            <field name="partnerBirthdate" default="Dta. Nasc. do socio"/>
+            <field name="constitutionType" default="Tipo de constituicao - socio"/>
+            <field name="contract" default="Contato - socio"/>
+            <field name="partnerName" default="Nome do socio"/>
+            <field name="pronounTreatmentPartner" default="Pronome de tratamento - Socio"/>
+            <field name="partnerNacionality" default="Nacionalidade do socio"/>
+            <field name="partnerFunction" default="Funcao do socio"/>
+            <field name="percPartner" default="Perc. Participacao do socio"/>
             <field name="contactBirthdate" default="Dta. nasc. contato"/>
             <field name="contactCpf" default="CPF contato"/>
             <field name="contactEmail" default="EMAIL contato"/>
@@ -356,11 +356,11 @@
             <field name="fee" default="FEE"/>
             <field name="feeIdNumber" default="FEE_ID_NUMBER"/>
 
-            <field name="bankCode" default="Código do banco"/>
+            <field name="bankCode" default="Codigo do banco"/>
             <field name="agency" default="Agencia"/>
             <field name="accountDigit" default="Dig. conta"/>
             <field name="accountNumber" default="Num. Conta"/>
-            <field name="accountOwner" default="Nome do responsável"/>
+            <field name="accountOwner" default="Nome do responsavel"/>
             <field name="accountType" default="Tipo de conta"/>
 
 <!--            <field name="comercial" default="Tipo de Estabelecimento"/>-->
