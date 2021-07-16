@@ -23,7 +23,7 @@ jdbc:
 
 spring:
   datasource:
-    jndi-name: java:/PRE_PROPOSAL_DS
+    jndi-name: java:/M360
   jooq:
     sql-dialect: org.hibernate.dialect.Oracle10gDialect
   jpa:
