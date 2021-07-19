@@ -4,7 +4,7 @@ application:
   description: @project.description@
   version: @project.version@
   path.pkg: com.fiserv.preproposal.api
-  jenkins.build.version: @build.number@
+  jenkins.build.version: @version@
 
 logging:
   level:
@@ -23,7 +23,7 @@ jdbc:
 
 spring:
   datasource:
-    jndi-name: java:/M360
+    jndi-name: java:/PRE_PROPOSAL_DS
   jooq:
     sql-dialect: org.hibernate.dialect.Oracle10gDialect
   jpa:
