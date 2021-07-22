@@ -12,8 +12,11 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class ReportService {
+public class ReportsService {
 
+    /**
+     *
+     */
     @Value("${layout}")
     private String layout;
 

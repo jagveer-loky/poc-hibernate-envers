@@ -5,6 +5,7 @@ import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
 import com.fiserv.preproposal.api.domain.dtos.ErrorsReport;
 import com.fiserv.preproposal.api.domain.dtos.ProposalDataReport;
 import com.fiserv.preproposal.api.domain.dtos.CompleteProposalDataReport;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,6 +47,8 @@ import javax.persistence.Table;
                                         @ColumnResult(name = "AGENTCPFCNPJ", type = String.class),
                                         @ColumnResult(name = "INSTITUTION", type = String.class),
                                         @ColumnResult(name = "SERVICECONTRACT", type = String.class),
+                                        @ColumnResult(name = "OPTIN", type = String.class),
+                                        @ColumnResult(name = "SELLERREGISTRATION", type = String.class),
                                         @ColumnResult(name = "SUBCHANNEL", type = String.class),
                                         @ColumnResult(name = "TECNOLOGY", type = String.class),
                                         @ColumnResult(name = "INCLUDEDATE", type = String.class),
@@ -184,6 +187,8 @@ import javax.persistence.Table;
                                         @ColumnResult(name = "AGENTCPFCNPJ", type = String.class),
                                         @ColumnResult(name = "INSTITUTION", type = String.class),
                                         @ColumnResult(name = "SERVICECONTRACT", type = Integer.class),
+                                        @ColumnResult(name = "OPTIN", type = String.class),
+                                        @ColumnResult(name = "SELLERREGISTRATION", type = String.class),
                                         @ColumnResult(name = "SUBCHANNEL", type = String.class),
                                         @ColumnResult(name = "TECHNOLOGY", type = String.class),
                                         @ColumnResult(name = "TERMINALSNUMBER", type = Long.class),
@@ -293,6 +298,8 @@ import javax.persistence.Table;
                 "       tpd.AGENT_CPF_CNPJ AS \"AGENTCPFCNPJ\",\n" +
                 "       tfc.institution AS \"INSTITUTION\",\n" +
                 "       tfc.service_contract AS \"SERVICECONTRACT\",\n" +
+                "       tpd.opt_in AS \"OPTIN\"," +
+                "       tpd.seller_registration AS \"SELLERREGISTRATION\"," +
                 "       tpd.SUB_CHANNEL AS \"SUBCHANNEL\", \n" +
                 "       tcs.service_id || '-' || TCS.TECHNOLOGY AS \"TECNOLOGY\",\n" +
                 "       TO_CHAR(tpd.INSERTION_DATE, 'dd/MM/yyyy hh:mm')  AS \"INCLUDEDATE\",\n" +
@@ -659,6 +666,8 @@ import javax.persistence.Table;
                 "       tpd.AGENT_CPF_CNPJ AS \"AGENTCPFCNPJ\",\n" +
                 "       tfc.institution AS \"INSTITUTION\",\n" +
                 "       tfc.service_contract AS \"SERVICECONTRACT\",\n" +
+                "       tpd.opt_in AS \"OPTIN\"," +
+                "       tpd.seller_registration AS \"SELLERREGISTRATION\"," +
                 "       tpd.SUB_CHANNEL AS \"SUBCHANNEL\", \n" +
                 "       tcs.service_id || '-' || TCS.TECHNOLOGY AS \"TECHNOLOGY\",\n" +
                 "       tcs.TERMINALS_NUMBER AS \"TERMINALSNUMBER\", \n" +

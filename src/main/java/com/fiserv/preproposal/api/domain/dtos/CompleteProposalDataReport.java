@@ -66,6 +66,20 @@ public class CompleteProposalDataReport {
     private Integer serviceContract;
 
     @Schema(
+            description = "Opt In",
+            example = "SIM/NAO",
+            type = "String"
+    )
+    private String optIn;
+
+    @Schema(
+            description = "Matrícula do Vendedor",
+            example = "C654321",
+            type = "String"
+    )
+    private String sellerRegistration;
+
+    @Schema(
             description = "Sub Canal",
             example = "0425",
             type = "String"
