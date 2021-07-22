@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.fiserv</groupId>
     <artifactId>pre-proposal-api</artifactId>
-    <version>${build.number}</version>
+    <version>1</version>
     <name>pre-proposal-api</name>
     <description>API to generate reports of pre proposals</description>
     <packaging>war</packaging>
@@ -38,6 +38,7 @@
         <javassist.version>3.20.0-GA</javassist.version>
         <hibernate.version>5.4.25.Final</hibernate.version>
 
+        <build.number>${version}</build.number>
     </properties>
 
     <dependencyManagement>

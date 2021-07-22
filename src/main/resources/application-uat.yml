@@ -4,7 +4,7 @@ application:
   description: @project.description@
   version: @project.version@
   path.pkg: com.fiserv.preproposal.api
-  jenkins.build.version: @version@
+  jenkins.build.version: @build.number@
 
 logging:
   level:
