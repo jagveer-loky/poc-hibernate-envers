@@ -10,11 +10,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompleteProposalDataReport {
+public class CompleteReport {
 
     public static final String HEADER_NAME = "header";
 
-    public static final String NAME = "complete-proposal-data";
+    public static final String NAME = "complete";
 
     @Schema(
             description = "ID da Pre Proposta",

@@ -3,9 +3,7 @@ package com.fiserv.preproposal.api.domain.entity;
 import com.fiserv.preproposal.api.domain.dtos.BasicReport;
 import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
 import com.fiserv.preproposal.api.domain.dtos.ErrorsReport;
-import com.fiserv.preproposal.api.domain.dtos.ProposalDataReport;
-import com.fiserv.preproposal.api.domain.dtos.CompleteProposalDataReport;
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.fiserv.preproposal.api.domain.dtos.CompleteReport;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -109,76 +107,10 @@ import javax.persistence.Table;
                 }
         ),
         @SqlResultSetMapping(
-                name = "proposalDataReportMapping",
+                name = "completeReportMapping",
                 classes = {
                         @ConstructorResult(
-                                targetClass = ProposalDataReport.class,
-                                columns = {
-                                        @ColumnResult(name = "PREPROPOSALID", type = Long.class),
-                                        @ColumnResult(name = "PROPOSALNUMBER", type = String.class),
-                                        @ColumnResult(name = "MERCHANT", type = String.class),
-                                        @ColumnResult(name = "USERID", type = String.class),
-                                        @ColumnResult(name = "AGENTCPFCNPJ", type = String.class),
-                                        @ColumnResult(name = "INSTITUTION", type = String.class),
-                                        @ColumnResult(name = "SERVICECONTRACT", type = Integer.class),
-                                        @ColumnResult(name = "SUBCHANNEL", type = String.class),
-                                        @ColumnResult(name = "TECNOLOGY", type = String.class),
-                                        @ColumnResult(name = "FISERVSTATUS", type = String.class),
-                                        @ColumnResult(name = "CAIXASTATUS", type = String.class),
-                                        @ColumnResult(name = "CAIXAMESSAGE", type = String.class),
-                                        @ColumnResult(name = "INCLUSIONDATE", type = String.class),
-                                        @ColumnResult(name = "CONCLUSIONDATE", type = String.class),
-                                        @ColumnResult(name = "ONLINESUBMITIONDATE", type = String.class),
-                                        @ColumnResult(name = "RESPONSETYPE", type = String.class),
-                                        @ColumnResult(name = "PERSONTYPE", type = String.class),
-                                        @ColumnResult(name = "CPFCNPJ", type = String.class),
-                                        @ColumnResult(name = "FANTASYNAME", type = String.class),
-                                        @ColumnResult(name = "SOCIALREASON", type = String.class),
-                                        @ColumnResult(name = "VOUNCHERNAME", type = String.class),
-                                        @ColumnResult(name = "MONTHLYBILLING", type = String.class),
-                                        @ColumnResult(name = "BIRTHDATE", type = String.class),
-                                        @ColumnResult(name = "GENDER", type = String.class),
-                                        @ColumnResult(name = "TREATMENTPRONOUN", type = String.class),
-                                        @ColumnResult(name = "BIRTHPLACE", type = String.class),
-                                        @ColumnResult(name = "NACIONALITY", type = String.class),
-                                        @ColumnResult(name = "FULLNAME", type = String.class),
-                                        @ColumnResult(name = "MUNICIPALREGISTRATION", type = String.class),
-                                        @ColumnResult(name = "STATEREGISTRATION", type = String.class),
-                                        @ColumnResult(name = "CONSTITUTIONFORM", type = String.class),
-                                        @ColumnResult(name = "OPENDATE", type = String.class),
-                                        @ColumnResult(name = "ANNUAL_BILLING_VOL", type = String.class),
-                                        @ColumnResult(name = "ANNUAL_VOL_CASH", type = String.class),
-                                        @ColumnResult(name = "ANNUAL_VOL_SALES_CARD", type = String.class),
-                                        @ColumnResult(name = "ANNUAL_VOL_SALES_CARD_GROUP", type = String.class),
-                                        @ColumnResult(name = "AVERAGE_TICKET", type = String.class),
-                                        @ColumnResult(name = "BACENPERMISSION", type = String.class),
-                                        @ColumnResult(name = "CAMPAINGCODE", type = String.class),
-                                        @ColumnResult(name = "CNAE", type = String.class),
-                                        @ColumnResult(name = "ECOMMERCE", type = String.class),
-                                        @ColumnResult(name = "FOREIGNCARD", type = String.class),
-                                        @ColumnResult(name = "MANUAL_PREPAYMENT_ENABLED", type = String.class),
-                                        @ColumnResult(name = "BOARDING_BRANCHING", type = String.class),
-                                        @ColumnResult(name = "PERC_CARD_NOT_PRESENT", type = String.class),
-                                        @ColumnResult(name = "PERC_CARD_PRESENT", type = String.class),
-                                        @ColumnResult(name = "PERC_INTERNET", type = String.class),
-                                        @ColumnResult(name = "PREPAYMENT_INDICATOR", type = String.class),
-                                        @ColumnResult(name = "RECURRINGTRANSACTION", type = String.class),
-                                        @ColumnResult(name = "SERVICE_DAY_0", type = String.class),
-                                        @ColumnResult(name = "SERVICE_DAY_15_30", type = String.class),
-                                        @ColumnResult(name = "SERVICE_DAY_1_7", type = String.class),
-                                        @ColumnResult(name = "SERVICE_DAY_8_14", type = String.class),
-                                        @ColumnResult(name = "SERVICE_DAY_OVER_30", type = String.class),
-                                        @ColumnResult(name = "PENDINGBWDATE", type = String.class),
-                                        @ColumnResult(name = "CONCLUSIONBWDATE", type = String.class),
-                                }
-                        )
-                }
-        ),
-        @SqlResultSetMapping(
-                name = "completeProposalDataReportMapping",
-                classes = {
-                        @ConstructorResult(
-                                targetClass = CompleteProposalDataReport.class,
+                                targetClass = CompleteReport.class,
                                 columns = {
                                         @ColumnResult(name = "PREPROPOSALID", type = Long.class),
                                         @ColumnResult(name = "PROPOSALNUMBER", type = String.class),
@@ -562,103 +494,7 @@ import javax.persistence.Table;
                 "       )" +
                 "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))" +
                 "group by tfc.file_name,tfc.INSTITUTION,tfc.SERVICE_CONTRACT,tpd.RESPONSE_TYPE, tpd.AGENT_CHANNEL,tpd.AGENT_CPF_CNPJ,tpd.id,proposal_number,merchant_id,tfc.READ_DATE,tfc.IS_VALID,tpphe.field,tpphe.field_description,tpphe.message,tpphe.message_detail", resultSetMapping = "errorsReportMapping"),
-        @NamedNativeQuery(name = "getProposalDataReport", query = "SELECT  \n" +
-                "       tpd.id AS \"PREPROPOSALID\",\n" +
-                "       tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
-                "       tpd.merchant_id AS \"MERCHANT\",\n" +
-                "       tpd.AGENT_CHANNEL AS \"USERID\", \n" +
-                "       tpd.AGENT_CPF_CNPJ AS \"AGENTCPFCNPJ\",\n" +
-                "       tfc.institution AS \"INSTITUTION\",\n" +
-                "       tfc.service_contract AS \"SERVICECONTRACT\",\n" +
-                "       tpd.SUB_CHANNEL AS \"SUBCHANNEL\", \n" +
-                "       tcs.service_id || '-' || TCS.TECHNOLOGY AS \"TECNOLOGY\",\n" +
-                "       tpps.CODE || '-' || tpps.PT_DESCRIPTION AS \"FISERVSTATUS\",\n" +
-                "       tpcs.code || '-' || tpcs.PT_DESCRIPTION AS \"CAIXASTATUS\",\n" +
-                "       tpcs.message_code || '-' || tpcs.message_description AS \"CAIXAMESSAGE\",         \n" +
-                "       TO_CHAR(tpd.INSERTION_DATE, 'dd/MM/yyyy hh:mm')  AS \"INCLUSIONDATE\",\n" +
-                "       TO_CHAR(tpd.CONCLUSION_DATE, 'dd/MM/yyyy hh:mm')  AS \"CONCLUSIONDATE\",\n" +
-                "       TO_CHAR(tpd.ONLINE_DATE, 'dd/MM/yyyy hh:mm') AS \"ONLINESUBMITIONDATE\",\n" +
-                "       tpd.RESPONSE_TYPE AS \"RESPONSETYPE\", " +
-                "       CASE tpd.proposal_type WHEN 'F' THEN 'Fisica'\n" +
-                "       ELSE 'Juridica' END AS \"PERSONTYPE\",\n" +
-                "       CASE tpd.proposal_type WHEN 'F' THEN tppp.CPF\n" +
-                "       ELSE tpplp.CNPJ END AS \"CPFCNPJ\",\n" +
-                "       CASE tpd.proposal_type WHEN 'F' THEN tppp.FANTASY_NAME\n" +
-                "       ELSE tpplp.FANTASY_NAME END AS \"FANTASYNAME\",\n" +
-                "       CASE tpd.proposal_type WHEN 'F' THEN tppp.NAME || ' ' || tppp.SURNAME\n" +
-                "       ELSE tpplp.SOCIAL_REASON END AS \"SOCIALREASON\",\n" +
-                "       CASE tpd.proposal_type WHEN 'F' THEN tppp.PLATE_NAME\n" +
-                "       ELSE tpplp.PLATE_NAME END AS \"VOUNCHERNAME\",\n" +
-                "       CASE tpd.proposal_type WHEN 'F' THEN tppp.MONTHLY_INCOME\n" +
-                "       ELSE tpplp.MONTH_AVAREGE END AS \"MONTHLYBILLING\",\n" +
-                "       CASE tpd.proposal_type WHEN 'F' THEN tppp.BIRTH_DATE\n" +
-                "       ELSE tpplp.DATE_CONSTITUTION END AS \"BIRTHDATE\",\n" +
-                "       tppp.GENDER AS \"GENDER\",\n" +
-                "       tppp.TREATMENT_PRONOUN AS \"TREATMENTPRONOUN\",\n" +
-                "       tppp.LOCAL_BIRTH AS \"BIRTHPLACE\",\n" +
-                "       tppp.NATIONALITY AS \"NACIONALITY\",\n" +
-                "       tppp.name || ' ' || tppp.surname AS \"FULLNAME\",\n" +
-                "       tpplp.CITY_INCRIPTION AS \"MUNICIPALREGISTRATION\",\n" +
-                "       tpplp.STATE_INSCRIPTION AS \"STATEREGISTRATION\",\n" +
-                "       'Sociedade Empresária' AS \"CONSTITUTIONFORM\",\n" +
-                "       tpplp.OPEN_DATE AS \"OPENDATE\",\n" +
-                "       tpd.ANNUAL_BILLING_VOL, \n" +
-                "       tpd.ANNUAL_VOL_CASH, \n" +
-                "       tpd.ANNUAL_VOL_SALES_CARD, \n" +
-                "       tpd.ANNUAL_VOL_SALES_CARD_GROUP, \n" +
-                "       tpd.AVERAGE_TICKET,\n" +
-                "       CASE tpd.BACEN_PERMISSION WHEN 'true' THEN 'SIM'\n" +
-                "       ELSE 'NÃO' END AS \"BACENPERMISSION\",\n" +
-                "       tpd.CAMPAING_ID AS \"CAMPAINGCODE\", \n" +
-                "       tpd.CNAE, \n" +
-                "       tpd.ECOMMERCE, \n" +
-                "       CASE tpd.FOREING_CARD WHEN 'true' THEN 'SIM'\n" +
-                "       ELSE 'NÃO' END AS \"FOREIGNCARD\",\n" +
-                "       CASE tpd.MANUAL_PREPAYMENT_ENABLED WHEN 'true' THEN 'SIM'\n" +
-                "       ELSE 'NÃO' END AS \"MANUAL_PREPAYMENT_ENABLED\",        \n" +
-                "       tpd.BOARDING_BRANCHING, \n" +
-                "       tpd.PERC_CARD_NOT_PRESENT , \n" +
-                "       tpd.PERC_CARD_PRESENT ,\n" +
-                "       tpd.PERC_INTERNET , \n" +
-                "       CASE tpd.PREPAYMENT_INDICATOR WHEN 'true' THEN 'SIM'\n" +
-                "       ELSE 'NÃO' END AS \"PREPAYMENT_INDICATOR\",  \n" +
-                "       CASE tpd.RECURRING_TRANSACTION WHEN 'true' THEN 'SIM'\n" +
-                "       ELSE 'NÃO' END AS \"RECURRINGTRANSACTION\", \n" +
-                "       tpd.SERVICE_DAY_0, \n" +
-                "       tpd.SERVICE_DAY_15_30,\n" +
-                "       tpd.SERVICE_DAY_1_7, \n" +
-                "       tpd.SERVICE_DAY_8_14, \n" +
-                "       tpd.SERVICE_DAY_OVER_30, \n" +
-                "       tpd.BW_DATE AS \"PENDINGBWDATE\", \n" +
-                "       tpd.BW_CONCLUSION_DATE AS \"CONCLUSIONBWDATE\"\n" +
-                "       from tb_proposal_data tpd\n" +
-                "  LEFT join TB_PROPOSAL_PHYSICAL_PERSON tppp on tpd.proposal_type = 'F' and tpd.id = tppp.ID_FILE_PROPOSAL_DTA\n" +
-                "  LEFT join TB_PRE_PROPOSAL_LEGAL_PERSON tpplp on tpd.proposal_type = 'J' and tpd.id = tpplp.id_file_proposal_dta\n" +
-                "  LEFT join TB_FILE_CONTROL TFC ON TFC.ID = tpd.id_file_control\n" +
-                "  LEFT join tb_capture_solution TCS ON tcs.id_proposal_data = TPD.ID\n" +
-                "  LEFT join tb_pre_proposal_status tpps on tpps.id = tpd.status_id\n" +
-                "  LEFT join tb_proposal_cx_status tpcs on tpcs.status_id = tpps.id" +
-                "  WHERE tfc.INSTITUTION = :institution \n" +
-                "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
-                "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
-                "       AND (" +
-                "               (" +
-                "                   (:notIn = 0) " +
-                "                       AND (" +
-                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
-                "                       )" +
-                "               )" +
-                "           OR" +
-                "               (" +
-                "                   (:notIn = 1) " +
-                "                       AND (" +
-                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
-                "                       )" +
-                "               )" +
-                "       )" +
-                "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))"
-                , resultSetMapping = "proposalDataReportMapping"),
-        @NamedNativeQuery(name = "getCompleteProposalDataReport", query = "SELECT  \n" +
+        @NamedNativeQuery(name = "getCompleteReport", query = "SELECT  \n" +
                 "       tpd.id AS \"PREPROPOSALID\",\n" +
                 "      tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
                 "       tpd.merchant_id AS \"MERCHANT\",\n" +
@@ -808,7 +644,7 @@ import javax.persistence.Table;
                 "               )" +
                 "       )" +
                 "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))"
-                , resultSetMapping = "completeProposalDataReportMapping")
+                , resultSetMapping = "completeReportMapping")
 })
 public class EProposalData {
 

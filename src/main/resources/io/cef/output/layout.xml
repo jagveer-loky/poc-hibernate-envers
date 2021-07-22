@@ -268,7 +268,7 @@
 
 <!--    </stream>-->
 
-    <stream name="complete-proposal-data" minOccurs="0" maxOccurs="unbounded" format='csv'>
+    <stream name="complete" minOccurs="0" maxOccurs="unbounded" format='csv'>
         <parser>
             <property name="delimiter" value=";"/>
         </parser>
@@ -380,8 +380,8 @@
             <field name="responseType" default="Tipo de proposta"/>
         </record>
 
-        <record name="complete-proposal-data" order="2" occurs="0+"
-                class="com.fiserv.preproposal.api.domain.dtos.CompleteProposalDataReport">
+        <record name="complete" order="2" occurs="0+"
+                class="com.fiserv.preproposal.api.domain.dtos.CompleteReport">
 
 
             <field name="preproposalId"/>
