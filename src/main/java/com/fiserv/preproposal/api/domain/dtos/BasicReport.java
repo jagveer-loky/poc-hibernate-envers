@@ -168,7 +168,7 @@ public class BasicReport {
             example = "Errors",
             type = "String"
     )
-    private String error;
+    private String errors;
 
     @Schema(
             description = "Data de Submissao",

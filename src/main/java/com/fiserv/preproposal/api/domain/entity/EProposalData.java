@@ -45,7 +45,7 @@ import javax.persistence.*;
                                         @ColumnResult(name = "FISERVSTATUS", type = String.class),
                                         @ColumnResult(name = "CEFSTATUS", type = String.class),
                                         @ColumnResult(name = "CEFMESSAGE", type = String.class),
-                                        @ColumnResult(name = "ERROR", type = String.class),
+                                        @ColumnResult(name = "ERRORS", type = String.class),
                                         @ColumnResult(name = "SUBMITIONDATE", type = String.class),
                                 }
                         )
@@ -95,7 +95,7 @@ import javax.persistence.*;
                                         @ColumnResult(name = "FISERVSTATUS", type = String.class),
                                         @ColumnResult(name = "CAIXASTATUS", type = String.class),
                                         @ColumnResult(name = "CAIXAMESSAGE", type = String.class),
-                                        @ColumnResult(name = "ERROR", type = String.class),
+                                        @ColumnResult(name = "ERRORS", type = String.class),
                                         @ColumnResult(name = "INCLUDEIN", type = String.class),
                                         @ColumnResult(name = "FINISHEDIN", type = String.class),
                                         @ColumnResult(name = "SUBMISSIONONLINEDATE", type = String.class),
@@ -219,11 +219,11 @@ import javax.persistence.*;
                 "                               TB_PRE_PROPOSAL_HISTORY.STATUS || '(' || TB_PRE_PROPOSAL_HISTORY_ERROR.FIELD || '): ' ||  TB_PRE_PROPOSAL_HISTORY_ERROR.MESSAGE " +
                 "                       END" +
                 "                   ), '; '" +
-                "               ) WITHIN GROUP (ORDER BY TB_PRE_PROPOSAL_HISTORY.STATUS) \"Erro\"" +
+                "               ) WITHIN GROUP (ORDER BY TB_PRE_PROPOSAL_HISTORY.STATUS) \"ERRORS\"" +
                 "           FROM TB_PRE_PROPOSAL_HISTORY" +
                 "               LEFT OUTER JOIN TB_PRE_PROPOSAL_HISTORY_ERROR TB_PRE_PROPOSAL_HISTORY_ERROR on TB_PRE_PROPOSAL_HISTORY_ERROR.ID_PROPOSAL_HISTORY = TB_PRE_PROPOSAL_HISTORY.id" +
                 "           WHERE TB_PRE_PROPOSAL_HISTORY.ID_PROPOSAL_DATA = tpd.id AND TB_PRE_PROPOSAL_HISTORY.STATUS LIKE '%_ERROR'" +
-                "       ) AS \"ERROR\"," +
+                "       ) AS \"ERRORS\"," +
                 "       TO_CHAR(tpd.ONLINE_DATE, 'dd/MM/yyyy hh:mm') AS \"SUBMITIONDATE\"\n" +
                 "FROM tb_proposal_data tpd\n" +
                 "\t   LEFT JOIN TB_PROPOSAL_PHYSICAL_PERSON tppp on tpd.proposal_type = 'F' and tpd.id = tppp.ID_FILE_PROPOSAL_DTA\n" +
@@ -466,11 +466,11 @@ import javax.persistence.*;
                 "                               TB_PRE_PROPOSAL_HISTORY.STATUS || '(' || TB_PRE_PROPOSAL_HISTORY_ERROR.FIELD || '): ' ||  TB_PRE_PROPOSAL_HISTORY_ERROR.MESSAGE " +
                 "                       END" +
                 "                   ), '; '" +
-                "               ) WITHIN GROUP (ORDER BY TB_PRE_PROPOSAL_HISTORY.STATUS) \"Erro\"" +
+                "               ) WITHIN GROUP (ORDER BY TB_PRE_PROPOSAL_HISTORY.STATUS) \"ERRORS\"" +
                 "           FROM TB_PRE_PROPOSAL_HISTORY" +
                 "               LEFT OUTER JOIN TB_PRE_PROPOSAL_HISTORY_ERROR TB_PRE_PROPOSAL_HISTORY_ERROR on TB_PRE_PROPOSAL_HISTORY_ERROR.ID_PROPOSAL_HISTORY = TB_PRE_PROPOSAL_HISTORY.id" +
                 "           WHERE TB_PRE_PROPOSAL_HISTORY.ID_PROPOSAL_DATA = tpd.id AND TB_PRE_PROPOSAL_HISTORY.STATUS LIKE '%_ERROR'" +
-                "       ) AS \"ERROR\"," +
+                "       ) AS \"ERRORS\"," +
                 "       TO_CHAR(tpd.INSERTION_DATE, 'dd/MM/yyyy hh:mm')  AS \"INCLUDEIN\",\n" +
                 "       TO_CHAR(tpd.CONCLUSION_DATE, 'dd/MM/yyyy hh:mm')  AS \"FINISHEDIN\",\n" +
                 "       TO_CHAR(tpd.ONLINE_DATE, 'dd/MM/yyyy hh:mm') AS \"SUBMISSIONONLINEDATE\",\n" +

@@ -28,7 +28,7 @@
             <field name="fiservStatus" default="Status - FISERV"/>
             <field name="cefStatus" default="Status - CAIXA"/>
             <field name="cefMessage" default="Mensagem Caixa"/>
-            <field name="error" default="Erros"/>
+            <field name="errors" default="Erros"/>
             <field name="submissionDate" default="Submissao ao Online em"/>
         </record>
 
@@ -55,7 +55,7 @@
             <field name="fiservStatus"/>
             <field name="cefStatus"/>
             <field name="cefMessage"/>
-            <field name="error"/>
+            <field name="errors"/>
             <field name="submissionDate"/>
 
         </record>
@@ -122,7 +122,7 @@
             <field name="fiservStatus" default="Status - FISERV"/>
             <field name="caixaStatus" default="Status - CAIXA"/>
             <field name="caixaMessage" default="Mensagem Caixa"/>
-            <field name="error" default="Erros"/>
+            <field name="errors" default="Erros"/>
             <field name="includeIn" default="Inclusao em"/>
             <field name="finishedIn" default="Conclusao em"/>
             <field name="submissionOnlineDate" default="Submissao ao online em"/>
@@ -233,7 +233,7 @@
             <field name="fiservStatus"/>
             <field name="caixaStatus"/>
             <field name="caixaMessage"/>
-            <field name="error"/>
+            <field name="errors"/>
             <field name="includeIn"/>
             <field name="finishedIn"/>
             <field name="submissionOnlineDate"/>

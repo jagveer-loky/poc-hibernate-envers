@@ -133,7 +133,7 @@ public class CompleteReport {
             example = "Errors",
             type = "String"
     )
-    private String error;
+    private String errors;
 
     @Schema(
             description = "Data de Inclusao",
