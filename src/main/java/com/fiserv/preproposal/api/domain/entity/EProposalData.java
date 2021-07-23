@@ -1,24 +1,14 @@
 package com.fiserv.preproposal.api.domain.entity;
 
 import com.fiserv.preproposal.api.domain.dtos.BasicReport;
-import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
-import com.fiserv.preproposal.api.domain.dtos.ErrorsReport;
 import com.fiserv.preproposal.api.domain.dtos.CompleteReport;
+import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.ColumnResult;
-import javax.persistence.ConstructorResult;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedNativeQueries;
-import javax.persistence.NamedNativeQuery;
-import javax.persistence.SqlResultSetMapping;
-import javax.persistence.SqlResultSetMappings;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 
 @Entity
@@ -55,6 +45,7 @@ import javax.persistence.Table;
                                         @ColumnResult(name = "FISERVSTATUS", type = String.class),
                                         @ColumnResult(name = "CEFSTATUS", type = String.class),
                                         @ColumnResult(name = "CEFMESSAGE", type = String.class),
+                                        @ColumnResult(name = "ERROR", type = String.class),
                                         @ColumnResult(name = "SUBMITIONDATE", type = String.class),
                                 }
                         )
@@ -83,30 +74,6 @@ import javax.persistence.Table;
                 }
         ),
         @SqlResultSetMapping(
-                name = "errorsReportMapping",
-                classes = {
-                        @ConstructorResult(
-                                targetClass = ErrorsReport.class,
-                                columns = {
-                                        @ColumnResult(name = "FILENAME", type = String.class),
-                                        @ColumnResult(name = "INSTITUTION", type = String.class),
-                                        @ColumnResult(name = "SERVICECONTRACT", type = Integer.class),
-                                        @ColumnResult(name = "RESPONSETYPE", type = String.class),
-                                        @ColumnResult(name = "USERID", type = String.class),
-                                        @ColumnResult(name = "AGENTCPFCNPJ", type = String.class),
-                                        @ColumnResult(name = "PREPROPOSALID", type = Long.class),
-                                        @ColumnResult(name = "PROPOSALNUMBER", type = String.class),
-                                        @ColumnResult(name = "MERCHANT", type = String.class),
-                                        @ColumnResult(name = "PROCESSINGDATE", type = String.class),
-                                        @ColumnResult(name = "ERROR", type = String.class),
-                                        @ColumnResult(name = "ERRORDESCRIPTION", type = String.class),
-                                        @ColumnResult(name = "ERRORMESSAGE", type = String.class),
-                                        @ColumnResult(name = "DETAIL", type = String.class)
-                                }
-                        )
-                }
-        ),
-        @SqlResultSetMapping(
                 name = "completeReportMapping",
                 classes = {
                         @ConstructorResult(
@@ -128,6 +95,7 @@ import javax.persistence.Table;
                                         @ColumnResult(name = "FISERVSTATUS", type = String.class),
                                         @ColumnResult(name = "CAIXASTATUS", type = String.class),
                                         @ColumnResult(name = "CAIXAMESSAGE", type = String.class),
+                                        @ColumnResult(name = "ERROR", type = String.class),
                                         @ColumnResult(name = "INCLUDEIN", type = String.class),
                                         @ColumnResult(name = "FINISHEDIN", type = String.class),
                                         @ColumnResult(name = "SUBMISSIONONLINEDATE", type = String.class),
@@ -240,6 +208,22 @@ import javax.persistence.Table;
                 "       tpps.CODE || '-' || tpps.PT_DESCRIPTION AS \"FISERVSTATUS\",\n" +
                 "       tpcs.code || '-' || tpcs.PT_DESCRIPTION AS \"CEFSTATUS\",\n" +
                 "       tpcs.message_code || '-' || tpcs.message_description AS \"CEFMESSAGE\",\n" +
+                "       (" +
+                "           SELECT LISTAGG" +
+                "               (" +
+                "                   (" +
+                "                       CASE" +
+                "                           WHEN TB_PRE_PROPOSAL_HISTORY_ERROR.FIELD IS NULL THEN " +
+                "                               TB_PRE_PROPOSAL_HISTORY.STATUS || ': ' ||  TB_PRE_PROPOSAL_HISTORY_ERROR.MESSAGE" +
+                "                           ELSE" +
+                "                               TB_PRE_PROPOSAL_HISTORY.STATUS || '(' || TB_PRE_PROPOSAL_HISTORY_ERROR.FIELD || '): ' ||  TB_PRE_PROPOSAL_HISTORY_ERROR.MESSAGE " +
+                "                       END" +
+                "                   ), '; '" +
+                "               ) WITHIN GROUP (ORDER BY TB_PRE_PROPOSAL_HISTORY.STATUS) \"Erro\"" +
+                "           FROM TB_PRE_PROPOSAL_HISTORY" +
+                "               LEFT OUTER JOIN TB_PRE_PROPOSAL_HISTORY_ERROR TB_PRE_PROPOSAL_HISTORY_ERROR on TB_PRE_PROPOSAL_HISTORY_ERROR.ID_PROPOSAL_HISTORY = TB_PRE_PROPOSAL_HISTORY.id" +
+                "           WHERE TB_PRE_PROPOSAL_HISTORY.ID_PROPOSAL_DATA = tpd.id AND TB_PRE_PROPOSAL_HISTORY.STATUS LIKE '%_ERROR'" +
+                "       ) AS \"ERROR\"," +
                 "       TO_CHAR(tpd.ONLINE_DATE, 'dd/MM/yyyy hh:mm') AS \"SUBMITIONDATE\"\n" +
                 "FROM tb_proposal_data tpd\n" +
                 "\t   LEFT JOIN TB_PROPOSAL_PHYSICAL_PERSON tppp on tpd.proposal_type = 'F' and tpd.id = tppp.ID_FILE_PROPOSAL_DTA\n" +
@@ -454,46 +438,6 @@ import javax.persistence.Table;
                 "       )" +
                 "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))" +
                 "   group by tfc.file_name,tfc.INSTITUTION,tfc.SERVICE_CONTRACT,tfc.READ_DATE,tfc.IS_VALID, TFC.id", resultSetMapping = "quantitativeReportMapping"),
-        @NamedNativeQuery(name = "getErrorsReport", query = "SELECT   \n" +
-                "    tfc.file_name AS \"FILENAME\",\n" +
-                "    tfc.INSTITUTION AS \"INSTITUTION\", \n" +
-                "    tfc.SERVICE_CONTRACT AS \"SERVICECONTRACT\",\n" +
-                "    tpd.RESPONSE_TYPE AS \"RESPONSETYPE\", \n" +
-                "    tpd.AGENT_CHANNEL AS \"USERID\", \n" +
-                "    tpd.AGENT_CPF_CNPJ AS \"AGENTCPFCNPJ\",\n" +
-                "    tpd.id AS \"PREPROPOSALID\",\n" +
-                "    tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
-                "    tpd.merchant_id AS \"MERCHANT\",\n" +
-                "    TO_CHAR(tfc.READ_DATE, 'dd/MM/yyyy hh:mm')  AS \"PROCESSINGDATE\",\n" +
-                "    tpphe.field AS \"ERROR\",\n" +
-                "    tpphe.field_description AS \"ERRORDESCRIPTION\",\n" +
-                "    tpphe.message AS \"ERRORMESSAGE\",\n" +
-                "    tpphe.message_detail AS \"DETAIL\"\n" +
-                "from  tb_pre_proposal_history tpph\n" +
-                "   Left join TB_PRE_PROPOSAL_HISTORY_ERROR tpphe on tpph.id = tpphe.id_proposal_history\n" +
-                "   Left join tb_proposal_data tpd on tpd.id = tpph.id_proposal_data\n" +
-                "   Left join TB_FILE_CONTROL TFC ON TFC.ID = tpd.id_file_control\n" +
-                "   left join tb_pre_proposal_status tpps on tpps.id = tpd.status_id\n" +
-                "  WHERE tfc.INSTITUTION = :institution \n" +
-                "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
-                "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
-                "       AND (" +
-                "               (" +
-                "                   (:notIn = 0) " +
-                "                       AND (" +
-                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
-                "                       )" +
-                "               )" +
-                "           OR" +
-                "               (" +
-                "                   (:notIn = 1) " +
-                "                       AND (" +
-                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
-                "                       )" +
-                "               )" +
-                "       )" +
-                "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))" +
-                "group by tfc.file_name,tfc.INSTITUTION,tfc.SERVICE_CONTRACT,tpd.RESPONSE_TYPE, tpd.AGENT_CHANNEL,tpd.AGENT_CPF_CNPJ,tpd.id,proposal_number,merchant_id,tfc.READ_DATE,tfc.IS_VALID,tpphe.field,tpphe.field_description,tpphe.message,tpphe.message_detail", resultSetMapping = "errorsReportMapping"),
         @NamedNativeQuery(name = "getCompleteReport", query = "SELECT  \n" +
                 "       tpd.id AS \"PREPROPOSALID\",\n" +
                 "      tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
@@ -511,6 +455,22 @@ import javax.persistence.Table;
                 "       tpps.CODE || '-' || tpps.PT_DESCRIPTION AS \"FISERVSTATUS\",\n" +
                 "       tpcs.code || '-' || tpcs.PT_DESCRIPTION AS \"CAIXASTATUS\",\n" +
                 "       tpcs.message_code || '-' || tpcs.message_description AS \"CAIXAMESSAGE\",         \n" +
+                "       (" +
+                "           SELECT LISTAGG" +
+                "               (" +
+                "                   (" +
+                "                       CASE" +
+                "                           WHEN TB_PRE_PROPOSAL_HISTORY_ERROR.FIELD IS NULL THEN " +
+                "                               TB_PRE_PROPOSAL_HISTORY.STATUS || ': ' ||  TB_PRE_PROPOSAL_HISTORY_ERROR.MESSAGE" +
+                "                           ELSE" +
+                "                               TB_PRE_PROPOSAL_HISTORY.STATUS || '(' || TB_PRE_PROPOSAL_HISTORY_ERROR.FIELD || '): ' ||  TB_PRE_PROPOSAL_HISTORY_ERROR.MESSAGE " +
+                "                       END" +
+                "                   ), '; '" +
+                "               ) WITHIN GROUP (ORDER BY TB_PRE_PROPOSAL_HISTORY.STATUS) \"Erro\"" +
+                "           FROM TB_PRE_PROPOSAL_HISTORY" +
+                "               LEFT OUTER JOIN TB_PRE_PROPOSAL_HISTORY_ERROR TB_PRE_PROPOSAL_HISTORY_ERROR on TB_PRE_PROPOSAL_HISTORY_ERROR.ID_PROPOSAL_HISTORY = TB_PRE_PROPOSAL_HISTORY.id" +
+                "           WHERE TB_PRE_PROPOSAL_HISTORY.ID_PROPOSAL_DATA = tpd.id AND TB_PRE_PROPOSAL_HISTORY.STATUS LIKE '%_ERROR'" +
+                "       ) AS \"ERROR\"," +
                 "       TO_CHAR(tpd.INSERTION_DATE, 'dd/MM/yyyy hh:mm')  AS \"INCLUDEIN\",\n" +
                 "       TO_CHAR(tpd.CONCLUSION_DATE, 'dd/MM/yyyy hh:mm')  AS \"FINISHEDIN\",\n" +
                 "       TO_CHAR(tpd.ONLINE_DATE, 'dd/MM/yyyy hh:mm') AS \"SUBMISSIONONLINEDATE\",\n" +

@@ -28,6 +28,7 @@
             <field name="fiservStatus" default="Status - FISERV"/>
             <field name="cefStatus" default="Status - CAIXA"/>
             <field name="cefMessage" default="Mensagem Caixa"/>
+            <field name="error" default="Erros"/>
             <field name="submissionDate" default="Submissao ao Online em"/>
         </record>
 
@@ -54,6 +55,7 @@
             <field name="fiservStatus"/>
             <field name="cefStatus"/>
             <field name="cefMessage"/>
+            <field name="error"/>
             <field name="submissionDate"/>
 
         </record>
@@ -98,176 +100,6 @@
         </record>
     </stream>
 
-<!--    <stream name="errors" minOccurs="0" maxOccurs="unbounded" format='csv'>-->
-<!--        <parser>-->
-<!--            <property name="delimiter" value=";"/>-->
-<!--        </parser>-->
-
-<!--        <record name="header" order="1" occurs="1">-->
-<!--            <field name="filename" default="Nome do arquivo"/>-->
-<!--            <field name="institution" default="Instituicao"/>-->
-<!--            <field name="serviceContract" default="Service Contract"/>-->
-<!--            <field name="userId" default="UserId"/>-->
-<!--            <field name="agentCpfCnpj" default="CPF/CNPJ do agente"/>-->
-<!--            <field name="preproposalId" default="Numero da pre proposta"/>-->
-<!--            <field name="proposalNumber" default="ID da proposta"/>-->
-<!--            <field name="merchant" default="Merchant ID"/>-->
-<!--            <field name="processingDate" default="Data de processamento"/>-->
-<!--            <field name="error" default="Campo de erro"/>-->
-<!--            <field name="errorDescription" default="Descricao do erro"/>-->
-<!--            <field name="errorMessage" default="Mensagem de erro"/>-->
-<!--            <field name="detail" default="Detalhe"/>-->
-<!--        </record>-->
-
-<!--        <record name="errors" order="2" occurs="0+"-->
-<!--                class="com.fiserv.preproposal.api.domain.dtos.ErrorsReport">-->
-
-<!--            <field name="filename"/>-->
-<!--            <field name="institution"/>-->
-<!--            <field name="serviceContract"/>-->
-<!--            <field name="userId"/>-->
-<!--            <field name="agentCpfCnpj"/>-->
-<!--            <field name="preproposalId"/>-->
-<!--            <field name="proposalNumber"/>-->
-<!--            <field name="merchant"/>-->
-<!--            <field name="processingDate"/>-->
-<!--            <field name="error"/>-->
-<!--            <field name="errorDescription"/>-->
-<!--            <field name="errorMessage"/>-->
-<!--            <field name="detail"/>-->
-
-<!--        </record>-->
-
-<!--    </stream>-->
-
-<!--    <stream name="proposal-data" minOccurs="0" maxOccurs="unbounded" format='csv'>-->
-<!--        <parser>-->
-<!--            <property name="delimiter" value=";"/>-->
-<!--        </parser>-->
-
-<!--        <record name="header" order="1" occurs="1">-->
-
-<!--            <field name="preproposalId" default="ID da pre proposta"/>-->
-<!--            <field name="proposalNumber" default="Numero da pre proposta"/>-->
-<!--            <field name="merchant" default="Merchant ID"/>-->
-<!--            <field name="userId" default="UserId"/>-->
-<!--            <field name="agentCpfCnpj" default="CPF/CNPJ do agente"/>-->
-<!--            <field name="institution" default="Instituicao"/>-->
-<!--            <field name="serviceContract" default="Service Contract"/>-->
-<!--            <field name="subChannel" default="Sub Canal"/>-->
-<!--            <field name="tecnology" default="Tecnologia"/>-->
-<!--            <field name="fiservStatus" default="Status - FISERV"/>-->
-<!--            <field name="caixaStatus" default="Status - CAIXA"/>-->
-<!--            <field name="caixaMessage" default="Mensagem Caixa"/>-->
-<!--            <field name="inclusionDate" default="Inclusao em"/>-->
-<!--            <field name="conclusionDate" default="Conclusao em"/>-->
-<!--            <field name="onlineSubmitionDate" default="Submissao ao online em"/>-->
-<!--            <field name="persionType" default="Tipo de pessoa"/>-->
-<!--            <field name="cpfCnpj" default="CPF/CNPJ"/>-->
-<!--            <field name="fantasyName" default="Nome Fantasia"/>-->
-<!--            <field name="socialReason" default="Razao Social"/>-->
-<!--            <field name="vouncherName" default="Nome Plaqueta (Comprovante)"/>-->
-<!--            <field name="montlyBilling" default="Faturamento Mensal"/>-->
-<!--            <field name="birthDate" default="Nascimento/Constituicao"/>-->
-<!--            <field name="gender" default="Genero"/>-->
-<!--            <field name="treatmentPronoun" default="Pronome de tratamento"/>-->
-<!--            <field name="birthPlace" default="Local de nascimento"/>-->
-<!--            <field name="nacionality" default="Nacionalidade"/>-->
-<!--            <field name="fullName" default="Nome completo"/>-->
-<!--            <field name="municipalRegistration" default="Inscricao Municipal"/>-->
-<!--            <field name="stateRegistration" default="Inscricao estadual"/>-->
-<!--            <field name="constitutionForm" default="Forma de constituicao"/>-->
-<!--            <field name="openDate" default="Data de abertura"/>-->
-<!--            <field name="anualBillingVol" default="ANNUAL_BILLING_VOL"/>-->
-<!--            <field name="anualVolCash" default="ANNUAL_VOL_CASH"/>-->
-<!--            <field name="anualVolSalesCard" default="ANNUAL_VOL_SALES_CARD"/>-->
-<!--            <field name="anualVolSalesCardGroup" default="ANNUAL_VOL_SALES_CARD_GROUP"/>-->
-<!--            <field name="averageTicket" default="AVERAGE_TICKET"/>-->
-<!--            <field name="bacenPermission" default="Permissao Bacen"/>-->
-<!--            <field name="campaingCode" default="Codigo da campanha"/>-->
-<!--            <field name="cnae" default="CNAE"/>-->
-<!--            <field name="eCommerce" default="ECOMMERCE"/>-->
-<!--            <field name="foreignCard" default="Cartao estrangeiro"/>-->
-<!--            <field name="manualPrepaymentEnabled" default="MANUAL_PREPAYMENT_ENABLED"/>-->
-<!--            <field name="boardingBranching" default="BOARDING_BRANCHING"/>-->
-<!--            <field name="percCardNotPresent" default="Porc. cartao n/ presente"/>-->
-<!--            <field name="percCardPresent" default="Porc. cartao presente"/>-->
-<!--            <field name="percInternet" default="Porc. Internet"/>-->
-<!--            <field name="prepaymentIndicator" default="PREPAYMENT_INDICATOR"/>-->
-<!--            <field name="recurringTransaction" default="Transacao recorrente"/>-->
-<!--            <field name="serviceDay0" default="SERVICE_DAY_0"/>-->
-<!--            <field name="serviceDay1530" default="SERVICE_DAY_15_30"/>-->
-<!--            <field name="serviceDay17" default="SERVICE_DAY_1_7"/>-->
-<!--            <field name="serviceDay814" default="SERVICE_DAY_8_14"/>-->
-<!--            <field name="serviceDayOver30" default="SERVICE_DAY_OVER_30"/>-->
-<!--            <field name="pendingBwDate" default="Pendente BW em"/>-->
-<!--            <field name="conclusionBWDate" default="Data de instalacao"/>-->
-
-<!--        </record>-->
-
-<!--        <record name="proposal-data" order="2" occurs="0+"-->
-<!--                class="com.fiserv.preproposal.api.domain.dtos.ProposalDataReport">-->
-
-<!--            <field name="preproposalId"/>-->
-<!--            <field name="proposalNumber"/>-->
-<!--            <field name="merchant"/>-->
-<!--            <field name="userId"/>-->
-<!--            <field name="agentCpfCnpj"/>-->
-<!--            <field name="institution"/>-->
-<!--            <field name="serviceContract"/>-->
-<!--            <field name="subChannel"/>-->
-<!--            <field name="tecnology"/>-->
-<!--            <field name="fiservStatus"/>-->
-<!--            <field name="caixaStatus"/>-->
-<!--            <field name="caixaMessage"/>-->
-<!--            <field name="inclusionDate"/>-->
-<!--            <field name="conclusionDate"/>-->
-<!--            <field name="onlineSubmitionDate"/>-->
-<!--            <field name="persionType"/>-->
-<!--            <field name="cpfCnpj"/>-->
-<!--            <field name="fantasyName"/>-->
-<!--            <field name="socialReason"/>-->
-<!--            <field name="vouncherName"/>-->
-<!--            <field name="montlyBilling"/>-->
-<!--            <field name="birthDate"/>-->
-<!--            <field name="gender"/>-->
-<!--            <field name="treatmentPronoun"/>-->
-<!--            <field name="birthPlace"/>-->
-<!--            <field name="nacionality"/>-->
-<!--            <field name="fullName"/>-->
-<!--            <field name="municipalRegistration"/>-->
-<!--            <field name="stateRegistration"/>-->
-<!--            <field name="constitutionForm"/>-->
-<!--            <field name="openDate"/>-->
-<!--            <field name="anualBillingVol"/>-->
-<!--            <field name="anualVolCash"/>-->
-<!--            <field name="anualVolSalesCard"/>-->
-<!--            <field name="anualVolSalesCardGroup"/>-->
-<!--            <field name="averageTicket"/>-->
-<!--            <field name="bacenPermission"/>-->
-<!--            <field name="campaingCode"/>-->
-<!--            <field name="cnae"/>-->
-<!--            <field name="eCommerce"/>-->
-<!--            <field name="foreignCard"/>-->
-<!--            <field name="manualPrepaymentEnabled"/>-->
-<!--            <field name="boardingBranching"/>-->
-<!--            <field name="percCardNotPresent"/>-->
-<!--            <field name="percCardPresent"/>-->
-<!--            <field name="percInternet"/>-->
-<!--            <field name="prepaymentIndicator"/>-->
-<!--            <field name="recurringTransaction"/>-->
-<!--            <field name="serviceDay0"/>-->
-<!--            <field name="serviceDay1530"/>-->
-<!--            <field name="serviceDay17"/>-->
-<!--            <field name="serviceDay814"/>-->
-<!--            <field name="serviceDayOver30"/>-->
-<!--            <field name="pendingBwDate"/>-->
-<!--            <field name="conclusionBWDate"/>-->
-
-<!--        </record>-->
-
-<!--    </stream>-->
-
     <stream name="complete" minOccurs="0" maxOccurs="unbounded" format='csv'>
         <parser>
             <property name="delimiter" value=";"/>
@@ -290,6 +122,7 @@
             <field name="fiservStatus" default="Status - FISERV"/>
             <field name="caixaStatus" default="Status - CAIXA"/>
             <field name="caixaMessage" default="Mensagem Caixa"/>
+            <field name="error" default="Erros"/>
             <field name="includeIn" default="Inclusao em"/>
             <field name="finishedIn" default="Conclusao em"/>
             <field name="submissionOnlineDate" default="Submissao ao online em"/>
@@ -400,6 +233,7 @@
             <field name="fiservStatus"/>
             <field name="caixaStatus"/>
             <field name="caixaMessage"/>
+            <field name="error"/>
             <field name="includeIn"/>
             <field name="finishedIn"/>
             <field name="submissionOnlineDate"/>

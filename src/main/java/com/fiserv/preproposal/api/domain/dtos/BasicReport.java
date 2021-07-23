@@ -164,6 +164,13 @@ public class BasicReport {
     private String cefMessage;
 
     @Schema(
+            description = "Erros de processamento dos bulks",
+            example = "Errors",
+            type = "String"
+    )
+    private String error;
+
+    @Schema(
             description = "Data de Submissao",
             example = "28/06/2021 12:06",
             type = "String"

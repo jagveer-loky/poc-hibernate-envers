@@ -129,6 +129,13 @@ public class CompleteReport {
     private String caixaMessage;
 
     @Schema(
+            description = "Erros de processamento dos bulks",
+            example = "Errors",
+            type = "String"
+    )
+    private String error;
+
+    @Schema(
             description = "Data de Inclusao",
             example = "12/05/2021 11:44",
             type = "String"
