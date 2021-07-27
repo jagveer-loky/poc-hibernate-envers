@@ -13,8 +13,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class QuantitativeReport {
 
-    public static final String HEADER_NAME = "header";
-
     public static final String NAME = "quantitative";
 
     @Parsed(field = "Nome do Arquivo")

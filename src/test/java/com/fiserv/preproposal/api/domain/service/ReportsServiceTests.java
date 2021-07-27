@@ -232,4 +232,34 @@ class ReportsServiceTests {
 
     }
 
+    /**
+     *
+     */
+    @Test
+    void testExtractFieldsFromBasicReportClass() {
+        final Set<String> fields = this.reportsService.extractFieldsFromBasicReport();
+        Assertions.assertEquals(fields.size(), this.reportsService.getAttributesFromClass(BasicReport.class).size());
+        Assertions.assertEquals(this.reportsService.getFieldsFromReport(BasicReport.NAME).size(), this.reportsService.getAttributesFromClass(BasicReport.class).size());
+    }
+
+    /**
+     *
+     */
+    @Test
+    void testExtractFieldsFromCompleteReportClass() {
+        final Set<String> fields = this.reportsService.extractFieldsFromCompleteReport();
+        Assertions.assertEquals(fields.size(), this.reportsService.getAttributesFromClass(CompleteReport.class).size());
+        Assertions.assertEquals(this.reportsService.getFieldsFromReport(CompleteReport.NAME).size(), this.reportsService.getAttributesFromClass(CompleteReport.class).size());
+    }
+
+    /**
+     *
+     */
+    @Test
+    void testExtractFieldsFromQuantitativeReportClass() {
+        final Set<String> fields = this.reportsService.extractFieldsFromQuantitativeReport();
+        Assertions.assertEquals(fields.size(), this.reportsService.getAttributesFromClass(QuantitativeReport.class).size());
+        Assertions.assertEquals(this.reportsService.getFieldsFromReport(QuantitativeReport.NAME).size(), this.reportsService.getAttributesFromClass(QuantitativeReport.class).size());
+    }
+
 }

@@ -13,8 +13,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class BasicReport {
 
-    public static final String HEADER_NAME = "header";
-
     public static final String NAME = "basic";
 
     @Parsed(field = "Id da Proposta")

@@ -13,8 +13,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CompleteReport {
 
-    public static final String HEADER_NAME = "header";
-
     public static final String NAME = "complete";
 
     @Parsed(field = "ID da proposta")

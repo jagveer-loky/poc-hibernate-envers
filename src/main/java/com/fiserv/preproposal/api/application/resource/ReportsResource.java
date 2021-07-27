@@ -18,13 +18,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -446,5 +444,13 @@ public class ReportsResource {
      */
     public String format(final Object value) {
         return String.format("%0" + 8 + "d", Long.valueOf((String) value));
+    }
+
+    /**
+     * @return
+     */
+    @GetMapping("fields")
+    public HashMap<String, Set<String>> getFieldsFromReports() {
+        return reportsService.getFieldsFromReports( );
     }
 }
