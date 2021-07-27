@@ -1,5 +1,16 @@
 package com.fiserv.preproposal.api.infrastrucutre.io;
 
+import com.fiserv.preproposal.api.domain.dtos.BasicReport;
+import com.univocity.parsers.annotations.Parsed;
+import com.univocity.parsers.common.processor.BeanWriterProcessor;
+import com.univocity.parsers.common.processor.RowWriterProcessor;
+import com.univocity.parsers.csv.CsvParserSettings;
+import com.univocity.parsers.csv.CsvRoutines;
+import com.univocity.parsers.csv.CsvWriter;
+import com.univocity.parsers.csv.CsvWriterSettings;
+import com.univocity.parsers.fixed.FixedWidthFields;
+import com.univocity.parsers.fixed.FixedWidthWriter;
+import com.univocity.parsers.fixed.FixedWidthWriterSettings;
 import lombok.Data;
 import lombok.NonNull;
 import org.beanio.*;
@@ -10,10 +21,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,7 +36,7 @@ public class IOService<T> {
      * @return T
      */
     public T read(@NonNull final String layout, @NonNull final String input, @NonNull final String streamName) {
-        return readSkippingErrors(layout, input, streamName, null);
+        return read(layout, input, streamName, null);
     }
 
     /**
@@ -38,7 +46,7 @@ public class IOService<T> {
      * @param linesToIgnore String
      * @return T
      */
-    private T readSkippingErrors(@NonNull final String layout, @NonNull final String input, @NonNull final String streamName, Set<String> linesToIgnore) {
+    private T read(@NonNull final String layout, @NonNull final String input, @NonNull final String streamName, Set<String> linesToIgnore) {
 
         final StreamFactory factory = createStreamFactoryFromLayout(layout);
 
@@ -73,7 +81,7 @@ public class IOService<T> {
                 }
             }
 
-            return this.readSkippingErrors(layout, input, streamName, linesToIgnore);
+            return this.read(layout, input, streamName, linesToIgnore);
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
@@ -148,6 +156,116 @@ public class IOService<T> {
 
         return outputStream.toByteArray();
     }
+
+    /**
+     * @param objects
+     * @return
+     */
+    public byte[] writeInMemory(@NonNull final Stream<T> objects/*,  final @NonNull String headerName, final @NonNull String layout, @NonNull final String streamName, @NonNull List<Column> ignoredColumns*/) {
+//        final StreamFactory factory = createStreamFactoryFromLayout(layout);
+//
+//        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//
+//        try {
+//
+//            final Writer writer = new OutputStreamWriter(outputStream);
+//
+//            final BeanWriter beanWriter = factory.createWriter(streamName, writer);
+//
+//            beanWriter.write(headerName, null);
+//
+//            objects.forEach(beanWriter::write);
+//
+//            beanWriter.flush();
+//            beanWriter.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+////        ResultSet resultSet = statement.executeQuery("SELECT * FROM users");
+//
+//        BeanWriterProcessor<Bean> processor = new BeanWriterProcessor(Bean.class);  //TODO zoado
+//
+//
+//        CsvWriterSettings  settings = new CsvWriterSettings ();  //TODO zoado
+////        final CsvWriterSettings csvWriterSettings = new CsvWriterSettings();
+//        settings.setRowWriterProcessor(processor);
+////        csvWriterSettings.excludeFields("Age");
+//        settings.setHeaderWritingEnabled(true);
+//        settings.setColumnReorderingEnabled(true); //this does the trick
+//        // Sets the file headers
+//        settings.setHeaders("id", "cpfCnpj");
+//
+//        settings.selectFields("id", "cpfCnpj");
+//        Bean bean = new Bean();
+//        bean.setId("1");
+//        bean.setCpfCnpj("1");
+
+//        final CsvWriter writer = new CsvWriter(outputStream, settings); //TODO ZOADO
+//
+//        // Writes the headers specified in the settings
+//        writer.writeHeaders();
+//
+//        writer.processRecord(bean);
+////        objects.forEach(asdfasd -> {
+////            writer.processRecord(asdfasd);
+////        });
+//
+//
+//        writer.close();
+//
+//        return outputStream.toByteArray();
+//
+
+
+        // This time we're going to parse a list of beans at once and write them to an output.
+// First we configure the input format
+        CsvParserSettings parserSettings = new CsvParserSettings();
+        parserSettings.getFormat().setLineSeparator("\n");
+
+// Then the output format
+        CsvWriterSettings writerSettings = new CsvWriterSettings();
+        writerSettings.getFormat().setLineSeparator("\r\n");
+        writerSettings.getFormat().setDelimiter(';');
+        writerSettings.setQuoteAllFields(true);
+//        writerSettings.setHeaders("id", "CPF ou CNPJ");
+//        writerSettings.selectFields("id", "CPF ou CNPJ");
+        writerSettings.setColumnReorderingEnabled(true);
+        writerSettings.setHeaderWritingEnabled(true);
+        writerSettings.excludeFields("Id da Proposta");
+// Let's create a new routines object with the parser and writer configuration.
+
+        BeanWriterProcessor processor = new BeanWriterProcessor(BasicReport.class);
+        writerSettings.setRowWriterProcessor(processor);
+        CsvWriter csvWriter = new CsvWriter(outputStream, writerSettings);
+//        csvWriter.processRecordsAndClose(Arrays.asList(bean));
+
+        objects.forEach(bean1 -> {
+            csvWriter.processRecord(bean1);
+        });
+
+        csvWriter.close();
+
+//        CsvRoutines routines = new CsvRoutines(parserSettings, writerSettings); // Can also use TSV and Fixed-width routines
+//
+//// Now, let's write all beans to the output using the writeAll routine:
+//// Note that it takes an Iterable as the input. You could use routines.iterate(),
+//// as shown in the previous example, to avoid loading all objects in memory.
+//        routines.writeAll(Arrays.asList(bean), Bean.class, outputStream);
+
+// And here's the result
+        return outputStream.toByteArray();
+    }
+//
+//    @Data
+//    public class Bean {
+//        @Parsed
+//        private String id;
+//        @Parsed
+//        private String cpfCnpj;
+//    }
 
     /**
      * @param objects    Stream<T>

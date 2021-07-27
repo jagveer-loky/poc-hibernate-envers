@@ -273,7 +273,7 @@ public class ReportsResource {
                                                     @RequestParam final String serviceContract,
                                                     @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
                                                     @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
-                                                    @RequestParam(required = false) final boolean notIn,
+                                                    @RequestParam(required = false) final Boolean notIn,
                                                     @RequestParam(required = false) final Set<String> responsesTypes,
                                                     @RequestParam(required = false) final Set<String> status) {
         return ResponseEntity

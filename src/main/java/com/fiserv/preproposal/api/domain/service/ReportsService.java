@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
@@ -84,7 +86,7 @@ public class ReportsService {
      */
     public byte[] getBasicCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status) {
         final List<BasicReport> list = this.getBasicReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
-        return new IOService<BasicReport>().writeInMemory(list.stream(), BasicReport.HEADER_NAME, layout, BasicReport.NAME);
+        return new IOService<BasicReport>().writeInMemory(list.stream());
     }
 
     /**
