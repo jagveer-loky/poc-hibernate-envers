@@ -1,16 +1,9 @@
 package com.fiserv.preproposal.api.infrastrucutre.io;
 
-import com.fiserv.preproposal.api.domain.dtos.BasicReport;
-import com.univocity.parsers.annotations.Parsed;
+import com.fiserv.preproposal.api.infrastrucutre.aid.ListUtil;
 import com.univocity.parsers.common.processor.BeanWriterProcessor;
-import com.univocity.parsers.common.processor.RowWriterProcessor;
-import com.univocity.parsers.csv.CsvParserSettings;
-import com.univocity.parsers.csv.CsvRoutines;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
-import com.univocity.parsers.fixed.FixedWidthFields;
-import com.univocity.parsers.fixed.FixedWidthWriter;
-import com.univocity.parsers.fixed.FixedWidthWriterSettings;
 import lombok.Data;
 import lombok.NonNull;
 import org.beanio.*;
@@ -158,114 +151,68 @@ public class IOService<T> {
     }
 
     /**
-     * @param objects
-     * @return
+     * @param objects        Stream<T>
+     * @param beanType       Class<T>
+     * @param fieldsToIgnore Collection<String>
+     * @return byte[]
      */
-    public byte[] writeInMemory(@NonNull final Stream<T> objects/*,  final @NonNull String headerName, final @NonNull String layout, @NonNull final String streamName, @NonNull List<Column> ignoredColumns*/) {
-//        final StreamFactory factory = createStreamFactoryFromLayout(layout);
-//
-//        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//
-//        try {
-//
-//            final Writer writer = new OutputStreamWriter(outputStream);
-//
-//            final BeanWriter beanWriter = factory.createWriter(streamName, writer);
-//
-//            beanWriter.write(headerName, null);
-//
-//            objects.forEach(beanWriter::write);
-//
-//            beanWriter.flush();
-//            beanWriter.close();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+    public byte[] writeInMemory(@NonNull final Stream<T> objects, final Class<T> beanType, final Collection<String> fieldsToIgnore) {
 
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-////        ResultSet resultSet = statement.executeQuery("SELECT * FROM users");
-//
-//        BeanWriterProcessor<Bean> processor = new BeanWriterProcessor(Bean.class);  //TODO zoado
-//
-//
-//        CsvWriterSettings  settings = new CsvWriterSettings ();  //TODO zoado
-////        final CsvWriterSettings csvWriterSettings = new CsvWriterSettings();
-//        settings.setRowWriterProcessor(processor);
-////        csvWriterSettings.excludeFields("Age");
-//        settings.setHeaderWritingEnabled(true);
-//        settings.setColumnReorderingEnabled(true); //this does the trick
-//        // Sets the file headers
-//        settings.setHeaders("id", "cpfCnpj");
-//
-//        settings.selectFields("id", "cpfCnpj");
-//        Bean bean = new Bean();
-//        bean.setId("1");
-//        bean.setCpfCnpj("1");
-
-//        final CsvWriter writer = new CsvWriter(outputStream, settings); //TODO ZOADO
-//
-//        // Writes the headers specified in the settings
-//        writer.writeHeaders();
-//
-//        writer.processRecord(bean);
-////        objects.forEach(asdfasd -> {
-////            writer.processRecord(asdfasd);
-////        });
-//
-//
-//        writer.close();
-//
-//        return outputStream.toByteArray();
-//
-
-
-        // This time we're going to parse a list of beans at once and write them to an output.
-// First we configure the input format
-        CsvParserSettings parserSettings = new CsvParserSettings();
-        parserSettings.getFormat().setLineSeparator("\n");
-
-// Then the output format
-        CsvWriterSettings writerSettings = new CsvWriterSettings();
+        final CsvWriterSettings writerSettings = new CsvWriterSettings();
         writerSettings.getFormat().setLineSeparator("\r\n");
         writerSettings.getFormat().setDelimiter(';');
         writerSettings.setQuoteAllFields(true);
-//        writerSettings.setHeaders("id", "CPF ou CNPJ");
-//        writerSettings.selectFields("id", "CPF ou CNPJ");
         writerSettings.setColumnReorderingEnabled(true);
         writerSettings.setHeaderWritingEnabled(true);
-        writerSettings.excludeFields("Id da Proposta");
-// Let's create a new routines object with the parser and writer configuration.
+        writerSettings.excludeFields(toList(fieldsToIgnore));
 
-        BeanWriterProcessor processor = new BeanWriterProcessor(BasicReport.class);
+        final BeanWriterProcessor<T> processor = new BeanWriterProcessor<>(beanType);
         writerSettings.setRowWriterProcessor(processor);
-        CsvWriter csvWriter = new CsvWriter(outputStream, writerSettings);
-//        csvWriter.processRecordsAndClose(Arrays.asList(bean));
 
-        objects.forEach(bean1 -> {
-            csvWriter.processRecord(bean1);
-        });
+        final CsvWriter csvWriter = new CsvWriter(outputStream, writerSettings);
+
+        objects.forEach(csvWriter::processRecord);
 
         csvWriter.close();
 
-//        CsvRoutines routines = new CsvRoutines(parserSettings, writerSettings); // Can also use TSV and Fixed-width routines
-//
-//// Now, let's write all beans to the output using the writeAll routine:
-//// Note that it takes an Iterable as the input. You could use routines.iterate(),
-//// as shown in the previous example, to avoid loading all objects in memory.
-//        routines.writeAll(Arrays.asList(bean), Bean.class, outputStream);
-
-// And here's the result
         return outputStream.toByteArray();
     }
-//
-//    @Data
-//    public class Bean {
-//        @Parsed
-//        private String id;
-//        @Parsed
-//        private String cpfCnpj;
-//    }
+
+    private static String[] toList(final Collection<String> list) {
+        if (list == null)
+            return new String[]{};
+        return list.toArray(new String[0]);
+    }
+
+    /**
+     * @param objects  Stream<T>
+     * @param beanType Class<T>
+     * @return byte[]
+     */
+    public byte[] writeInMemory(@NonNull final Stream<T> objects, final Class<T> beanType) {
+
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        final CsvWriterSettings writerSettings = new CsvWriterSettings();
+        writerSettings.getFormat().setLineSeparator("\r\n");
+        writerSettings.getFormat().setDelimiter(';');
+        writerSettings.setQuoteAllFields(true);
+        writerSettings.setColumnReorderingEnabled(true);
+        writerSettings.setHeaderWritingEnabled(true);
+
+        final BeanWriterProcessor<T> processor = new BeanWriterProcessor<>(beanType);
+        writerSettings.setRowWriterProcessor(processor);
+
+        final CsvWriter csvWriter = new CsvWriter(outputStream, writerSettings);
+
+        objects.forEach(csvWriter::processRecord);
+
+        csvWriter.close();
+
+        return outputStream.toByteArray();
+    }
 
     /**
      * @param objects    Stream<T>

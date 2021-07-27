@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
@@ -84,9 +82,9 @@ public class ReportsService {
      * @param status          Collection<String>
      * @return byte[]
      */
-    public byte[] getBasicCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status) {
+    public byte[] getBasicCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status, final Collection<String> fieldsToIgnore) {
         final List<BasicReport> list = this.getBasicReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
-        return new IOService<BasicReport>().writeInMemory(list.stream());
+        return new IOService<BasicReport>().writeInMemory(list.stream(), BasicReport.class, fieldsToIgnore);
     }
 
     /**
@@ -99,9 +97,9 @@ public class ReportsService {
      * @param status          Collection<String>
      * @return byte[]
      */
-    public byte[] getQuantitativeCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Set<String> status) {
+    public byte[] getQuantitativeCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Set<String> status, final Collection<String> fieldsToIgnore) {
         final List<QuantitativeReport> list = getQuantitativeReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
-        return new IOService<QuantitativeReport>().writeInMemory(list.stream(), QuantitativeReport.HEADER_NAME, layout, QuantitativeReport.NAME);
+        return new IOService<QuantitativeReport>().writeInMemory(list.stream(), QuantitativeReport.class, fieldsToIgnore);
     }
 
     /**
@@ -114,9 +112,9 @@ public class ReportsService {
      * @param status          Collection<String>
      * @return byte[]
      */
-    public byte[] getCSVCompleteReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Set<String> status) {
+    public byte[] getCompleteCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Set<String> status, final Set<String> fieldsToIgnore) {
         final List<CompleteReport> list = getCompleteReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
-        return new IOService<CompleteReport>().writeInMemory(list.stream(), CompleteReport.HEADER_NAME, layout, CompleteReport.NAME);
+        return new IOService<CompleteReport>().writeInMemory(list.stream(), CompleteReport.class, fieldsToIgnore);
     }
 
 }
