@@ -274,12 +274,12 @@ public class ReportsResource {
                                                     @RequestParam(required = false) final Boolean notIn,
                                                     @RequestParam(required = false) final Set<String> responsesTypes,
                                                     @RequestParam(required = false) final Set<String> status,
-                                                    @RequestParam(required = false) final Set<String> fieldsToIgnore) {
+                                                    @RequestParam(required = false) final Set<String> fields) {
         return ResponseEntity
                 .ok()
                 .header("Content-Disposition", "attachment;filename=" + BasicReport.NAME + ".csv")
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportsService.getBasicCSVReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status, fieldsToIgnore));
+                .body(reportsService.getBasicCSVReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status, fields));
     }
 
     @Operation(
@@ -352,12 +352,12 @@ public class ReportsResource {
                                                            @RequestParam(required = false) final Boolean notIn,
                                                            @RequestParam(required = false) final Set<String> responsesTypes,
                                                            @RequestParam(required = false) final Set<String> status,
-                                                           @RequestParam(required = false) final Set<String> fieldsToIgnore) {
+                                                           @RequestParam(required = false) final Set<String> fields) {
         return ResponseEntity
                 .ok()
                 .header("Content-Disposition", "attachment;filename=" + QuantitativeReport.NAME + ".csv")
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportsService.getQuantitativeCSVReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status, fieldsToIgnore));
+                .body(reportsService.getQuantitativeCSVReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status, fields));
     }
 
     @Operation(
@@ -430,12 +430,12 @@ public class ReportsResource {
                                                        @RequestParam(required = false) final Boolean notIn,
                                                        @RequestParam(required = false) final Set<String> responsesTypes,
                                                        @RequestParam(required = false) final Set<String> status,
-                                                       @RequestParam(required = false) final Set<String> fieldsToIgnore) {
+                                                       @RequestParam(required = false) final Set<String> fields) {
         return ResponseEntity
                 .ok()
                 .header("Content-Disposition", "attachment;filename=" + CompleteReport.NAME + ".csv")
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportsService.getCompleteCSVReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status, fieldsToIgnore));
+                .body(reportsService.getCompleteCSVReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status, fields));
     }
 
     /**

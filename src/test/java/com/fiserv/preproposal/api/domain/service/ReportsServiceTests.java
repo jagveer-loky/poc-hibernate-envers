@@ -3,6 +3,7 @@ package com.fiserv.preproposal.api.domain.service;
 import com.fiserv.preproposal.api.domain.dtos.BasicReport;
 import com.fiserv.preproposal.api.domain.dtos.CompleteReport;
 import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
+import com.fiserv.preproposal.api.infrastrucutre.io.IOService;
 import com.univocity.parsers.common.processor.RowListProcessor;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
@@ -66,6 +67,8 @@ class ReportsServiceTests {
     @Test
     void basicCSVReportMustReturnAllFieldsMustPass() {
 
+        final IOService<BasicReport> ioService = new IOService<>();
+
         final CsvParserSettings parserSettings = new CsvParserSettings();
         parserSettings.setLineSeparatorDetectionEnabled(true);
         parserSettings.setHeaderExtractionEnabled(true);
@@ -86,7 +89,7 @@ class ReportsServiceTests {
 
         headersToRemove.forEach(header -> Assertions.assertTrue(oldHeaders[0].contains(header)));
 
-        final byte[] croppedBasicCSVReport = reportsService.getBasicCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, headersToRemove);
+        final byte[] croppedBasicCSVReport = reportsService.getBasicCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, ioService.extractFieldsToIgnore(BasicReport.class,headersToRemove));
         parser.parse(new ByteArrayInputStream(croppedBasicCSVReport));
 
         final String[] newHeaders = rowProcessor.getHeaders();
@@ -125,6 +128,8 @@ class ReportsServiceTests {
     @Test
     void quantitativeCSVReportMustReturnAllFieldsMustPass() {
 
+        final IOService<QuantitativeReport> ioService = new IOService<>();
+
         final CsvParserSettings parserSettings = new CsvParserSettings();
         parserSettings.setLineSeparatorDetectionEnabled(true);
         parserSettings.setHeaderExtractionEnabled(true);
@@ -133,7 +138,7 @@ class ReportsServiceTests {
         parserSettings.setRowProcessor(rowProcessor);
 
         final CsvParser parser = new CsvParser(parserSettings);
-        final byte[] completeQuantitativeCSVReport = reportsService.getQuantitativeCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null, null);
+        final byte[] completeQuantitativeCSVReport = reportsService.getQuantitativeCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null);
         parser.parse(new ByteArrayInputStream(completeQuantitativeCSVReport));
 
         final String[] oldHeaders = rowProcessor.getHeaders();
@@ -145,7 +150,7 @@ class ReportsServiceTests {
 
         headersToRemove.forEach(header -> Assertions.assertTrue(oldHeaders[0].contains(header)));
 
-        final byte[] croppedQuantitativeCSVReport = reportsService.getQuantitativeCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, headersToRemove);
+        final byte[] croppedQuantitativeCSVReport = reportsService.getQuantitativeCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, ioService.extractFieldsToIgnore(QuantitativeReport.class,headersToRemove));
         parser.parse(new ByteArrayInputStream(croppedQuantitativeCSVReport));
 
         final String[] newHeaders = rowProcessor.getHeaders();
@@ -198,6 +203,8 @@ class ReportsServiceTests {
     @Test
     void completeCSVReportMustReturnAllFieldsMustPass() {
 
+        final IOService<CompleteReport> ioService = new IOService<>();
+
         final CsvParserSettings parserSettings = new CsvParserSettings();
         parserSettings.setLineSeparatorDetectionEnabled(true);
         parserSettings.setHeaderExtractionEnabled(true);
@@ -206,7 +213,8 @@ class ReportsServiceTests {
         parserSettings.setRowProcessor(rowProcessor);
 
         final CsvParser parser = new CsvParser(parserSettings);
-        final byte[] completeCompleteCSVReport = reportsService.getCompleteCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, null);
+        // Get with all fields
+        final byte[] completeCompleteCSVReport = reportsService.getCompleteCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null);
         parser.parse(new ByteArrayInputStream(completeCompleteCSVReport));
 
         final String[] oldHeaders = rowProcessor.getHeaders();
@@ -221,7 +229,8 @@ class ReportsServiceTests {
 
         headersToRemove.forEach(header -> Assertions.assertTrue(oldHeaders[0].contains(header)));
 
-        final byte[] croppedCompleteCSVReport = reportsService.getCompleteCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, headersToRemove);
+        // Get with only some fields
+        final byte[] croppedCompleteCSVReport = reportsService.getCompleteCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, ioService.extractFieldsToIgnore(CompleteReport.class, headersToRemove));
         parser.parse(new ByteArrayInputStream(croppedCompleteCSVReport));
 
         final String[] newHeaders = rowProcessor.getHeaders();
@@ -238,8 +247,8 @@ class ReportsServiceTests {
     @Test
     void testExtractFieldsFromBasicReportClass() {
         final Set<String> fields = this.reportsService.extractFieldsFromBasicReport();
-        Assertions.assertEquals(fields.size(), this.reportsService.getAttributesFromClass(BasicReport.class).size());
-        Assertions.assertEquals(this.reportsService.getFieldsFromReport(BasicReport.NAME).size(), this.reportsService.getAttributesFromClass(BasicReport.class).size());
+        Assertions.assertEquals(fields.size(), IOService.getAttributesFromClass(BasicReport.class).size());
+        Assertions.assertEquals(this.reportsService.getFieldsFromReport(BasicReport.NAME).size(), IOService.getAttributesFromClass(BasicReport.class).size());
     }
 
     /**
@@ -248,8 +257,8 @@ class ReportsServiceTests {
     @Test
     void testExtractFieldsFromCompleteReportClass() {
         final Set<String> fields = this.reportsService.extractFieldsFromCompleteReport();
-        Assertions.assertEquals(fields.size(), this.reportsService.getAttributesFromClass(CompleteReport.class).size());
-        Assertions.assertEquals(this.reportsService.getFieldsFromReport(CompleteReport.NAME).size(), this.reportsService.getAttributesFromClass(CompleteReport.class).size());
+        Assertions.assertEquals(fields.size(), IOService.getAttributesFromClass(CompleteReport.class).size());
+        Assertions.assertEquals(this.reportsService.getFieldsFromReport(CompleteReport.NAME).size(), IOService.getAttributesFromClass(CompleteReport.class).size());
     }
 
     /**
@@ -258,8 +267,8 @@ class ReportsServiceTests {
     @Test
     void testExtractFieldsFromQuantitativeReportClass() {
         final Set<String> fields = this.reportsService.extractFieldsFromQuantitativeReport();
-        Assertions.assertEquals(fields.size(), this.reportsService.getAttributesFromClass(QuantitativeReport.class).size());
-        Assertions.assertEquals(this.reportsService.getFieldsFromReport(QuantitativeReport.NAME).size(), this.reportsService.getAttributesFromClass(QuantitativeReport.class).size());
+        Assertions.assertEquals(fields.size(), IOService.getAttributesFromClass(QuantitativeReport.class).size());
+        Assertions.assertEquals(this.reportsService.getFieldsFromReport(QuantitativeReport.NAME).size(), IOService.getAttributesFromClass(QuantitativeReport.class).size());
     }
 
 }

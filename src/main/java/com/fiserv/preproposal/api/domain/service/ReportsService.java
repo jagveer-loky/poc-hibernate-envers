@@ -10,11 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -83,9 +80,9 @@ public class ReportsService {
      * @param status          Collection<String>
      * @return byte[]
      */
-    public byte[] getBasicCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status, final Collection<String> fieldsToIgnore) {
+    public byte[] getBasicCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status, final Collection<String> fields) {
         final List<BasicReport> list = this.getBasicReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
-        return new IOService<BasicReport>().convertToCSV(list.stream(), BasicReport.class, fieldsToIgnore);
+        return new IOService<BasicReport>().convertToCSV(list.stream(), BasicReport.class, fields);
     }
 
     /**
@@ -98,9 +95,25 @@ public class ReportsService {
      * @param status          Collection<String>
      * @return byte[]
      */
-    public byte[] getQuantitativeCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Set<String> status, final Collection<String> fieldsToIgnore) {
+    public byte[] getQuantitativeCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Set<String> status) {
         final List<QuantitativeReport> list = getQuantitativeReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
-        return new IOService<QuantitativeReport>().convertToCSV(list.stream(), QuantitativeReport.class, fieldsToIgnore);
+        return new IOService<QuantitativeReport>().convertToCSV(list.stream(), QuantitativeReport.class);
+    }
+
+    /**
+     * @param institution     String
+     * @param serviceContract String
+     * @param initialDate     LocalDate
+     * @param finalDate       LocalDate
+     * @param notIn           Boolean
+     * @param responsesTypes  Collection<String>
+     * @param status          Collection<String>
+     * @param fields          Collection<String>
+     * @return byte[]
+     */
+    public byte[] getQuantitativeCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Set<String> status, final Collection<String> fields) {
+        final List<QuantitativeReport> list = getQuantitativeReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
+        return new IOService<QuantitativeReport>().convertToCSV(list.stream(), QuantitativeReport.class, fields);
     }
 
     /**
@@ -113,9 +126,25 @@ public class ReportsService {
      * @param status          Collection<String>
      * @return byte[]
      */
-    public byte[] getCompleteCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Set<String> status, final Set<String> fieldsToIgnore) {
+    public byte[] getCompleteCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Set<String> status) {
         final List<CompleteReport> list = getCompleteReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
-        return new IOService<CompleteReport>().convertToCSV(list.stream(), CompleteReport.class, fieldsToIgnore);
+        return new IOService<CompleteReport>().convertToCSV(list.stream(), CompleteReport.class);
+    }
+
+    /**
+     * @param institution     String
+     * @param serviceContract String
+     * @param initialDate     LocalDate
+     * @param finalDate       LocalDate
+     * @param notIn           Boolean
+     * @param responsesTypes  Collection<String>
+     * @param status          Collection<String>
+     * @param fields          Collection<String>
+     * @return byte[]
+     */
+    public byte[] getCompleteCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Set<String> status, final Set<String> fields) {
+        final List<CompleteReport> list = getCompleteReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
+        return new IOService<CompleteReport>().convertToCSV(list.stream(), CompleteReport.class, fields);
     }
 
     /**
@@ -124,7 +153,7 @@ public class ReportsService {
     public Set<String> extractFieldsFromBasicReport() {
         final Set<String> fields = new HashSet<>();
         try {
-            for (final String attribute : getAttributesFromClass(BasicReport.class)) {
+            for (final String attribute : IOService.getAttributesFromClass(BasicReport.class)) {
                 final Parsed annotation = BasicReport.class.getDeclaredField(attribute).getAnnotation(Parsed.class);
                 fields.add(annotation.field()[0]);
             }
@@ -140,7 +169,7 @@ public class ReportsService {
     public Set<String> extractFieldsFromCompleteReport() {
         final Set<String> fields = new HashSet<>();
         try {
-            for (final String attribute : getAttributesFromClass(CompleteReport.class)) {
+            for (final String attribute : IOService.getAttributesFromClass(CompleteReport.class)) {
                 final Parsed annotation = CompleteReport.class.getDeclaredField(attribute).getAnnotation(Parsed.class);
                 fields.add(annotation.field()[0]);
             }
@@ -156,7 +185,7 @@ public class ReportsService {
     public Set<String> extractFieldsFromQuantitativeReport() {
         final Set<String> fields = new HashSet<>();
         try {
-            for (final String attribute : getAttributesFromClass(QuantitativeReport.class)) {
+            for (final String attribute : IOService.getAttributesFromClass(QuantitativeReport.class)) {
                 final Parsed annotation = QuantitativeReport.class.getDeclaredField(attribute).getAnnotation(Parsed.class);
                 fields.add(annotation.field()[0]);
             }
@@ -164,22 +193,6 @@ public class ReportsService {
             e.printStackTrace();
         }
         return fields;
-    }
-
-    /**
-     * Extract the attributes from class
-     *
-     * @return Set<String>
-     */
-    public Set<String> getAttributesFromClass(final Class<?> clazz) {
-
-        return Arrays.stream(clazz.getDeclaredMethods())
-                .map(Method::getName)
-                .filter(method -> method.contains("get") || method.contains("set"))
-                .map(method -> {
-                    final String attribute = method.replace("get", "").replace("set", "");
-                    return attribute.substring(0, 1).toLowerCase() + attribute.substring(1);
-                }).collect(Collectors.toSet());
     }
 
     /**
@@ -199,6 +212,7 @@ public class ReportsService {
 
     /**
      * TODO construct test
+     *
      * @return Set<String>
      */
     public HashMap<String, Set<String>> getFieldsFromReports() {
