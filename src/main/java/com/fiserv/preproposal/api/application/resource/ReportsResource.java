@@ -1,7 +1,7 @@
 package com.fiserv.preproposal.api.application.resource;
 
 import com.fiserv.preproposal.api.domain.dtos.*;
-import com.fiserv.preproposal.api.domain.service.ReportService;
+import com.fiserv.preproposal.api.domain.service.ReportsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -18,13 +18,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -35,13 +33,13 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping(value = "/reports", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 @Tag(name = "REPORT", description = "Resource with the requests that allow to query the information referring to pre proposal reports.")
-public class ReportResource {
+public class ReportsResource {
 
     private static final String DATE_TIME_PATTERN = "dd/MM/yyyy";
 
-    private static final Logger LOG = LogManager.getLogger(ReportResource.class);
+    private static final Logger LOG = LogManager.getLogger(ReportsResource.class);
 
-    private final ReportService reportService;
+    private final ReportsService reportsService;
 
     @Operation(
             summary = "Return the Report One Information",
@@ -115,7 +113,7 @@ public class ReportResource {
                                             @RequestParam(required = false) final Set<String> responsesTypes,
                                             @RequestParam(required = false) final Set<String> status) {
         LOG.info("Get Basic Report");
-        return reportService.getBasicReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+        return reportsService.getBasicReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
     @Operation(
@@ -190,106 +188,19 @@ public class ReportResource {
                                                           @RequestParam(required = false) final Set<String> responsesTypes,
                                                           @RequestParam(required = false) final Set<String> status) {
         LOG.info("Get Quantitative Report");
-        return reportService.getQuantitativeReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+        return reportsService.getQuantitativeReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
-    @Operation(
-            summary = "Return the Report Three Information",
-            description = "Return the Report Three Information",
-            tags = "REPORT",
-            parameters = {
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "institution",
-                            required = true,
-                            description = "Filter Institution",
-                            example = "00000007"
-                    ),
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "serviceContract",
-                            required = true,
-                            description = "Filter Service Contract",
-                            example = "149"
-                    ),
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "initialDate",
-                            required = true,
-                            description = "Filter Initial Date",
-                            example = "10/10/2020"
-                    ),
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "finalDate",
-                            required = true,
-                            description = "Filter Final Date",
-                            allowEmptyValue = true,
-                            example = "09/11/2021"
-                    ),
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "notIn",
-                            description = "If 'false' reponseType will filtered with clause 'not in', else with clause 'in'",
-                            example = "[true, false]"
-                    ),
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "responsesTypes",
-                            allowEmptyValue = true,
-                            description = "Filter Responses Types List",
-                            example = "[FISERV_ONLINE,LEAD]"
-                    ),
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "status",
-                            description = "Filter Status List",
-                            allowEmptyValue = true,
-                            example = "[PRE1,PRE2]"
-                    )
-            }
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Sucessful Operation",
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = ErrorsReport.class)))
-            )
-    })
-    @GetMapping(ErrorsReport.NAME)
-    public List<ErrorsReport> getErrorsReport(@RequestParam final String institution,
-                                              @RequestParam final String serviceContract,
-                                              @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
-                                              @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
-                                              @RequestParam(required = false) final Boolean notIn,
-                                              @RequestParam(required = false) final Set<String> responsesTypes,
-                                              @RequestParam(required = false) final Set<String> status) {
-        LOG.info("Get Errors Report");
-        return reportService.getErrorsReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
-    }
-
-    @GetMapping(ProposalDataReport.NAME)
-    public List<ProposalDataReport> getProposalDataReport(@RequestParam final String institution,
-                                                          @RequestParam final String serviceContract,
-                                                          @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
-                                                          @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
-                                                          @RequestParam(required = false) final Boolean notIn,
-                                                          @RequestParam(required = false) final Set<String> responsesTypes,
-                                                          @RequestParam(required = false) final Set<String> status) {
-        LOG.info("Get Proposal Data Report");
-        return reportService.getProposalDataReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
-    }
-
-    @GetMapping(CompleteProposalDataReport.NAME)
-    public List<CompleteProposalDataReport> getCompleteProposalDataReport(@RequestParam final String institution,
-                                                                          @RequestParam final String serviceContract,
-                                                                          @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
-                                                                          @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
-                                                                          @RequestParam(required = false) final Boolean notIn,
-                                                                          @RequestParam(required = false) final Set<String> responsesTypes,
-                                                                          @RequestParam(required = false) final Set<String> status) {
+    @GetMapping(CompleteReport.NAME)
+    public List<CompleteReport> getCompleteReport(@RequestParam final String institution,
+                                                  @RequestParam final String serviceContract,
+                                                  @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
+                                                  @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
+                                                  @RequestParam(required = false) final Boolean notIn,
+                                                  @RequestParam(required = false) final Set<String> responsesTypes,
+                                                  @RequestParam(required = false) final Set<String> status) {
         LOG.info("Get Complete Proposal Report");
-        return reportService.getCompleteProposalDataReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+        return reportsService.getCompleteReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
     @Operation(
@@ -360,14 +271,15 @@ public class ReportResource {
                                                     @RequestParam final String serviceContract,
                                                     @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
                                                     @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
-                                                    @RequestParam(required = false) final boolean notIn,
+                                                    @RequestParam(required = false) final Boolean notIn,
                                                     @RequestParam(required = false) final Set<String> responsesTypes,
-                                                    @RequestParam(required = false) final Set<String> status) {
+                                                    @RequestParam(required = false) final Set<String> status,
+                                                    @RequestParam(required = false) final Set<String> fields) {
         return ResponseEntity
                 .ok()
                 .header("Content-Disposition", "attachment;filename=" + BasicReport.NAME + ".csv")
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportService.getBasicCSVReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status));
+                .body(reportsService.getBasicCSVReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status, fields));
     }
 
     @Operation(
@@ -439,167 +351,13 @@ public class ReportResource {
                                                            @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
                                                            @RequestParam(required = false) final Boolean notIn,
                                                            @RequestParam(required = false) final Set<String> responsesTypes,
-                                                           @RequestParam(required = false) final Set<String> status) {
+                                                           @RequestParam(required = false) final Set<String> status,
+                                                           @RequestParam(required = false) final Set<String> fields) {
         return ResponseEntity
                 .ok()
                 .header("Content-Disposition", "attachment;filename=" + QuantitativeReport.NAME + ".csv")
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportService.getQuantitativeCSVReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status));
-    }
-
-    @Operation(
-            summary = "Return the Report Three CSV",
-            description = "Return the Report Three CSV",
-            tags = "CSV",
-            parameters = {
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "institution",
-                            required = true,
-                            description = "Filter Institution",
-                            example = "00000007"
-                    ),
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "serviceContract",
-                            required = true,
-                            description = "Filter Service Contract",
-                            example = "149"
-                    ),
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "initialDate",
-                            required = true,
-                            description = "Filter Initial Date",
-                            example = "10/10/2020"
-                    ),
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "finalDate",
-                            required = true,
-                            description = "Filter Final Date",
-                            allowEmptyValue = true,
-                            example = "09/11/2021"
-                    ),
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "notIn",
-                            description = "If 'false' reponseType will filtered with clause 'not in', else with clause 'in'",
-                            example = "[true, false]"
-                    ),
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "responsesTypes",
-                            allowEmptyValue = true, description = "Filter Responses Types List",
-                            example = "[FISERV_ONLINE,LEAD]"
-                    ),
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "status",
-                            description = "Filter Status List",
-                            allowEmptyValue = true,
-                            example = "[PRE1,PRE2]"
-                    )
-            }
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Sucessful Operation",
-                    content = @Content(schema = @Schema(type = "string", format = "binary"))
-            )
-    })
-    @GetMapping(ErrorsReport.NAME + "/csv")
-    public ResponseEntity<byte[]> getErrorsCSVReport(@RequestParam final String institution,
-                                                     @RequestParam final String serviceContract,
-                                                     @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
-                                                     @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
-                                                     @RequestParam(required = false) final Boolean notIn,
-                                                     @RequestParam(required = false) final Set<String> responsesTypes,
-                                                     @RequestParam(required = false) final Set<String> status) {
-        return ResponseEntity
-                .ok()
-                .header("Content-Disposition", "attachment;filename=" + ErrorsReport.NAME + ".csv")
-                .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportService.getErrorsCSVReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status));
-    }
-
-
-    @Operation(
-            summary = "Return the Report Four CSV",
-            description = "Return the Report Four CSV",
-            tags = "CSV",
-            parameters = {
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "institution",
-                            required = true,
-                            description = "Filter Institution",
-                            example = "00000007"
-                    ),
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "serviceContract",
-                            required = true,
-                            description = "Filter Service Contract",
-                            example = "149"
-                    ),
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "initialDate",
-                            required = true,
-                            description = "Filter Initial Date",
-                            example = "10/10/2020"
-                    ),
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "finalDate",
-                            required = true,
-                            description = "Filter Final Date",
-                            allowEmptyValue = true,
-                            example = "09/11/2021"
-                    ),
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "notIn",
-                            description = "If 'false' reponseType will filtered with clause 'not in', else with clause 'in'",
-                            example = "[true, false]"
-                    ),
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "responsesTypes",
-                            allowEmptyValue = true, description = "Filter Responses Types List",
-                            example = "[FISERV_ONLINE,LEAD]"
-                    ),
-                    @Parameter(
-                            in = ParameterIn.QUERY,
-                            name = "status",
-                            description = "Filter Status List",
-                            allowEmptyValue = true,
-                            example = "[PRE1,PRE2]"
-                    )
-            }
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Sucessful Operation",
-                    content = @Content(schema = @Schema(type = "string", format = "binary"))
-            )
-    })
-    @GetMapping(ProposalDataReport.NAME + "/csv")
-    public ResponseEntity<byte[]> getCSVProposalDataReport(@RequestParam final String institution,
-                                                           @RequestParam final String serviceContract,
-                                                           @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
-                                                           @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
-                                                           @RequestParam(required = false) final Boolean notIn,
-                                                           @RequestParam(required = false) final Set<String> responsesTypes,
-                                                           @RequestParam(required = false) final Set<String> status) {
-        return ResponseEntity
-                .ok()
-                .header("Content-Disposition", "attachment;filename=" + ProposalDataReport.NAME + ".csv")
-                .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportService.getCSVProposalDataReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status));
+                .body(reportsService.getQuantitativeCSVReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status, fields));
     }
 
     @Operation(
@@ -664,19 +422,20 @@ public class ReportResource {
                     content = @Content(schema = @Schema(type = "string", format = "binary"))
             )
     })
-    @GetMapping(CompleteProposalDataReport.NAME + "/csv")
-    public ResponseEntity<byte[]> getCSVCompleteProposalDataReport(@RequestParam final String institution,
-                                                                   @RequestParam final String serviceContract,
-                                                                   @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
-                                                                   @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
-                                                                   @RequestParam(required = false) final Boolean notIn,
-                                                                   @RequestParam(required = false) final Set<String> responsesTypes,
-                                                                   @RequestParam(required = false) final Set<String> status) {
+    @GetMapping(CompleteReport.NAME + "/csv")
+    public ResponseEntity<byte[]> getCSVCompleteReport(@RequestParam final String institution,
+                                                       @RequestParam final String serviceContract,
+                                                       @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate initialDate,
+                                                       @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) final LocalDate finalDate,
+                                                       @RequestParam(required = false) final Boolean notIn,
+                                                       @RequestParam(required = false) final Set<String> responsesTypes,
+                                                       @RequestParam(required = false) final Set<String> status,
+                                                       @RequestParam(required = false) final Set<String> fields) {
         return ResponseEntity
                 .ok()
-                .header("Content-Disposition", "attachment;filename=" + CompleteProposalDataReport.NAME + ".csv")
+                .header("Content-Disposition", "attachment;filename=" + CompleteReport.NAME + ".csv")
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(reportService.getCSVCompleteProposalDataReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status));
+                .body(reportsService.getCompleteCSVReport(format(institution), serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status, fields));
     }
 
     /**
@@ -685,5 +444,13 @@ public class ReportResource {
      */
     public String format(final Object value) {
         return String.format("%0" + 8 + "d", Long.valueOf((String) value));
+    }
+
+    /**
+     * @return
+     */
+    @GetMapping("fields")
+    public HashMap<String, Set<String>> getFieldsFromReports() {
+        return reportsService.getFieldsFromReports( );
     }
 }
