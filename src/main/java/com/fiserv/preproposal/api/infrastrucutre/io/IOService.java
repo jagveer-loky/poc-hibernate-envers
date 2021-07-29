@@ -1,5 +1,6 @@
 package com.fiserv.preproposal.api.infrastrucutre.io;
 
+import com.fiserv.preproposal.api.domain.dtos.BasicReport;
 import com.univocity.parsers.annotations.Parsed;
 import com.univocity.parsers.common.processor.BeanWriterProcessor;
 import com.univocity.parsers.csv.CsvWriter;
@@ -63,7 +64,7 @@ public class IOService<T> {
         writerSettings.setQuoteAllFields(true);
         writerSettings.setColumnReorderingEnabled(true);
         writerSettings.setHeaderWritingEnabled(true);
-
+        writerSettings.setHeaders(toList(fields));
         final Collection<String> fieldsToIgnore = extractFieldsToIgnore(beanType, fields);
         writerSettings.excludeFields(toList(fieldsToIgnore));
 
