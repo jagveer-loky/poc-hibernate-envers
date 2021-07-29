@@ -1,6 +1,7 @@
 package com.fiserv.preproposal.api.infrastrucutre.io;
 
 import com.fiserv.preproposal.api.domain.dtos.BasicReport;
+import com.fiserv.preproposal.api.infrastrucutre.normalizer.Normalizer;
 import com.univocity.parsers.annotations.Parsed;
 import com.univocity.parsers.common.processor.BeanWriterProcessor;
 import com.univocity.parsers.csv.CsvWriter;
@@ -73,7 +74,8 @@ public class IOService<T> {
 
         final CsvWriter csvWriter = new CsvWriter(outputStream, writerSettings);
 
-        objects.forEach(csvWriter::processRecord);
+        final Normalizer<T> normalizer = new Normalizer<>();
+        objects.forEach(object -> csvWriter.processRecord(normalizer.normalize(object)));
 
         csvWriter.close();
 
