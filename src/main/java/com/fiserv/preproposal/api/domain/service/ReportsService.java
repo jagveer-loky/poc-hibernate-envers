@@ -9,12 +9,15 @@ import com.univocity.parsers.annotations.Parsed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ReportsService {
 
     /**
@@ -36,9 +39,10 @@ public class ReportsService {
      * @param notIn           Boolean
      * @param responsesTypes  Collection<String>
      * @param status          Collection<String>
-     * @return List<BasicReport>
+     * @return Stream<BasicReport>
      */
-    public List<BasicReport> getBasicReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status) {
+    @Transactional(readOnly = true)
+    public Stream<BasicReport> getBasicReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status) {
         return proposalRepository.getBasicReport(institution, serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
@@ -50,9 +54,24 @@ public class ReportsService {
      * @param notIn           Boolean
      * @param responsesTypes  Collection<String>
      * @param status          Collection<String>
-     * @return List<QuantitativeReport>
+     * @return int
      */
-    public List<QuantitativeReport> getQuantitativeReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status) {
+    @Transactional(readOnly = true)
+    public int getCountBasicReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status) {
+        return proposalRepository.getCountBasicReport(institution, serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+    }
+
+    /**
+     * @param institution     String
+     * @param serviceContract String
+     * @param initialDate     LocalDate
+     * @param finalDate       LocalDate
+     * @param notIn           Boolean
+     * @param responsesTypes  Collection<String>
+     * @param status          Collection<String>
+     * @return Stream<QuantitativeReport>
+     */
+    public Stream<QuantitativeReport> getQuantitativeReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status) {
         return proposalRepository.getQuantitativeReport(institution, serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
@@ -64,10 +83,38 @@ public class ReportsService {
      * @param notIn           Boolean
      * @param responsesTypes  Collection<String>
      * @param status          Collection<String>
-     * @return List<CompleteReport>
+     * @return int
      */
-    public List<CompleteReport> getCompleteReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status) {
+    public int getCountQuantitativeReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status) {
+        return proposalRepository.getCountQuantitativeReport(institution, serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+    }
+
+    /**
+     * @param institution     String
+     * @param serviceContract String
+     * @param initialDate     LocalDate
+     * @param finalDate       LocalDate
+     * @param notIn           Boolean
+     * @param responsesTypes  Collection<String>
+     * @param status          Collection<String>
+     * @return Stream<CompleteReport>
+     */
+    public Stream<CompleteReport> getCompleteReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status) {
         return proposalRepository.getCompleteReport(institution, serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
+    }
+
+    /**
+     * @param institution     String
+     * @param serviceContract String
+     * @param initialDate     LocalDate
+     * @param finalDate       LocalDate
+     * @param notIn           Boolean
+     * @param responsesTypes  Collection<String>
+     * @param status          Collection<String>
+     * @return int
+     */
+    public int getCountCompleteReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status) {
+        return proposalRepository.getCountCompleteReport(institution, serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
     /**
@@ -81,8 +128,8 @@ public class ReportsService {
      * @return byte[]
      */
     public byte[] getBasicCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status, final Collection<String> fields) {
-        final List<BasicReport> list = this.getBasicReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
-        return new IOService<BasicReport>().convertToCSV(list.stream(), BasicReport.class, fields);
+        final Stream<BasicReport> stream = this.getBasicReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
+        return new IOService<BasicReport>().convertToCSV(stream, BasicReport.class, fields);
     }
 
     /**
@@ -96,8 +143,8 @@ public class ReportsService {
      * @return byte[]
      */
     public byte[] getQuantitativeCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Set<String> status) {
-        final List<QuantitativeReport> list = getQuantitativeReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
-        return new IOService<QuantitativeReport>().convertToCSV(list.stream(), QuantitativeReport.class);
+        final Stream<QuantitativeReport> stream = getQuantitativeReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
+        return new IOService<QuantitativeReport>().convertToCSV(stream, QuantitativeReport.class);
     }
 
     /**
@@ -112,8 +159,8 @@ public class ReportsService {
      * @return byte[]
      */
     public byte[] getQuantitativeCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Set<String> status, final Collection<String> fields) {
-        final List<QuantitativeReport> list = getQuantitativeReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
-        return new IOService<QuantitativeReport>().convertToCSV(list.stream(), QuantitativeReport.class, fields);
+        final Stream<QuantitativeReport> stream = getQuantitativeReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
+        return new IOService<QuantitativeReport>().convertToCSV(stream, QuantitativeReport.class, fields);
     }
 
     /**
@@ -127,8 +174,8 @@ public class ReportsService {
      * @return byte[]
      */
     public byte[] getCompleteCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Set<String> status) {
-        final List<CompleteReport> list = getCompleteReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
-        return new IOService<CompleteReport>().convertToCSV(list.stream(), CompleteReport.class);
+        final Stream<CompleteReport> stream = getCompleteReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
+        return new IOService<CompleteReport>().convertToCSV(stream, CompleteReport.class);
     }
 
     /**
@@ -143,8 +190,8 @@ public class ReportsService {
      * @return byte[]
      */
     public byte[] getCompleteCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Set<String> status, final Set<String> fields) {
-        final List<CompleteReport> list = getCompleteReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
-        return new IOService<CompleteReport>().convertToCSV(list.stream(), CompleteReport.class, fields);
+        final Stream<CompleteReport> stream = getCompleteReport(institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status);
+        return new IOService<CompleteReport>().convertToCSV(stream, CompleteReport.class, fields);
     }
 
     /**

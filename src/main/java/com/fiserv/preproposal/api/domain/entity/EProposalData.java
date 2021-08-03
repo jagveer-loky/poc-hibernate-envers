@@ -253,6 +253,34 @@ import javax.persistence.*;
                 "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE IN (:status))"
                 ,
                 resultSetMapping = "basicReportMapping"),
+        @NamedNativeQuery(name = "getCountBasicReport", query =
+                "   SELECT COUNT(*) " +
+                        "   FROM tb_proposal_data tpd " +
+                        "       LEFT JOIN TB_PROPOSAL_PHYSICAL_PERSON tppp on tpd.proposal_type = 'F' and tpd.id = tppp.ID_FILE_PROPOSAL_DTA " +
+                        "       LEFT JOIN TB_PRE_PROPOSAL_LEGAL_PERSON tpplp on tpd.proposal_type = 'J' and tpd.id = tpplp.id_file_proposal_dta " +
+                        "       LEFT JOIN TB_FILE_CONTROL TFC ON TFC.ID = tpd.id_file_control " +
+                        "       LEFT JOIN tb_capture_solution TCS ON tcs.id_proposal_data = TPD.ID " +
+                        "       LEFT JOIN tb_pre_proposal_status tpps on tpps.id = tpd.status_id " +
+                        "       LEFT JOIN tb_proposal_cx_status tpcs on tpcs.status_id = tpps.id " +
+                        "   WHERE tfc.INSTITUTION = :institution " +
+                        "       AND tfc.SERVICE_CONTRACT = :serviceContract " +
+                        "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate " +
+                        "       AND (" +
+                        "               (" +
+                        "                   (:notIn = 0) " +
+                        "                       AND (" +
+                        "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                        "                       )" +
+                        "               )" +
+                        "           OR" +
+                        "               (" +
+                        "                   (:notIn = 1) " +
+                        "                       AND (" +
+                        "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                        "                       )" +
+                        "               )" +
+                        "       )" +
+                        "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE IN (:status))"),
         @NamedNativeQuery(name = "getQuantitativeReport", query = "  SELECT  \n" +
                 "            tfc.file_name AS \"FILENAME\",\n" +
                 "            tfc.INSTITUTION AS \"INSTITUTION\", \n" +
@@ -270,15 +298,19 @@ import javax.persistence.*;
                 "                       (" +
                 "                           (:notIn = 0) " +
                 "                               AND (" +
-                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NOT NULL AND tpd.response_type IN (:responsesTypes)" +
                 "                               )" +
                 "                       )" +
                 "                   OR" +
                 "                       (" +
                 "                           (:notIn = 1) " +
                 "                               AND (" +
-                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NOT NULL AND tpd.response_type NOT IN (:responsesTypes)" +
                 "                               )" +
+                "                       )" +
+                "                   OR" +
+                "                       (" +
+                "                           (:notIn = 0) AND COALESCE(:responsesTypes, NULL) IS NULL " +
                 "                       )" +
                 "               )" +
                 "             and TFC.id = TFC2.id\n" +
@@ -292,15 +324,19 @@ import javax.persistence.*;
                 "                       (" +
                 "                           (:notIn = 0) " +
                 "                               AND (" +
-                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NOT NULL AND tpd.response_type IN (:responsesTypes)" +
                 "                               )" +
                 "                       )" +
                 "                   OR" +
                 "                       (" +
                 "                           (:notIn = 1) " +
                 "                               AND (" +
-                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NOT NULL AND tpd.response_type NOT IN (:responsesTypes)" +
                 "                               )" +
+                "                       )" +
+                "                   OR" +
+                "                       (" +
+                "                           (:notIn = 0) AND COALESCE(:responsesTypes, NULL) IS NULL " +
                 "                       )" +
                 "               )" +
                 "             and TFC.id = TFC2.id\n" +
@@ -314,15 +350,19 @@ import javax.persistence.*;
                 "                       (" +
                 "                           (:notIn = 0) " +
                 "                               AND (" +
-                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NOT NULL AND tpd.response_type IN (:responsesTypes)" +
                 "                               )" +
                 "                       )" +
                 "                   OR" +
                 "                       (" +
                 "                           (:notIn = 1) " +
                 "                               AND (" +
-                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NOT NULL AND tpd.response_type NOT IN (:responsesTypes)" +
                 "                               )" +
+                "                       )" +
+                "                   OR" +
+                "                       (" +
+                "                           (:notIn = 0) AND COALESCE(:responsesTypes, NULL) IS NULL " +
                 "                       )" +
                 "               )" +
                 "             and TFC.id = TFC2.id\n" +
@@ -336,15 +376,19 @@ import javax.persistence.*;
                 "                       (" +
                 "                           (:notIn = 0) " +
                 "                               AND (" +
-                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NOT NULL AND tpd.response_type IN (:responsesTypes)" +
                 "                               )" +
                 "                       )" +
                 "                   OR" +
                 "                       (" +
                 "                           (:notIn = 1) " +
                 "                               AND (" +
-                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NOT NULL AND tpd.response_type NOT IN (:responsesTypes)" +
                 "                               )" +
+                "                       )" +
+                "                   OR" +
+                "                       (" +
+                "                           (:notIn = 0) AND COALESCE(:responsesTypes, NULL) IS NULL " +
                 "                       )" +
                 "               )" +
                 "             and TFC.id = TFC2.id\n" +
@@ -358,15 +402,19 @@ import javax.persistence.*;
                 "                       (" +
                 "                           (:notIn = 0) " +
                 "                               AND (" +
-                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NOT NULL AND tpd.response_type IN (:responsesTypes)" +
                 "                               )" +
                 "                       )" +
                 "                   OR" +
                 "                       (" +
                 "                           (:notIn = 1) " +
                 "                               AND (" +
-                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NOT NULL AND tpd.response_type NOT IN (:responsesTypes)" +
                 "                               )" +
+                "                       )" +
+                "                   OR" +
+                "                       (" +
+                "                           (:notIn = 0) AND COALESCE(:responsesTypes, NULL) IS NULL " +
                 "                       )" +
                 "               )" +
                 "             and TFC.id = TFC2.id\n" +
@@ -380,15 +428,19 @@ import javax.persistence.*;
                 "                       (" +
                 "                           (:notIn = 0) " +
                 "                               AND (" +
-                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NOT NULL AND tpd.response_type IN (:responsesTypes)" +
                 "                               )" +
                 "                       )" +
                 "                   OR" +
                 "                       (" +
                 "                           (:notIn = 1) " +
                 "                               AND (" +
-                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NOT NULL AND tpd.response_type NOT IN (:responsesTypes)" +
                 "                               )" +
+                "                       )" +
+                "                   OR" +
+                "                       (" +
+                "                           (:notIn = 0) AND COALESCE(:responsesTypes, NULL) IS NULL " +
                 "                       )" +
                 "               )" +
                 "             and TFC.id = TFC2.id\n" +
@@ -402,15 +454,19 @@ import javax.persistence.*;
                 "                       (" +
                 "                           (:notIn = 0) " +
                 "                               AND (" +
-                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NOT NULL AND tpd.response_type IN (:responsesTypes)" +
                 "                               )" +
                 "                       )" +
                 "                   OR" +
                 "                       (" +
                 "                           (:notIn = 1) " +
                 "                               AND (" +
-                "                                   COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                                   COALESCE(:responsesTypes, NULL) IS NOT NULL AND tpd.response_type NOT IN (:responsesTypes)" +
                 "                               )" +
+                "                       )" +
+                "                   OR" +
+                "                       (" +
+                "                           (:notIn = 0) AND COALESCE(:responsesTypes, NULL) IS NULL " +
                 "                       )" +
                 "               )" +
                 "             and TFC.id = TFC2.id\n" +
@@ -425,19 +481,60 @@ import javax.persistence.*;
                 "               (" +
                 "                   (:notIn = 0) " +
                 "                       AND (" +
-                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                           COALESCE(:responsesTypes, NULL) IS NOT NULL AND tpd.response_type IN (:responsesTypes)" +
                 "                       )" +
                 "               )" +
                 "           OR" +
                 "               (" +
                 "                   (:notIn = 1) " +
                 "                       AND (" +
-                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                           COALESCE(:responsesTypes, NULL) IS NOT NULL AND tpd.response_type NOT IN (:responsesTypes)" +
                 "                       )" +
+                "               )" +
+                "           OR" +
+                "               (" +
+                "                   (:notIn = 0) AND COALESCE(:responsesTypes, NULL) IS NULL " +
                 "               )" +
                 "       )" +
                 "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))" +
                 "   group by tfc.file_name,tfc.INSTITUTION,tfc.SERVICE_CONTRACT,tfc.READ_DATE,tfc.IS_VALID, TFC.id", resultSetMapping = "quantitativeReportMapping"),
+        @NamedNativeQuery(name = "getCountQuantitativeReport", query =
+                "SELECT " +
+                        "        COUNT(*) " +
+                        "FROM " +
+                        "        ( " +
+                        "                SELECT " +
+                        "                   tfc.file_name,tfc.INSTITUTION,tfc.SERVICE_CONTRACT,tfc.READ_DATE,tfc.IS_VALID, TFC.id " +
+                        "                FROM tb_proposal_data tpd " +
+                        "                   LEFT JOIN TB_PROPOSAL_PHYSICAL_PERSON tppp on tpd.proposal_type = 'F' and tpd.id = tppp.ID_FILE_PROPOSAL_DTA " +
+                        "                   LEFT JOIN TB_PRE_PROPOSAL_LEGAL_PERSON tpplp on tpd.proposal_type = 'J' and tpd.id = tpplp.id_file_proposal_dta " +
+                        "                   LEFT JOIN TB_FILE_CONTROL TFC ON TFC.ID = tpd.id_file_control " +
+                        "                   LEFT JOIN tb_capture_solution TCS ON tcs.id_proposal_data = TPD.ID " +
+                        "                   LEFT JOIN tb_pre_proposal_status tpps on tpps.id = tpd.status_id " +
+                        "                   LEFT JOIN tb_proposal_cx_status tpcs on tpcs.status_id = tpps.id " +
+                        "               WHERE " +
+                        "                       tfc.INSTITUTION = :institution \n" +
+                        "                   AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
+                        "                   AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
+                        "                   AND (" +
+                        "                           (" +
+                        "                               (:notIn = 0) " +
+                        "                                   AND (" +
+                        "                                       COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                        "                                   )" +
+                        "                           )" +
+                        "                       OR" +
+                        "                           (" +
+                        "                               (:notIn = 1) " +
+                        "                                   AND (" +
+                        "                                       COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                        "                                   )" +
+                        "                           )" +
+                        "                   )" +
+                        "                   AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))" +
+                        "               GROUP BY tfc.file_name,tfc.INSTITUTION,tfc.SERVICE_CONTRACT,tfc.READ_DATE,tfc.IS_VALID, TFC.id " +
+                        "        )"
+        ),
         @NamedNativeQuery(name = "getCompleteReport", query = "SELECT  \n" +
                 "       tpd.id AS \"PREPROPOSALID\",\n" +
                 "      tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
@@ -604,7 +701,40 @@ import javax.persistence.*;
                 "               )" +
                 "       )" +
                 "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))"
-                , resultSetMapping = "completeReportMapping")
+                , resultSetMapping = "completeReportMapping"),
+        @NamedNativeQuery(name = "getCountCompleteReport", query = "SELECT COUNT(*) " +
+                "       from tb_proposal_data tpd " +
+                "  LEFT join TB_PROPOSAL_PHYSICAL_PERSON tppp on tpd.proposal_type = 'F' and tpd.id = tppp.ID_FILE_PROPOSAL_DTA\n" +
+                "  LEFT join TB_PRE_PROPOSAL_LEGAL_PERSON tpplp on tpd.proposal_type = 'J' and tpd.id = tpplp.id_file_proposal_dta\n" +
+                "  LEFT join TB_FILE_CONTROL TFC ON TFC.ID = tpd.id_file_control\n" +
+                "  LEFT join tb_capture_solution TCS ON tcs.id_proposal_data = TPD.ID\n" +
+                "  LEFT join tb_pre_proposal_status tpps on tpps.id = tpd.status_id\n" +
+                "  LEFT join tb_proposal_cx_status tpcs on tpcs.status_id = tpps.id\n" +
+                "  LEFT JOIN TB_PROPOSAL_COMPANY_PARTNERS TPCP ON TPCP.ID_PROPOSAL_PJ_DTA = tpplp.id\n" +
+                "  LEFT JOIN TB_PRE_PROPOSAL_ADDRESS TPPA ON TPPA.ID_FILE_PROPOSAL_DTA = tpd.ID\n" +
+                "  LEFT JOIN TB_CONTACT tc on tc.ID_PROPOSAL_DATA = tpd.ID\n" +
+                "  LEFT JOIN TB_ACCOUNT_FREE taf on taf.ID_FILE_PROPOSAL_DTA = tpd.ID\n" +
+                "  LEFT JOIN TB_BANK_ACCOUNT tba on tba.ID_FILE_PROPOSAL_DTA = tpd.ID\n" +
+                "  left join TB_PRE_WORKING_DAY tpwa on tpwa.ID_PROPOSAL_DATA = tpd.ID" +
+                "  WHERE tfc.INSTITUTION = :institution \n" +
+                "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
+                "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
+                "       AND (" +
+                "               (" +
+                "                   (:notIn = 0) " +
+                "                       AND (" +
+                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
+                "                       )" +
+                "               )" +
+                "           OR" +
+                "               (" +
+                "                   (:notIn = 1) " +
+                "                       AND (" +
+                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
+                "                       )" +
+                "               )" +
+                "       )" +
+                "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))")
 })
 public class EProposalData {
 
