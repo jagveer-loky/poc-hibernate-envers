@@ -1,4 +1,4 @@
-package com.fiserv.preproposal.api.infrastrucutre.io;
+package com.fiserv.preproposal.api.domain.repository.report;
 
 import com.fiserv.preproposal.api.domain.dtos.BasicReport;
 import com.fiserv.preproposal.api.infrastrucutre.normalizer.Normalizer;
@@ -6,52 +6,36 @@ import com.univocity.parsers.annotations.Parsed;
 import com.univocity.parsers.common.processor.BeanWriterProcessor;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
+import lombok.Getter;
 import lombok.NonNull;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Service
-public class IOService<T> {
-
+public abstract class AbstractReportRepository<T> implements IReadReportRepository, IWriteReportRepository {
 
     /**
-     * Return with all fields
      *
-     * @param objects  Stream<T>
-     * @param beanType Class<T>
-     * @return byte[]
      */
-    public byte[] convertToCSV(@NonNull final Stream<T> objects, final Class<T> beanType) {
+    public final static String DATETIME_PATTERN = "ddMMyyyyHHmmss";
 
-        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        final CsvWriterSettings writerSettings = new CsvWriterSettings();
-        writerSettings.getFormat().setLineSeparator("\r\n");
-        writerSettings.getFormat().setDelimiter(';');
-        writerSettings.setQuoteAllFields(true);
-        writerSettings.setColumnReorderingEnabled(true);
-        writerSettings.setHeaderWritingEnabled(true);
-
-        final BeanWriterProcessor<T> processor = new BeanWriterProcessor<>(beanType);
-        writerSettings.setRowWriterProcessor(processor);
-
-        final CsvWriter csvWriter = new CsvWriter(outputStream, writerSettings);
-
-        objects.forEach(csvWriter::processRecord);
-
-        csvWriter.close();
-
-        return outputStream.toByteArray();
-    }
+    /**
+     *
+     */
+    @Setter
+    @Getter
+    @Value("${io.output}")
+    private String path;
 
     /**
      * @param objects  Stream<T>
@@ -61,7 +45,7 @@ public class IOService<T> {
      */
     public byte[] convertToCSV(@NonNull final Stream<T> objects, final Class<T> beanType, final Collection<String> fields) {
 
-        final File file = new File("file.csv");
+        final File file = new File(this.getPath()); //TODO
 
         final CsvWriterSettings writerSettings = new CsvWriterSettings();
         writerSettings.getFormat().setLineSeparator("\r\n");
@@ -145,4 +129,6 @@ public class IOService<T> {
                     return attribute.substring(0, 1).toLowerCase() + attribute.substring(1);
                 }).collect(Collectors.toSet());
     }
+
+
 }

@@ -7,6 +7,8 @@ import com.fiserv.preproposal.api.infrastrucutre.io.IOService;
 import com.univocity.parsers.common.processor.RowListProcessor;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
+import org.jobrunr.scheduling.BackgroundJob;
+import org.jobrunr.scheduling.JobScheduler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,29 +17,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SpringBootTest
 @Transactional(readOnly = true)
-class ReportsServiceTests {
+class ReportServiceTests {
 
     @Autowired
-    ReportsService reportsService;
+    ReportService reportService;
 
     /**
      *
      */
     @Test
     void basicReportMustBeContainOnlyFiservOnlineResponsesTypesMustPass() {
-        final List<BasicReport> basicReport = reportsService.getBasicReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null).collect(Collectors.toList());
+        final List<BasicReport> basicReport = reportService.getBasicReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null).collect(Collectors.toList());
         Assertions.assertNotNull(basicReport);
         if (!basicReport.isEmpty())
             basicReport.forEach(report -> Assertions.assertEquals(report.getResponseType(), "FISERV_ONLINE"));
-        final int countBasicReport = reportsService.getCountBasicReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null);
+        final int countBasicReport = reportService.getCountBasicReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null);
         Assertions.assertEquals(countBasicReport, basicReport.size());
     }
 
@@ -46,11 +45,11 @@ class ReportsServiceTests {
      */
     @Test
     void basicReportMustBeNotContainFiservOnlineResponseTypeMustPass() {
-        final List<BasicReport> basicReport = reportsService.getBasicReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null).collect(Collectors.toList());
+        final List<BasicReport> basicReport = reportService.getBasicReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null).collect(Collectors.toList());
         Assertions.assertNotNull(basicReport);
         if (!basicReport.isEmpty())
             basicReport.forEach(report -> Assertions.assertNotEquals(report.getResponseType(), "FISERV_ONLINE"));
-        final int countBasicReport = reportsService.getCountBasicReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null);
+        final int countBasicReport = reportService.getCountBasicReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null);
         Assertions.assertEquals(countBasicReport, basicReport.size());
     }
 
@@ -59,69 +58,69 @@ class ReportsServiceTests {
      */
     @Test
     void basicReportMustReturnAllResponsesTypesMustPass() {
-        final List<BasicReport> basicReport = reportsService.getBasicReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null).collect(Collectors.toList());
+        final List<BasicReport> basicReport = reportService.getBasicReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null).collect(Collectors.toList());
         Assertions.assertNotNull(basicReport);
         if (!basicReport.isEmpty()) {
             Assertions.assertTrue(basicReport.stream().anyMatch(basicReport1 -> basicReport1.getResponseType().equals("FISERV_ONLINE")));
 //            Assertions.assertTrue(basicReport.stream().anyMatch(basicReport1 -> basicReport1.getResponseType().equals("LEAD")));
             Assertions.assertTrue(basicReport.stream().anyMatch(basicReport1 -> basicReport1.getResponseType().equals("LNK_PAYMENT")));
         }
-        final int countBasicReport = reportsService.getCountBasicReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null);
+        final int countBasicReport = reportService.getCountBasicReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null);
         Assertions.assertEquals(countBasicReport, basicReport.size());
     }
 
-    /**
-     *
-     */
-    @Test
-    void basicCSVReportMustReturnAllFieldsMustPass() {
-
-        final IOService<BasicReport> ioService = new IOService<>();
-
-        final CsvParserSettings parserSettings = new CsvParserSettings();
-        parserSettings.setLineSeparatorDetectionEnabled(true);
-        parserSettings.setHeaderExtractionEnabled(true);
-
-        final RowListProcessor rowProcessor = new RowListProcessor();
-        parserSettings.setRowProcessor(rowProcessor);
-
-        final CsvParser parser = new CsvParser(parserSettings);
-        final byte[] completeBasicCSVReport = reportsService.getBasicCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, null);
-        parser.parse(new ByteArrayInputStream(completeBasicCSVReport));
-
-        final String[] oldHeaders = rowProcessor.getHeaders();
-
-        final Set<String> headersToRemove = new HashSet<>();
-        headersToRemove.add("Id da Proposta");
-        headersToRemove.add("Nome Fantasia");
-        headersToRemove.add("Tipo da resposta");
-
-        headersToRemove.forEach(header -> Assertions.assertTrue(oldHeaders[0].contains(header)));
-
-        final byte[] croppedBasicCSVReport = reportsService.getBasicCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, ioService.extractFieldsToIgnore(BasicReport.class, headersToRemove));
-        parser.parse(new ByteArrayInputStream(croppedBasicCSVReport));
-
-        final String[] newHeaders = rowProcessor.getHeaders();
-
-        headersToRemove.forEach(header -> Assertions.assertFalse(newHeaders[0].contains(header)));
-
-        Assertions.assertNotEquals(oldHeaders[0].split(";").length, newHeaders[0].split(";").length);
-
-    }
+//    /**
+//     *
+//     */
+//    @Test
+//    void basicCSVReportMustReturnAllFieldsMustPass() {
+//
+//        final IOService<BasicReport> ioService = new IOService<>();
+//
+//        final CsvParserSettings parserSettings = new CsvParserSettings();
+//        parserSettings.setLineSeparatorDetectionEnabled(true);
+//        parserSettings.setHeaderExtractionEnabled(true);
+//
+//        final RowListProcessor rowProcessor = new RowListProcessor();
+//        parserSettings.setRowProcessor(rowProcessor);
+//
+//        final CsvParser parser = new CsvParser(parserSettings);
+//        final byte[] completeBasicCSVReport = reportService.getBasicCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, null);
+//        parser.parse(new ByteArrayInputStream(completeBasicCSVReport));
+//
+//        final String[] oldHeaders = rowProcessor.getHeaders();
+//
+//        final Set<String> headersToRemove = new HashSet<>();
+//        headersToRemove.add("Id da Proposta");
+//        headersToRemove.add("Nome Fantasia");
+//        headersToRemove.add("Tipo da resposta");
+//
+//        headersToRemove.forEach(header -> Assertions.assertTrue(oldHeaders[0].contains(header)));
+//
+//        final byte[] croppedBasicCSVReport = reportService.getBasicCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, ioService.extractFieldsToIgnore(BasicReport.class, headersToRemove));
+//        parser.parse(new ByteArrayInputStream(croppedBasicCSVReport));
+//
+//        final String[] newHeaders = rowProcessor.getHeaders();
+//
+//        headersToRemove.forEach(header -> Assertions.assertFalse(newHeaders[0].contains(header)));
+//
+//        Assertions.assertNotEquals(oldHeaders[0].split(";").length, newHeaders[0].split(";").length);
+//
+//    }
 
     /**
      *
      */
     @Test
     void quantitativeReportSeveralTestsTypesMustPass() {
-        final List<QuantitativeReport> quantitativeReportsWithOnlyFiservOnline = reportsService.getQuantitativeReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null).collect(Collectors.toList());
-        final int countQuantitativeReportWithOnlyFiservOnline = reportsService.getCountQuantitativeReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null);
+        final List<QuantitativeReport> quantitativeReportsWithOnlyFiservOnline = reportService.getQuantitativeReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null).collect(Collectors.toList());
+        final int countQuantitativeReportWithOnlyFiservOnline = reportService.getCountQuantitativeReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null);
         Assertions.assertEquals(countQuantitativeReportWithOnlyFiservOnline, quantitativeReportsWithOnlyFiservOnline.size());
-        final List<QuantitativeReport> quantitativeReportsWithoutFiservOnline = reportsService.getQuantitativeReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null).collect(Collectors.toList());
-        final int countQuantitativeReportWithoutFiservOnline = reportsService.getCountQuantitativeReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null);
+        final List<QuantitativeReport> quantitativeReportsWithoutFiservOnline = reportService.getQuantitativeReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null).collect(Collectors.toList());
+        final int countQuantitativeReportWithoutFiservOnline = reportService.getCountQuantitativeReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null);
         Assertions.assertEquals(countQuantitativeReportWithoutFiservOnline, quantitativeReportsWithoutFiservOnline.size());
-        final List<QuantitativeReport> quantitativeReportsWithAllFiservOnline = reportsService.getQuantitativeReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null).collect(Collectors.toList());
-        final int countQuantitativeReportWithAllFiservOnline = reportsService.getCountQuantitativeReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null);
+        final List<QuantitativeReport> quantitativeReportsWithAllFiservOnline = reportService.getQuantitativeReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null).collect(Collectors.toList());
+        final int countQuantitativeReportWithAllFiservOnline = reportService.getCountQuantitativeReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null);
         Assertions.assertEquals(countQuantitativeReportWithAllFiservOnline, quantitativeReportsWithAllFiservOnline.size());
 
         for (final QuantitativeReport quantitativeReportWithAllFiservOnline : quantitativeReportsWithAllFiservOnline) {
@@ -158,7 +157,7 @@ class ReportsServiceTests {
         parserSettings.setRowProcessor(rowProcessor);
 
         final CsvParser parser = new CsvParser(parserSettings);
-        final byte[] completeQuantitativeCSVReport = reportsService.getQuantitativeCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null);
+        final byte[] completeQuantitativeCSVReport = reportService.getQuantitativeCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null, null);
         parser.parse(new ByteArrayInputStream(completeQuantitativeCSVReport));
 
         final String[] oldHeaders = rowProcessor.getHeaders();
@@ -170,7 +169,7 @@ class ReportsServiceTests {
 
         headersToRemove.forEach(header -> Assertions.assertTrue(oldHeaders[0].contains(header)));
 
-        final byte[] croppedQuantitativeCSVReport = reportsService.getQuantitativeCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, ioService.extractFieldsToIgnore(QuantitativeReport.class, headersToRemove));
+        final byte[] croppedQuantitativeCSVReport = reportService.getQuantitativeCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, ioService.extractFieldsToIgnore(QuantitativeReport.class, headersToRemove));
         parser.parse(new ByteArrayInputStream(croppedQuantitativeCSVReport));
 
         final String[] newHeaders = rowProcessor.getHeaders();
@@ -186,10 +185,10 @@ class ReportsServiceTests {
      */
     @Test
     void completeReportMustBeContainOnlyFiservOnlineResponsesTypesMustPass() {
-        final List<CompleteReport> completeReport = reportsService.getCompleteReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null).collect(Collectors.toList());
+        final List<CompleteReport> completeReport = reportService.getCompleteReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null).collect(Collectors.toList());
         if (!completeReport.isEmpty())
             completeReport.forEach(report -> Assertions.assertEquals(report.getResponseType(), "FISERV_ONLINE"));
-        final int countCompleteReport = reportsService.getCountCompleteReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null);
+        final int countCompleteReport = reportService.getCountCompleteReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null);
         Assertions.assertEquals(countCompleteReport, completeReport.size());
     }
 
@@ -198,11 +197,11 @@ class ReportsServiceTests {
      */
     @Test
     void completeReportMustBeNotContainFiservOnlineResponseTypeMustPass() {
-        final List<CompleteReport> completeReport = reportsService.getCompleteReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null).collect(Collectors.toList());
+        final List<CompleteReport> completeReport = reportService.getCompleteReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null).collect(Collectors.toList());
         Assertions.assertNotNull(completeReport);
         if (!completeReport.isEmpty())
             completeReport.forEach(report -> Assertions.assertNotEquals(report.getResponseType(), "FISERV_ONLINE"));
-        final int countCompleteReport = reportsService.getCountCompleteReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null);
+        final int countCompleteReport = reportService.getCountCompleteReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), true, Collections.singleton("FISERV_ONLINE"), null);
         Assertions.assertEquals(countCompleteReport, completeReport.size());
     }
 
@@ -211,14 +210,14 @@ class ReportsServiceTests {
      */
     @Test
     void completeReportMustReturnAllResponsesTypesMustPass() {
-        final List<CompleteReport> completeReport = reportsService.getCompleteReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null).collect(Collectors.toList());
+        final List<CompleteReport> completeReport = reportService.getCompleteReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null).collect(Collectors.toList());
         Assertions.assertNotNull(completeReport);
         if (!completeReport.isEmpty()) {
             Assertions.assertTrue(completeReport.stream().anyMatch(errorsReport1 -> errorsReport1.getResponseType().equals("FISERV_ONLINE")));
 //            Assertions.assertTrue(proposalDataReport.stream().anyMatch(errorsReport1 -> errorsReport1.getResponseType().equals("LEAD")));
             Assertions.assertTrue(completeReport.stream().anyMatch(errorsReport1 -> errorsReport1.getResponseType().equals("LNK_PAYMENT")));
         }
-        final int countCompleteReport = reportsService.getCountCompleteReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null);
+        final int countCompleteReport = reportService.getCountCompleteReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null);
         Assertions.assertEquals(countCompleteReport, completeReport.size());
     }
 
@@ -239,7 +238,7 @@ class ReportsServiceTests {
 
         final CsvParser parser = new CsvParser(parserSettings);
         // Get with all fields
-        final byte[] completeCompleteCSVReport = reportsService.getCompleteCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null);
+        final byte[] completeCompleteCSVReport = reportService.getCompleteCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, null);
         parser.parse(new ByteArrayInputStream(completeCompleteCSVReport));
 
         final String[] oldHeaders = rowProcessor.getHeaders();
@@ -255,7 +254,7 @@ class ReportsServiceTests {
         headersToRemove.forEach(header -> Assertions.assertTrue(oldHeaders[0].contains(header)));
 
         // Get with only some fields
-        final byte[] croppedCompleteCSVReport = reportsService.getCompleteCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, ioService.extractFieldsToIgnore(CompleteReport.class, headersToRemove));
+        final byte[] croppedCompleteCSVReport = reportService.getCompleteCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, ioService.extractFieldsToIgnore(CompleteReport.class, headersToRemove));
         parser.parse(new ByteArrayInputStream(croppedCompleteCSVReport));
 
         final String[] newHeaders = rowProcessor.getHeaders();
@@ -271,9 +270,9 @@ class ReportsServiceTests {
      */
     @Test
     void testExtractFieldsFromBasicReportClass() {
-        final Set<String> fields = this.reportsService.extractFieldsFromBasicReport();
+        final Set<String> fields = this.reportService.extractFieldsFromBasicReport();
         Assertions.assertEquals(fields.size(), IOService.getAttributesFromClass(BasicReport.class).size());
-        Assertions.assertEquals(this.reportsService.getFieldsFromReport(BasicReport.NAME).size(), IOService.getAttributesFromClass(BasicReport.class).size());
+        Assertions.assertEquals(this.reportService.getFieldsFromReport(BasicReport.NAME).size(), IOService.getAttributesFromClass(BasicReport.class).size());
     }
 
     /**
@@ -281,9 +280,9 @@ class ReportsServiceTests {
      */
     @Test
     void testExtractFieldsFromCompleteReportClass() {
-        final Set<String> fields = this.reportsService.extractFieldsFromCompleteReport();
+        final Set<String> fields = this.reportService.extractFieldsFromCompleteReport();
         Assertions.assertEquals(fields.size(), IOService.getAttributesFromClass(CompleteReport.class).size());
-        Assertions.assertEquals(this.reportsService.getFieldsFromReport(CompleteReport.NAME).size(), IOService.getAttributesFromClass(CompleteReport.class).size());
+        Assertions.assertEquals(this.reportService.getFieldsFromReport(CompleteReport.NAME).size(), IOService.getAttributesFromClass(CompleteReport.class).size());
     }
 
     /**
@@ -291,9 +290,22 @@ class ReportsServiceTests {
      */
     @Test
     void testExtractFieldsFromQuantitativeReportClass() {
-        final Set<String> fields = this.reportsService.extractFieldsFromQuantitativeReport();
+        final Set<String> fields = this.reportService.extractFieldsFromQuantitativeReport();
         Assertions.assertEquals(fields.size(), IOService.getAttributesFromClass(QuantitativeReport.class).size());
-        Assertions.assertEquals(this.reportsService.getFieldsFromReport(QuantitativeReport.NAME).size(), IOService.getAttributesFromClass(QuantitativeReport.class).size());
+        Assertions.assertEquals(this.reportService.getFieldsFromReport(QuantitativeReport.NAME).size(), IOService.getAttributesFromClass(QuantitativeReport.class).size());
+    }
+
+    @Autowired
+    private JobScheduler jobScheduler;
+
+    /**
+     *
+     */
+    @Test
+    void teste() {
+        BackgroundJob.enqueue(() -> {
+//            reportService.getAsyncBasicCSVReport("00000007", null, null, null/*, null, null, null, null*/);
+        });
     }
 
 }

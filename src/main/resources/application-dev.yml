@@ -42,3 +42,11 @@ cors:
 springdoc:
   swagger-ui:
     url: /v3/api-docs/
+
+org:
+  jobrunr:
+    dashboard:
+      enabled=: true
+
+io:
+  output: src/main/resources/output
