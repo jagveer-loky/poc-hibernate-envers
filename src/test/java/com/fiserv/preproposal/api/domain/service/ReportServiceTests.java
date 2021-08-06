@@ -3,17 +3,15 @@ package com.fiserv.preproposal.api.domain.service;
 import com.fiserv.preproposal.api.domain.dtos.BasicReport;
 import com.fiserv.preproposal.api.domain.dtos.CompleteReport;
 import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
+import com.fiserv.preproposal.api.domain.entity.EReport;
 import com.fiserv.preproposal.api.infrastrucutre.io.IOService;
 import com.univocity.parsers.common.processor.RowListProcessor;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
-import org.jobrunr.scheduling.BackgroundJob;
-import org.jobrunr.scheduling.JobScheduler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
@@ -21,9 +19,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @SpringBootTest
-@Transactional(readOnly = true)
 class ReportServiceTests {
 
+    /**
+     *
+     */
     @Autowired
     ReportService reportService;
 
@@ -295,17 +295,24 @@ class ReportServiceTests {
         Assertions.assertEquals(this.reportService.getFieldsFromReport(QuantitativeReport.NAME).size(), IOService.getAttributesFromClass(QuantitativeReport.class).size());
     }
 
-    @Autowired
-    private JobScheduler jobScheduler;
-
     /**
      *
      */
     @Test
-    void teste() {
-        BackgroundJob.enqueue(() -> {
-//            reportService.getAsyncBasicCSVReport("00000007", null, null, null/*, null, null, null, null*/);
-        });
+    void testCalculatePercentage() {
+//        reportService.createBasicCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, null);
+        final EReport eReport = new EReport();
+        eReport.setCountLines(805);
+
+        for (int i = 1; i <= 805; i++) {
+            eReport.setCurrentLine(i);
+            eReport.calculatePercentage();
+            if (i == 1)
+                Assertions.assertEquals(eReport.getConcludedPercentage(), 0);
+            if (i == 805)
+                Assertions.assertEquals(eReport.getConcludedPercentage(), 100);
+        }
+        Assertions.assertEquals(eReport.getConcludedPercentage(), 100);
     }
 
 }

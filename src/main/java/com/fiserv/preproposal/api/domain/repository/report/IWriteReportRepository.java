@@ -21,6 +21,12 @@ public interface IWriteReportRepository {
     void create(final String ownerJob, final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status, final Collection<String> fields);
 
     /**
+     * @param ownerJob  String
+     * @param jobParams JobParams
+     */
+    void run(final String ownerJob, final JobParams jobParams);
+
+    /**
      * @param path String
      */
     void remove(final String path);

@@ -4,22 +4,19 @@ import com.fiserv.preproposal.api.domain.dtos.BasicReport;
 import com.fiserv.preproposal.api.domain.dtos.CompleteReport;
 import com.fiserv.preproposal.api.domain.dtos.JobParams;
 import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
+import com.fiserv.preproposal.api.domain.entity.EReport;
 import com.fiserv.preproposal.api.domain.repository.ProposalRepository;
+import com.fiserv.preproposal.api.domain.repository.ReportRepository;
 import com.fiserv.preproposal.api.domain.repository.report.impl.BasicReportRepository;
 import com.fiserv.preproposal.api.infrastrucutre.io.IOService;
 import com.univocity.parsers.annotations.Parsed;
-import lombok.Builder;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.jobrunr.jobs.annotations.Job;
-import org.jobrunr.scheduling.BackgroundJob;
-import org.jobrunr.scheduling.JobScheduler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Serializable;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Stream;
@@ -28,11 +25,6 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class ReportService {
 
-    @Autowired
-    BasicReportRepository basicReportRepository;
-
-    private final IOService<BasicReport> ioServiceBasicReport = new IOService<>();
-
     private final IOService<CompleteReport> ioServiceCompleteReport = new IOService<>();
 
     private final IOService<QuantitativeReport> ioServiceQuantitativeReport = new IOService<>();
@@ -40,7 +32,17 @@ public class ReportService {
     /**
      *
      */
+    private final ReportRepository reportRepository;
+
+    /**
+     *
+     */
     private final ProposalRepository proposalRepository;
+
+    /**
+     *
+     */
+    private final BasicReportRepository fileReportRepository;
 
     /**
      * @param institution     String
@@ -52,7 +54,7 @@ public class ReportService {
      * @param status          Collection<String>
      * @return Stream<BasicReport>
      */
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
     public Stream<BasicReport> getBasicReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status) {
         return proposalRepository.getBasicReport(institution, serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
@@ -127,22 +129,17 @@ public class ReportService {
         return proposalRepository.getCountCompleteReport(institution, serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
-    /**
-     * @param institution     String
-     * @param serviceContract String
-     * @param initialDate     LocalDate
-     * @param finalDate       LocalDate
-     * @param notIn           Boolean
-     * @param responsesTypes  Collection<String>
-     * @param status          Collection<String>
-     * @param fields          Collection<String>
-     */
-    public void createBasicCSVReport(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status, final Collection<String> fields) {
-        basicReportRepository.create("usuarioTal", institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status, fields);
+    public void create(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status, final Collection<String> fields) {
+        fileReportRepository.create("usuarioTal", institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status, fields);
     }
 
-    public void getBasicCSVReport(final String path) {
-        basicReportRepository.read(path);
+    public byte[] downloadById(final Long id) throws NotFound, IOException {
+        final EReport eReport = reportRepository.findById(id).orElseThrow(NotFound::new);
+        return Files.readAllBytes(fileReportRepository.read(eReport.getPath()).toPath());
+    }
+
+    public List<EReport> findByOwner(final String owner) {
+        return this.reportRepository.findByOwner(owner);
     }
 
     /**
@@ -182,7 +179,7 @@ public class ReportService {
      * @param jobParams JobParams
      */
     @Job(name = "getAsyncQuantitativeCSVReport %0", retries = 2)
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
     public void getAsyncQuantitativeCSVReport(final String jobOwner, final JobParams jobParams) {
         final Stream<QuantitativeReport> stream = this.getQuantitativeReport(jobParams.getInstitution(), jobParams.getServiceContract(), jobParams.getInitialDate(), jobParams.getFinalDate(), jobParams.getNotIn(), jobParams.getResponsesTypes(), jobParams.getStatus());
         this.ioServiceQuantitativeReport.convertToCSV(stream, QuantitativeReport.class, jobParams.getFields());
@@ -193,7 +190,7 @@ public class ReportService {
      * @param jobParams JobParams
      */
     @Job(name = "getAsyncQuantitativeCSVReport %0", retries = 2)
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
     public void getAsyncCompleteCSVReport(final String jobOwner, final JobParams jobParams) {
         final Stream<CompleteReport> stream = this.getCompleteReport(jobParams.getInstitution(), jobParams.getServiceContract(), jobParams.getInitialDate(), jobParams.getFinalDate(), jobParams.getNotIn(), jobParams.getResponsesTypes(), jobParams.getStatus());
         this.ioServiceCompleteReport.convertToCSV(stream, CompleteReport.class, jobParams.getFields());

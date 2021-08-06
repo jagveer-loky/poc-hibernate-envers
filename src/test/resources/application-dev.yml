@@ -18,15 +18,15 @@ spring:
         show_sql: true
         use_sql_comments: true
 
-#logging:
-#  level:
-#    org:
-#      hibernate:
-#        type:
-#          descriptor:
-#            sql:
-#              BasicBinder: TRACE
-#        SQL: DEBUG
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+        SQL: DEBUG
 #logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
 
 fdsecurity:
@@ -46,7 +46,7 @@ springdoc:
 org:
   jobrunr:
     dashboard:
-      enabled: true
+      enabled: false
 
 io:
-  output: src/main/resources/output
+  output: src/test/resources/output
