@@ -7,13 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuantitativeReport {
-
-    public static final String NAME = "quantitative";
+public class QuantitativeReport extends AbstractReport implements Serializable {
 
     @Parsed(field = "Nome do Arquivo")
     @Schema(

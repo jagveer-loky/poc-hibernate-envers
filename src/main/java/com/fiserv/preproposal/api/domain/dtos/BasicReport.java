@@ -15,8 +15,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class BasicReport extends AbstractReport implements Serializable {
 
-    public static final String NAME = "basic";
-
     @Parsed(field = "Id da Proposta")
     @Schema(
             description = "Id da Proposta",

@@ -1,7 +1,9 @@
 package com.fiserv.preproposal.api.application.resource;
 
 import com.fiserv.preproposal.api.domain.dtos.JobParams;
+import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
 import com.fiserv.preproposal.api.domain.entity.EReport;
+import com.fiserv.preproposal.api.domain.entity.TypeReport;
 import com.fiserv.preproposal.api.domain.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
@@ -22,10 +24,26 @@ public class ReportResource {
 
     private final ReportService reportService;
 
-    @PostMapping
-    public Boolean create(@RequestBody JobParams jobParams) {
+    @PostMapping(TypeReport.BASIC_VALUE)
+    public Boolean createBasicReport(@RequestBody JobParams jobParams) {
+        jobParams.setType(TypeReport.BASIC);
+        reportService.createBasicReport(jobParams);
 
-        reportService.create(jobParams);
+        return true;
+    }
+
+    @PostMapping(TypeReport.COMPLETE_VALUE)
+    public Boolean createCompleteReport(@RequestBody JobParams jobParams) {
+        jobParams.setType(TypeReport.COMPLETE);
+        reportService.createCompleteReport(jobParams);
+
+        return true;
+    }
+
+    @PostMapping(TypeReport.QUANTITATIVE_VALUE)
+    public Boolean createQuantitativeReport(@RequestBody JobParams jobParams) {
+        jobParams.setType(TypeReport.QUANTITATIVE);
+        reportService.createQuantitativeReport(jobParams);
 
         return true;
     }

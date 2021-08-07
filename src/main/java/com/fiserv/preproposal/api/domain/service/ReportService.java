@@ -5,29 +5,60 @@ import com.fiserv.preproposal.api.domain.dtos.CompleteReport;
 import com.fiserv.preproposal.api.domain.dtos.JobParams;
 import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
 import com.fiserv.preproposal.api.domain.entity.EReport;
+import com.fiserv.preproposal.api.domain.entity.TypeReport;
 import com.fiserv.preproposal.api.domain.repository.ProposalRepository;
 import com.fiserv.preproposal.api.domain.repository.ReportRepository;
-import com.fiserv.preproposal.api.domain.repository.report.AbstractReportRepository;
+import com.fiserv.preproposal.api.domain.repository.report.impl.BasicReportRepository;
+import com.fiserv.preproposal.api.domain.repository.report.impl.CompleteReportRepository;
+import com.fiserv.preproposal.api.domain.repository.report.impl.QuantitativeReportRepository;
 import com.fiserv.preproposal.api.infrastrucutre.io.IOService;
 import com.univocity.parsers.annotations.Parsed;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.jobrunr.jobs.annotations.Job;
+import org.jobrunr.scheduling.BackgroundJob;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReportService {
 
-    private final IOService<CompleteReport> ioServiceCompleteReport = new IOService<>();
+    /**
+     *
+     */
+    public final static String DATETIME_PATTERN = "ddMMyyyyHHmmss";
 
-    private final IOService<QuantitativeReport> ioServiceQuantitativeReport = new IOService<>();
+    /**
+     *
+     */
+    @Value("${io.output}")
+    private String path;
+
+    /**
+     *
+     */
+    private String absolutePath;
+
+    /**
+     *
+     */
+    private final Test test = Test.getInstance();
 
     /**
      *
@@ -42,7 +73,17 @@ public class ReportService {
     /**
      *
      */
-    private final AbstractReportRepository fileReportRepository;
+    private final BasicReportRepository basicReportRepository;
+
+    /**
+     *
+     */
+    private final CompleteReportRepository completeReportRepository;
+
+    /**
+     *
+     */
+    private final QuantitativeReportRepository quantitativeReportRepository;
 
     /**
      * @param institution     String
@@ -129,8 +170,69 @@ public class ReportService {
         return proposalRepository.getCountCompleteReport(institution, serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
-    public void create(final JobParams jobParams) {
-        fileReportRepository.create(jobParams);
+    public EReport create(final JobParams jobParams) {
+
+        // Config and set path of the file
+        final String absolutePath = (path + "/" + jobParams.getRequester() + "/" + jobParams.getType() + "-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATETIME_PATTERN))).toLowerCase(); // TODO MASTIGAÇÃO
+
+        // Instancing the jpa Entity to persist
+        // This entity will save the percentage done of the job
+        final EReport eReport = new EReport();
+        eReport.setPath(absolutePath);
+        eReport.setType(jobParams.getType());
+        eReport.setRequester(jobParams.getRequester());
+        eReport.setCountLines(0);
+
+        return eReport;
+    }
+
+    public void createBasicReport(final JobParams jobParams) {
+        BackgroundJob.enqueue(() -> startBasicReport(jobParams, reportRepository.save(create(jobParams))));
+    }
+
+    /**
+     * @param eReport EReport
+     */
+    @Job(name = "Saving in the database")
+    public void saveAsync(final EReport eReport) {
+        if (test.getCurrentLine() < eReport.getCurrentLine() || eReport.getCurrentLine() == eReport.getCountLines()) {
+            test.setCurrentLine(eReport.getCurrentLine());
+            eReport.calculatePercentage();
+            reportRepository.save(eReport);
+        }
+    }
+
+    @Transactional
+    @Job(name = "Generating basic report", retries = 2)
+    public void startBasicReport(final JobParams jobParams, final EReport eReport) {
+        eReport.setCountLines(proposalRepository.getCountBasicReport(jobParams.getInstitution(), jobParams.getServiceContract(), jobParams.getInitialDate(), jobParams.getFinalDate(), jobParams.getNotIn(), jobParams.getResponsesTypes(), jobParams.getStatus()));
+        final Stream<BasicReport> basicStream = proposalRepository.getBasicReport(jobParams.getInstitution(), jobParams.getServiceContract(), jobParams.getInitialDate(), jobParams.getFinalDate(), jobParams.getNotIn(), jobParams.getResponsesTypes(), jobParams.getStatus());
+        basicReportRepository.convertToCSV(basicStream, eReport, jobParams, e -> BackgroundJob.enqueue(() -> saveAsync(e)));
+    }
+
+    public void createCompleteReport(final JobParams jobParams) {
+        BackgroundJob.enqueue(() -> startCompleteReport(jobParams, reportRepository.save(create(jobParams))));
+    }
+
+    @Transactional
+    @Job(name = "Generating complete report", retries = 2)
+    public void startCompleteReport(final JobParams jobParams, final EReport eReport) {
+        eReport.setCountLines(proposalRepository.getCountCompleteReport(jobParams.getInstitution(), jobParams.getServiceContract(), jobParams.getInitialDate(), jobParams.getFinalDate(), jobParams.getNotIn(), jobParams.getResponsesTypes(), jobParams.getStatus()));
+        final Stream<CompleteReport> completeStream = proposalRepository.getCompleteReport(jobParams.getInstitution(), jobParams.getServiceContract(), jobParams.getInitialDate(), jobParams.getFinalDate(), jobParams.getNotIn(), jobParams.getResponsesTypes(), jobParams.getStatus());
+        completeReportRepository.convertToCSV(completeStream, eReport, jobParams, e -> BackgroundJob.enqueue(() -> saveAsync(e)));
+
+    }
+
+    public void createQuantitativeReport(final JobParams jobParams) {
+        BackgroundJob.enqueue(() -> startQuantitativeReport(jobParams, reportRepository.save(create(jobParams))));
+    }
+
+    @Transactional
+    @Job(name = "Generating quantitative report", retries = 2)
+    public void startQuantitativeReport(final JobParams jobParams, final EReport eReport) {
+        eReport.setCountLines(proposalRepository.getCountCompleteReport(jobParams.getInstitution(), jobParams.getServiceContract(), jobParams.getInitialDate(), jobParams.getFinalDate(), jobParams.getNotIn(), jobParams.getResponsesTypes(), jobParams.getStatus()));
+        final Stream<QuantitativeReport> quantitativeStream = proposalRepository.getQuantitativeReport(jobParams.getInstitution(), jobParams.getServiceContract(), jobParams.getInitialDate(), jobParams.getFinalDate(), jobParams.getNotIn(), jobParams.getResponsesTypes(), jobParams.getStatus());
+        quantitativeReportRepository.convertToCSV(quantitativeStream, eReport, jobParams, e -> BackgroundJob.enqueue(() -> saveAsync(e)));
     }
 
     public byte[] downloadById(final Long id) throws NotFound, IOException {
@@ -250,9 +352,9 @@ public class ReportService {
      */
     public Set<String> getFieldsFromReport(final String report) {
         switch (report) {
-            case BasicReport.NAME:
+            case TypeReport.BASIC_VALUE:
                 return extractFieldsFromBasicReport();
-            case CompleteReport.NAME:
+            case TypeReport.COMPLETE_VALUE:
                 return extractFieldsFromCompleteReport();
             default:
                 return extractFieldsFromQuantitativeReport();
@@ -266,9 +368,9 @@ public class ReportService {
      */
     public HashMap<String, Set<String>> getFieldsFromReports() {
         final HashMap<String, Set<String>> fieldsFromReports = new HashMap<>();
-        fieldsFromReports.put(BasicReport.NAME, getFieldsFromReport(BasicReport.NAME));
-        fieldsFromReports.put(CompleteReport.NAME, getFieldsFromReport(CompleteReport.NAME));
-        fieldsFromReports.put(QuantitativeReport.NAME, getFieldsFromReport(QuantitativeReport.NAME));
+        fieldsFromReports.put(TypeReport.BASIC_VALUE, getFieldsFromReport(TypeReport.BASIC_VALUE));
+        fieldsFromReports.put(TypeReport.COMPLETE_VALUE, getFieldsFromReport(TypeReport.COMPLETE_VALUE));
+        fieldsFromReports.put(TypeReport.QUANTITATIVE_VALUE, getFieldsFromReport(TypeReport.QUANTITATIVE_VALUE));
         return fieldsFromReports;
     }
 }

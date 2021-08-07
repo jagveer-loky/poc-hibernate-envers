@@ -4,6 +4,7 @@ import com.fiserv.preproposal.api.domain.dtos.BasicReport;
 import com.fiserv.preproposal.api.domain.dtos.CompleteReport;
 import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
 import com.fiserv.preproposal.api.domain.entity.EReport;
+import com.fiserv.preproposal.api.domain.entity.TypeReport;
 import com.fiserv.preproposal.api.infrastrucutre.io.IOService;
 import com.univocity.parsers.common.processor.RowListProcessor;
 import com.univocity.parsers.csv.CsvParser;
@@ -15,7 +16,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @SpringBootTest
@@ -272,7 +276,7 @@ class ReportServiceTests {
     void testExtractFieldsFromBasicReportClass() {
         final Set<String> fields = this.reportService.extractFieldsFromBasicReport();
         Assertions.assertEquals(fields.size(), IOService.getAttributesFromClass(BasicReport.class).size());
-        Assertions.assertEquals(this.reportService.getFieldsFromReport(BasicReport.NAME).size(), IOService.getAttributesFromClass(BasicReport.class).size());
+        Assertions.assertEquals(this.reportService.getFieldsFromReport(TypeReport.BASIC_VALUE).size(), IOService.getAttributesFromClass(BasicReport.class).size());
     }
 
     /**
@@ -282,7 +286,7 @@ class ReportServiceTests {
     void testExtractFieldsFromCompleteReportClass() {
         final Set<String> fields = this.reportService.extractFieldsFromCompleteReport();
         Assertions.assertEquals(fields.size(), IOService.getAttributesFromClass(CompleteReport.class).size());
-        Assertions.assertEquals(this.reportService.getFieldsFromReport(CompleteReport.NAME).size(), IOService.getAttributesFromClass(CompleteReport.class).size());
+        Assertions.assertEquals(this.reportService.getFieldsFromReport(TypeReport.COMPLETE_VALUE).size(), IOService.getAttributesFromClass(CompleteReport.class).size());
     }
 
     /**
@@ -292,7 +296,7 @@ class ReportServiceTests {
     void testExtractFieldsFromQuantitativeReportClass() {
         final Set<String> fields = this.reportService.extractFieldsFromQuantitativeReport();
         Assertions.assertEquals(fields.size(), IOService.getAttributesFromClass(QuantitativeReport.class).size());
-        Assertions.assertEquals(this.reportService.getFieldsFromReport(QuantitativeReport.NAME).size(), IOService.getAttributesFromClass(QuantitativeReport.class).size());
+        Assertions.assertEquals(this.reportService.getFieldsFromReport(TypeReport.QUANTITATIVE_VALUE).size(), IOService.getAttributesFromClass(QuantitativeReport.class).size());
     }
 
     /**
