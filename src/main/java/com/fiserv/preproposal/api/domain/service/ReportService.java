@@ -7,14 +7,14 @@ import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
 import com.fiserv.preproposal.api.domain.entity.EReport;
 import com.fiserv.preproposal.api.domain.repository.ProposalRepository;
 import com.fiserv.preproposal.api.domain.repository.ReportRepository;
-import com.fiserv.preproposal.api.domain.repository.report.impl.BasicReportRepository;
+import com.fiserv.preproposal.api.domain.repository.report.AbstractReportRepository;
 import com.fiserv.preproposal.api.infrastrucutre.io.IOService;
 import com.univocity.parsers.annotations.Parsed;
 import lombok.RequiredArgsConstructor;
-import org.jobrunr.jobs.annotations.Job;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
@@ -42,7 +42,7 @@ public class ReportService {
     /**
      *
      */
-    private final BasicReportRepository fileReportRepository;
+    private final AbstractReportRepository fileReportRepository;
 
     /**
      * @param institution     String
@@ -135,7 +135,7 @@ public class ReportService {
 
     public byte[] downloadById(final Long id) throws NotFound, IOException {
         final EReport eReport = reportRepository.findById(id).orElseThrow(NotFound::new);
-        return Files.readAllBytes(fileReportRepository.read(eReport.getPath()).toPath());
+        return Files.readAllBytes(new File(eReport.getPath()).toPath());
     }
 
     public List<EReport> findByRequester(final String requester) {

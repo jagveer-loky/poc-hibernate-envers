@@ -26,7 +26,7 @@ import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ApplicationEnum;
 import com.fiserv.preproposal.api.infrastrucutre.aid.enums.EventActivityEnum;
 import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ResponsesAndExceptionEnum;
 import com.fiserv.preproposal.api.application.pagination.DResponse;
-import com.fiserv.preproposal.api.infrastrucutre.aid.LogUtil;
+import com.fiserv.preproposal.api.infrastrucutre.aid.util.LogUtil;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice

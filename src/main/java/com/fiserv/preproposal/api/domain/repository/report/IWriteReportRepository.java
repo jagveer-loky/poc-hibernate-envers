@@ -1,9 +1,11 @@
 package com.fiserv.preproposal.api.domain.repository.report;
 
 import com.fiserv.preproposal.api.domain.dtos.JobParams;
+import com.fiserv.preproposal.api.domain.entity.EReport;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Set;
 
 public interface IWriteReportRepository {
 
@@ -15,10 +17,10 @@ public interface IWriteReportRepository {
     /**
      * @param jobParams JobParams
      */
-    void runAsync(final JobParams jobParams);
+    void runAsync(final EReport eReport, final JobParams jobParams);
 
     /**
-     * @param path String
+     * @return Set<String>
      */
-    void remove(final String path);
+    String[] extractFieldsToIgnore(final JobParams jobParam);
 }

@@ -15,7 +15,7 @@ import com.fiserv.preproposal.api.application.exceptions.UnauthorizedException;
 import com.fiserv.preproposal.api.domain.dtos.MessageSourceDTO;
 import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ResponsesAndExceptionEnum;
 import com.fiserv.preproposal.api.application.pagination.DSecurity;
-import com.fiserv.preproposal.api.infrastrucutre.aid.MessageSourceUtil;
+import com.fiserv.preproposal.api.infrastrucutre.aid.util.MessageSourceUtil;
 
 @Component
 public class FDSecurity {

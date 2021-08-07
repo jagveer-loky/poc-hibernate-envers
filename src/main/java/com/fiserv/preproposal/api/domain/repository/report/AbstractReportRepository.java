@@ -6,7 +6,6 @@ import com.fiserv.preproposal.api.domain.repository.ProposalRepository;
 import com.fiserv.preproposal.api.domain.repository.ReportRepository;
 import com.fiserv.preproposal.api.domain.service.Test;
 import com.fiserv.preproposal.api.infrastrucutre.normalizer.Normalizer;
-import com.univocity.parsers.annotations.Parsed;
 import com.univocity.parsers.common.processor.BeanWriterProcessor;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
@@ -20,25 +19,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.time.LocalDate;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.fiserv.preproposal.api.infrastrucutre.aid.util.ListUtil.toArray;
+
 @Slf4j
-public abstract class AbstractReportRepository<T> implements IReadReportRepository, IWriteReportRepository {
+public abstract class AbstractReportRepository<T> implements IWriteReportRepository {
 
     /**
      *
      */
     public final static String DATETIME_PATTERN = "ddMMyyyyHHmmss";
 
-    /*
-
+    /**
+     *
      */
     private final Normalizer<T> normalizer = new Normalizer<>();
 
@@ -63,41 +60,35 @@ public abstract class AbstractReportRepository<T> implements IReadReportReposito
     /**
      *
      */
-    @Setter
-    @Getter
     @Value("${io.output}")
     private String path;
 
     /**
      *
      */
-    @Setter
-    @Getter
-    private String fullPath;
-
-    /**
-     * @param path String
-     */
-    @Override
-    public void remove(final String path) {
-
-    }
-
-    /**
-     * @param path String
-     * @return byte[]
-     */
-    @Override
-    public File read(final String path) {
-        return new File(path);
-    }
+    private String absolutePath;
 
     /**
      * @param jobParams JobParams
      */
     @Override
     public void create(final JobParams jobParams) {
-        runAsync(jobParams);
+
+        // Config and set path of the file
+        absolutePath = (path + "/" + jobParams.getRequester() + "/" + jobParams.getType() + "-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATETIME_PATTERN))).toLowerCase(); // TODO MASTIGAÇÃO
+        log.info(String.format("Generating basic report to requester '%s' in the '%s' file", jobParams.getRequester(), absolutePath));
+
+        // Instancing the jpa Entity to persist
+        // This entity will save the percentage done of the job
+        final EReport eReport = new EReport();
+        eReport.setPath(absolutePath);
+        eReport.setType(jobParams.getType());
+        eReport.setRequester(jobParams.getRequester());
+        eReport.setCountLines(0);
+        eReport.setRequestedDate(LocalDateTime.now()); //TODO remover
+        reportRepository.save(eReport);
+
+        runAsync(reportRepository.save(eReport), jobParams);
     }
 
     /**
@@ -108,7 +99,7 @@ public abstract class AbstractReportRepository<T> implements IReadReportReposito
      */
     public File convertToCSV(@NonNull final Stream<T> objects, final EReport eReport, final JobParams jobParams) {
 
-        final File file = new File(this.getFullPath());
+        final File file = new File(absolutePath);
 
         final CsvWriterSettings writerSettings = new CsvWriterSettings();
         writerSettings.getFormat().setLineSeparator("\r\n");
@@ -116,11 +107,10 @@ public abstract class AbstractReportRepository<T> implements IReadReportReposito
         writerSettings.setQuoteAllFields(true);
         writerSettings.setColumnReorderingEnabled(true);
         writerSettings.setHeaderWritingEnabled(true);
-        writerSettings.setHeaders(toList(jobParams.getFields()));
-        final Collection<String> fieldsToIgnore = extractFieldsToIgnore(jobParams.getBeanType(), jobParams.getFields()); //TODO vai dar pau
-        writerSettings.excludeFields(toList(fieldsToIgnore));
+        writerSettings.setHeaders(toArray(jobParams.getFields()));
+        writerSettings.excludeFields(extractFieldsToIgnore(jobParams));
 
-        final BeanWriterProcessor<T> processor = new BeanWriterProcessor((jobParams.getBeanType())); //TODO vai dar pau
+        final BeanWriterProcessor<T> processor = new BeanWriterProcessor((jobParams.getBeanType()));
         writerSettings.setRowWriterProcessor(processor);
 
         final CsvWriter csvWriter = new CsvWriter(file, writerSettings);
@@ -161,61 +151,5 @@ public abstract class AbstractReportRepository<T> implements IReadReportReposito
             this.reportRepository.save(eReport);
         }
     }
-
-    /**
-     * @param list Collection<String>
-     * @return String[]
-     */
-    private static String[] toList(final Collection<String> list) {
-        if (list == null)
-            return new String[]{};
-        return list.toArray(new String[0]);
-    }
-
-    /**
-     * TODO construct test
-     *
-     * @param beanType Class<T>
-     * @param fields   Set<String>
-     * @return Set<String>
-     */
-    public Set<String> extractFieldsToIgnore(final Class<T> beanType, final Collection<String> fields) {
-        if (fields == null || fields.isEmpty())
-            return new HashSet<>();
-        return extractFieldsFromReport(beanType).stream().filter(field -> fields.stream().noneMatch(innerField -> innerField.equals(field))).collect(Collectors.toSet());
-    }
-
-    /**
-     * @return Set<String>
-     */
-    public Set<String> extractFieldsFromReport(final Class<T> beanType) {
-        final Set<String> fields = new HashSet<>();
-        try {
-            for (final String attribute : getAttributesFromClass(beanType)) {
-                final Parsed annotation = beanType.getDeclaredField(attribute).getAnnotation(Parsed.class);
-                fields.add(annotation.field()[0]);
-            }
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-        return fields;
-    }
-
-    /**
-     * Extract the attributes from class
-     *
-     * @return Set<String>
-     */
-    public static Set<String> getAttributesFromClass(final Class<?> clazz) {
-
-        return Arrays.stream(clazz.getDeclaredMethods())
-                .map(Method::getName)
-                .filter(method -> method.contains("get") || method.contains("set"))
-                .map(method -> {
-                    final String attribute = method.replace("get", "").replace("set", "");
-                    return attribute.substring(0, 1).toLowerCase() + attribute.substring(1);
-                }).collect(Collectors.toSet());
-    }
-
 
 }

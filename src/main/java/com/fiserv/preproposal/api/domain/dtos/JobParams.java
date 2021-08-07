@@ -37,6 +37,8 @@ public class JobParams implements Serializable {
     private Collection<String> status;
     private Collection<String> fields;
 
+    private Collection<String> fieldsToIgnore;
+
     /**
      * @return institution String
      */

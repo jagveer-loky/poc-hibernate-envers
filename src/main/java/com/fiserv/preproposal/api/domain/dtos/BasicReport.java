@@ -7,11 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BasicReport {
+public class BasicReport extends AbstractReport implements Serializable {
 
     public static final String NAME = "basic";
 
