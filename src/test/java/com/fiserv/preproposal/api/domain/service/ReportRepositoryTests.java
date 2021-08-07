@@ -38,7 +38,7 @@ class ReportRepositoryTests {
         // This entity will save the percentage done of the job
         final EReport eReport = new EReport();
         eReport.setPath("getFullPath()");
-        eReport.setOwner("ownerJob");
+        eReport.setRequester("requesterName");
         eReport.setCountLines(123);
         reportRepository.save(eReport);
     }

@@ -93,32 +93,20 @@ public abstract class AbstractReportRepository<T> implements IReadReportReposito
     }
 
     /**
-     * @param ownerJob        String
-     * @param institution     String
-     * @param serviceContract String
-     * @param initialDate     LocalDate
-     * @param finalDate       LocalDate
-     * @param notIn           Boolean
-     * @param responsesTypes  Collection<String>
-     * @param status          Collection<String>
-     * @param fields          Collection<String>
+     * @param jobParams JobParams
      */
     @Override
-    public void create(final String ownerJob, final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status, final Collection<String> fields) {
-
-        // Extract the params to putting to job
-        final JobParams jobParams = JobParams.builder().institution(institution).serviceContract(serviceContract).initialDate(initialDate).finalDate(finalDate).notIn(notIn).responsesTypes(responsesTypes).status(status).fields(fields).build();
-
-        run(ownerJob, jobParams);
+    public void create(final JobParams jobParams) {
+        runAsync(jobParams);
     }
 
     /**
-     * @param objects  Stream<T>
-     * @param beanType Class<T>
-     * @param fields   Collection<String>
+     * @param objects   Stream<T> To running when writing file. At each new iteration, a new register is written in file.
+     * @param eReport   EReport to saving the progress of the writing file
+     * @param jobParams JobParams to extract bean type (type report) and fields to write in file
      * @return byte[]
      */
-    public File convertToCSV(@NonNull final Stream<T> objects, final EReport eReport, final Class<T> beanType, final Collection<String> fields) {
+    public File convertToCSV(@NonNull final Stream<T> objects, final EReport eReport, final JobParams jobParams) {
 
         final File file = new File(this.getFullPath());
 
@@ -128,11 +116,11 @@ public abstract class AbstractReportRepository<T> implements IReadReportReposito
         writerSettings.setQuoteAllFields(true);
         writerSettings.setColumnReorderingEnabled(true);
         writerSettings.setHeaderWritingEnabled(true);
-        writerSettings.setHeaders(toList(fields));
-        final Collection<String> fieldsToIgnore = extractFieldsToIgnore(beanType, fields);
+        writerSettings.setHeaders(toList(jobParams.getFields()));
+        final Collection<String> fieldsToIgnore = extractFieldsToIgnore(jobParams.getBeanType(), jobParams.getFields()); //TODO vai dar pau
         writerSettings.excludeFields(toList(fieldsToIgnore));
 
-        final BeanWriterProcessor<T> processor = new BeanWriterProcessor<>(beanType);
+        final BeanWriterProcessor<T> processor = new BeanWriterProcessor((jobParams.getBeanType())); //TODO vai dar pau
         writerSettings.setRowWriterProcessor(processor);
 
         final CsvWriter csvWriter = new CsvWriter(file, writerSettings);
@@ -144,7 +132,7 @@ public abstract class AbstractReportRepository<T> implements IReadReportReposito
 
             csvWriter.processRecord(normalizer.normalize(object));
 
-            save(eReport);
+            saveAsync(eReport);
 
         });
 
@@ -156,20 +144,21 @@ public abstract class AbstractReportRepository<T> implements IReadReportReposito
     /**
      * @param eReport EReport
      */
-    public void save(final EReport eReport) {
-        BackgroundJob.enqueue(() -> saveAsync(UUID.randomUUID().toString(), eReport));
+    public void saveAsync(final EReport eReport) {
+        BackgroundJob.enqueue(() -> saveAsync(String.valueOf(eReport.getCurrentLine()), eReport));
     }
 
     /**
-     * @param job     String
+     * @param jobName String
      * @param eReport EReport
      */
-    @Job(name = "name %0")
-    public void saveAsync(final String job /*todo*/, final EReport eReport) {
+    @Job(name = "Saving in the database %0")
+    public void saveAsync(final String jobName, final EReport eReport) {
+        log.info("Saving in the database " + jobName);
         if (test.getCurrentLine() < eReport.getCurrentLine() || eReport.getCurrentLine() == eReport.getCountLines()) {
             test.setCurrentLine(eReport.getCurrentLine());
             eReport.calculatePercentage();
-            this.reportRepository.saveAndFlush(eReport); //TODO
+            this.reportRepository.save(eReport);
         }
     }
 

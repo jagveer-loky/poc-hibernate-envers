@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface ReportRepository extends JpaRepository<EReport, Long> {
 
-    List<EReport> findByOwner(final String owner);
+    List<EReport> findByRequester(final String requester);
 }

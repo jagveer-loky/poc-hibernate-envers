@@ -1,10 +1,16 @@
 package com.fiserv.preproposal.api.domain.dtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fiserv.preproposal.api.domain.entity.TypeReport;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -16,9 +22,15 @@ import java.util.Objects;
 @AllArgsConstructor
 public class JobParams implements Serializable {
 
+    private static final String DATE_TIME_PATTERN = "dd/MM/yyyy";
+
+    private String requester;
+    private TypeReport type;
     private String institution;
     private String serviceContract;
+    @JsonFormat(pattern = DATE_TIME_PATTERN)
     private LocalDate initialDate;
+    @JsonFormat(pattern = DATE_TIME_PATTERN)
     private LocalDate finalDate;
     private Boolean notIn;
     private Collection<String> responsesTypes;
@@ -51,6 +63,13 @@ public class JobParams implements Serializable {
      */
     public Collection<String> getStatus() {
         return (Objects.isNull(status) || status.isEmpty()) ? null : status;
+    }
+
+    /**
+     * @return Class
+     */
+    public Class getBeanType() {
+        return type.getType();
     }
 
     /**

@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "TB_REPORT")
-public class EReport {
+public class EReport implements Serializable {
 
     @Id
     @GeneratedValue(generator = "TB_REPORT_SEQ")
@@ -36,8 +37,8 @@ public class EReport {
      *
      */
     @NotNull
-    @Column(name = "OWNER", nullable = false)
-    private String owner;
+    @Column(name = "REQUESTER", nullable = false)
+    private String requester;
 
     /**
      *
@@ -67,10 +68,14 @@ public class EReport {
     private int countLines;
 
     /**
-     *
+     * TODO Verificar se dá pra deixar no singleton
      */
     @Transient
     private int currentLine;
+
+    @Column(name = "TYPE")
+    @Enumerated(value = EnumType.STRING)
+    private TypeReport type;
 
     /**
      *

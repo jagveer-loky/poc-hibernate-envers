@@ -129,8 +129,8 @@ public class ReportService {
         return proposalRepository.getCountCompleteReport(institution, serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
-    public void create(final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status, final Collection<String> fields) {
-        fileReportRepository.create("usuarioTal", institution, serviceContract, initialDate, finalDate, notIn, responsesTypes, status, fields);
+    public void create(final JobParams jobParams) {
+        fileReportRepository.create(jobParams);
     }
 
     public byte[] downloadById(final Long id) throws NotFound, IOException {
@@ -138,8 +138,8 @@ public class ReportService {
         return Files.readAllBytes(fileReportRepository.read(eReport.getPath()).toPath());
     }
 
-    public List<EReport> findByOwner(final String owner) {
-        return this.reportRepository.findByOwner(owner);
+    public List<EReport> findByRequester(final String requester) {
+        return this.reportRepository.findByRequester(requester);
     }
 
     /**
@@ -174,27 +174,27 @@ public class ReportService {
         return new IOService<CompleteReport>().convertToCSV(stream, CompleteReport.class, fields);
     }
 
-    /**
-     * @param jobOwner  String
-     * @param jobParams JobParams
-     */
-    @Job(name = "getAsyncQuantitativeCSVReport %0", retries = 2)
-//    @Transactional(readOnly = true)
-    public void getAsyncQuantitativeCSVReport(final String jobOwner, final JobParams jobParams) {
-        final Stream<QuantitativeReport> stream = this.getQuantitativeReport(jobParams.getInstitution(), jobParams.getServiceContract(), jobParams.getInitialDate(), jobParams.getFinalDate(), jobParams.getNotIn(), jobParams.getResponsesTypes(), jobParams.getStatus());
-        this.ioServiceQuantitativeReport.convertToCSV(stream, QuantitativeReport.class, jobParams.getFields());
-    }
-
-    /**
-     * @param jobOwner  String
-     * @param jobParams JobParams
-     */
-    @Job(name = "getAsyncQuantitativeCSVReport %0", retries = 2)
-//    @Transactional(readOnly = true)
-    public void getAsyncCompleteCSVReport(final String jobOwner, final JobParams jobParams) {
-        final Stream<CompleteReport> stream = this.getCompleteReport(jobParams.getInstitution(), jobParams.getServiceContract(), jobParams.getInitialDate(), jobParams.getFinalDate(), jobParams.getNotIn(), jobParams.getResponsesTypes(), jobParams.getStatus());
-        this.ioServiceCompleteReport.convertToCSV(stream, CompleteReport.class, jobParams.getFields());
-    }
+//    /**
+//     * @param jobOwner  String
+//     * @param jobParams JobParams
+//     */
+//    @Job(name = "getAsyncQuantitativeCSVReport %0", retries = 2)
+////    @Transactional(readOnly = true)
+//    public void getAsyncQuantitativeCSVReport(final String jobOwner, final JobParams jobParams) {
+//        final Stream<QuantitativeReport> stream = this.getQuantitativeReport(jobParams.getInstitution(), jobParams.getServiceContract(), jobParams.getInitialDate(), jobParams.getFinalDate(), jobParams.getNotIn(), jobParams.getResponsesTypes(), jobParams.getStatus());
+//        this.ioServiceQuantitativeReport.convertToCSV(stream, QuantitativeReport.class, jobParams.getFields());
+//    }
+//
+//    /**
+//     * @param jobOwner  String
+//     * @param jobParams JobParams
+//     */
+//    @Job(name = "getAsyncQuantitativeCSVReport %0", retries = 2)
+////    @Transactional(readOnly = true)
+//    public void getAsyncCompleteCSVReport(final String jobOwner, final JobParams jobParams) {
+//        final Stream<CompleteReport> stream = this.getCompleteReport(jobParams.getInstitution(), jobParams.getServiceContract(), jobParams.getInitialDate(), jobParams.getFinalDate(), jobParams.getNotIn(), jobParams.getResponsesTypes(), jobParams.getStatus());
+//        this.ioServiceCompleteReport.convertToCSV(stream, CompleteReport.class, jobParams.getFields());
+//    }
 
     /**
      * @return Set<String>

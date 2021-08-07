@@ -8,23 +8,14 @@ import java.util.Collection;
 public interface IWriteReportRepository {
 
     /**
-     * @param ownerJob        String
-     * @param institution     String
-     * @param serviceContract String
-     * @param initialDate     LocalDate
-     * @param finalDate       LocalDate
-     * @param notIn           Boolean
-     * @param responsesTypes  Collection<String>
-     * @param status          Collection<String>
-     * @param fields          Collection<String>
-     */
-    void create(final String ownerJob, final String institution, final String serviceContract, final LocalDate initialDate, final LocalDate finalDate, final Boolean notIn, final Collection<String> responsesTypes, final Collection<String> status, final Collection<String> fields);
-
-    /**
-     * @param ownerJob  String
      * @param jobParams JobParams
      */
-    void run(final String ownerJob, final JobParams jobParams);
+    void create(final JobParams jobParams);
+
+    /**
+     * @param jobParams JobParams
+     */
+    void runAsync(final JobParams jobParams);
 
     /**
      * @param path String

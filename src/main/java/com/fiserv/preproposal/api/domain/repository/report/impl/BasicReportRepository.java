@@ -20,47 +20,48 @@ import java.util.stream.Stream;
 public class BasicReportRepository extends AbstractReportRepository<BasicReport> {
 
     /**
-     * @param ownerJob  String
      * @param jobParams JobParams
      */
     @Override
-    public void run(final String ownerJob, final JobParams jobParams) {
+    public void runAsync(final JobParams jobParams) {
         // Config and set path of the file
-        setFullPath(getPath() + "/" + ownerJob + "/" + BasicReport.NAME + "/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATETIME_PATTERN)));
-        log.info(String.format("Generating basic report to user '%s' in the '%s' file", ownerJob, getFullPath()));
+        setFullPath((getPath() + "/" + jobParams.getRequester() + "/" + jobParams.getType() + "-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATETIME_PATTERN))).toLowerCase()); // TODO MASTIGAÇÃO
+        log.info(String.format("Generating basic report to requester '%s' in the '%s' file", jobParams.getRequester(), getFullPath()));
 
         // Instancing the jpa Entity to persist
         // This entity will save the percentage done of the job
         final EReport eReport = new EReport();
         eReport.setPath(getFullPath());
-        eReport.setOwner(ownerJob);
+        eReport.setType(jobParams.getType());
+        eReport.setRequester(jobParams.getRequester());
         eReport.setCountLines(0);
         eReport.setRequestedDate(LocalDateTime.now());
         reportRepository.save(eReport);
 
-        // Start the job
-        BackgroundJob.enqueue(() -> runAsync(ownerJob, eReport, jobParams));
+        // TODO por o stream Start the job
+        BackgroundJob.enqueue(() -> runAsync(jobParams.getRequester(), eReport, jobParams));
     }
 
     @Transactional
     @Job(name = "Generating basic report to %0", retries = 2)
-    public void runAsync(final String ownerJob, final EReport eReport, final JobParams jobParams) {
+    public void runAsync(final String jobName, final EReport eReport, final JobParams jobParams) {
 
         // Get count of the report
+        // todo meter if aqui
         final int countLines = proposalRepository.getCountBasicReport(jobParams.getInstitution(), jobParams.getServiceContract(), jobParams.getInitialDate(), jobParams.getFinalDate(), jobParams.getNotIn(), jobParams.getResponsesTypes(), jobParams.getStatus());
 
         // Set count lines in tb
         eReport.setCountLines(countLines);
 
         // Save async report
-        save(eReport);
+        saveAsync(eReport);
 
         // Get data as stream
-        final Stream<BasicReport> stream = proposalRepository.getBasicReport(jobParams.getInstitution(), jobParams.getServiceContract(), jobParams.getInitialDate(), jobParams.getFinalDate(), jobParams.getNotIn(), jobParams.getResponsesTypes(), jobParams.getStatus());
+        final Stream<BasicReport> /*TODO acoplamento */stream = proposalRepository.getBasicReport(jobParams.getInstitution(), jobParams.getServiceContract(), jobParams.getInitialDate(), jobParams.getFinalDate(), jobParams.getNotIn(), jobParams.getResponsesTypes(), jobParams.getStatus());
 
-        // Write the stream data in to the file
-        convertToCSV(stream, eReport, BasicReport.class, jobParams.getFields());
-        log.info(String.format("Generated basic report to user '%s' in the '%s' file", ownerJob, getFullPath()));
+        // Write the stream data in to the file TODO passar jpParams.getBeanType
+        convertToCSV(stream, eReport, jobParams);
+        log.info(String.format("Generated basic report to user '%s' in the '%s' file", jobName, getFullPath()));
 
     }
 }
