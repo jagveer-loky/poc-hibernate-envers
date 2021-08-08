@@ -1,7 +1,6 @@
 package com.fiserv.preproposal.api.domain.repository.report;
 
 import com.fiserv.preproposal.api.domain.dtos.ReportParams;
-import com.fiserv.preproposal.api.domain.entity.EReport;
 import com.fiserv.preproposal.api.infrastrucutre.normalizer.Normalizer;
 import com.univocity.parsers.common.processor.BeanWriterProcessor;
 import com.univocity.parsers.csv.CsvWriter;
@@ -10,6 +9,8 @@ import lombok.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -23,13 +24,13 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
     private final Normalizer<T> normalizer = new Normalizer<>();
 
     /**
-     * @param stream       Stream<T> To running when writing file. At each new iteration, a new register is written in file.
-     * @param file         File who will written
-     * @param reportParams JobParams to extract bean type (type report) and fields to write in file
-     * @return byte[]
+     * @param stream   Stream<T> To running when writing file. At each new iteration, a new register is written in file.
+     * @param file     File who will written
+     * @param fields   Fields to write in file
+     * @param consumer TODO must be complemented
      */
     @Transactional
-    public void convertToCSV(@NonNull final Stream<T> stream, final File file, final ReportParams reportParams, final Consumer<T> consumer) {
+    public void convertToCSV(@NonNull final Stream<T> stream, final File file, final Collection<String> fields, final Consumer<T> consumer) {
 
         final CsvWriterSettings writerSettings = new CsvWriterSettings();
         writerSettings.getFormat().setLineSeparator("\r\n");
@@ -37,11 +38,10 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
         writerSettings.setQuoteAllFields(true);
         writerSettings.setColumnReorderingEnabled(true);
         writerSettings.setHeaderWritingEnabled(true);
-        writerSettings.setHeaders(toArray(reportParams.getFields()));
-        writerSettings.excludeFields(extractFieldsToIgnore(reportParams));
+        writerSettings.setHeaders(toArray(fields));
+        writerSettings.excludeFields(extractFieldsToIgnore(toArray(fields)));
 
-        final BeanWriterProcessor<T> processor = new BeanWriterProcessor((reportParams.getBeanType()));
-        writerSettings.setRowWriterProcessor(processor);
+        writerSettings.setRowWriterProcessor(configProcessor());
 
         final CsvWriter csvWriter = new CsvWriter(file, writerSettings);
 

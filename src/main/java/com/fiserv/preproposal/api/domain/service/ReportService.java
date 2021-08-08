@@ -83,7 +83,7 @@ public class ReportService {
 
         final Stream<BasicReport> basicStream = proposalRepository.getBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
-        basicReportRepository.convertToCSV(basicStream, new File(eReport.getPath()), reportParams, basicReport -> {
+        basicReportRepository.convertToCSV(basicStream, new File(eReport.getPath()), reportParams.getFields(), basicReport -> {
 
             eReport.setCurrentLine(eReport.getCurrentLine() + 1);
 
@@ -99,7 +99,7 @@ public class ReportService {
 
         final Stream<CompleteReport> completeStream = proposalRepository.getCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
-        completeReportRepository.convertToCSV(completeStream, new File(eReport.getPath()), reportParams, completeReport -> {
+        completeReportRepository.convertToCSV(completeStream, new File(eReport.getPath()), reportParams.getFields(), completeReport -> {
 
             eReport.setCurrentLine(eReport.getCurrentLine() + 1);
 
@@ -111,11 +111,11 @@ public class ReportService {
     @Job(name = "Generating quantitative report", retries = 2)
     public void startQuantitativeReport(final ReportParams reportParams, final EReport eReport) {
 
-        eReport.setCountLines(proposalRepository.getCountCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
+        eReport.setCountLines(proposalRepository.getCountQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
 
         final Stream<QuantitativeReport> quantitativeStream = proposalRepository.getQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
-        quantitativeReportRepository.convertToCSV(quantitativeStream, new File(eReport.getPath()), reportParams, quantitativeReport -> {
+        quantitativeReportRepository.convertToCSV(quantitativeStream, new File(eReport.getPath()), reportParams.getFields(), quantitativeReport -> {
 
             eReport.setCurrentLine(eReport.getCurrentLine() + 1);
 
