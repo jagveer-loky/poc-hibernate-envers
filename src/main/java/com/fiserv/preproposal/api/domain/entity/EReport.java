@@ -82,6 +82,7 @@ public class EReport implements Serializable {
      */
     @PrePersist
     public void prePersist() {
+        countLines = 0;
         requestedDate = LocalDateTime.now();
         calculatePercentage();
     }

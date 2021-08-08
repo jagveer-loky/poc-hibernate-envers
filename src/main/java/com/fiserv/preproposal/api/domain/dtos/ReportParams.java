@@ -20,7 +20,7 @@ import java.util.Objects;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class JobParams implements Serializable {
+public class ReportParams implements Serializable {
 
     private static final String DATE_TIME_PATTERN = "dd/MM/yyyy";
 

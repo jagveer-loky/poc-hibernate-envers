@@ -1,12 +1,8 @@
 package com.fiserv.preproposal.api.domain.repository.report.impl;
 
-import com.fiserv.preproposal.api.domain.dtos.BasicReport;
-import com.fiserv.preproposal.api.domain.dtos.JobParams;
+import com.fiserv.preproposal.api.domain.dtos.ReportParams;
 import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
 import com.fiserv.preproposal.api.domain.repository.report.AbstractReportRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
@@ -17,12 +13,12 @@ import static com.fiserv.preproposal.api.infrastrucutre.aid.util.ListUtil.toArra
 public class QuantitativeReportRepository extends AbstractReportRepository<QuantitativeReport> {
 
     /**
-     * @param jobParams JobParams
+     * @param reportParams JobParams
      * @return String[]
      */
     @Override
-    public String[] extractFieldsToIgnore(final JobParams jobParams) {
-        Assert.notNull(jobParams, "JobParams cannot be null");
-        return toArray(new QuantitativeReport().extractFields().stream().filter(field -> jobParams.getFields() != null && jobParams.getFields().stream().noneMatch(innerField -> innerField.equals(field))).collect(Collectors.toSet()));
+    public String[] extractFieldsToIgnore(final ReportParams reportParams) {
+        Assert.notNull(reportParams, "JobParams cannot be null");
+        return toArray(new QuantitativeReport().extractFields().stream().filter(field -> reportParams.getFields() != null && reportParams.getFields().stream().noneMatch(innerField -> innerField.equals(field))).collect(Collectors.toSet()));
     }
 }
