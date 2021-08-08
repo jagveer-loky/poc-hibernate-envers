@@ -22,7 +22,7 @@ public class EReport implements Serializable {
 
     @Id
     @GeneratedValue(generator = "TB_REPORT_SEQ")
-    @SequenceGenerator(name = "TB_REPORT_SEQ" , sequenceName = "TB_REPORT_SEQ", allocationSize = 1)
+    @SequenceGenerator(name = "TB_REPORT_SEQ", sequenceName = "TB_REPORT_SEQ", allocationSize = 1)
     @Column(name = "ID", nullable = false)
     private Long id;
 
@@ -83,15 +83,17 @@ public class EReport implements Serializable {
     @PrePersist
     public void prePersist() {
         requestedDate = LocalDateTime.now();
-        concludedPercentage = 0;
+        calculatePercentage();
     }
 
     /**
      *
      */
     public void calculatePercentage() {
-        this.concludedPercentage = (currentLine * 100) / countLines;
-        if (this.concludedPercentage == 100)
+        concludedPercentage = countLines == 0 ? concludedPercentage : (currentLine * 100) / countLines;
+        if (concludedPercentage == 100)
             concludedDate = LocalDateTime.now();
+        if (concludedDate != null)
+            concludedPercentage = 100;
     }
 }

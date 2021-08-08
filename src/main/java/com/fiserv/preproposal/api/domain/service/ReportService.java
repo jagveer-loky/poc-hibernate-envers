@@ -18,12 +18,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.jobrunr.jobs.annotations.Job;
 import org.jobrunr.scheduling.BackgroundJob;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.context.WebApplicationContext;
 
+import javax.servlet.ServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,7 +33,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -54,11 +55,6 @@ public class ReportService {
      *
      */
     private String absolutePath;
-
-    /**
-     *
-     */
-    private final Test test = Test.getInstance();
 
     /**
      *
@@ -170,7 +166,7 @@ public class ReportService {
         return proposalRepository.getCountCompleteReport(institution, serviceContract, initialDate, finalDate, !Objects.isNull(notIn) && notIn, (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes, (Objects.isNull(status) || status.isEmpty()) ? null : status);
     }
 
-    public EReport create(final JobParams jobParams) {
+    public EReport createEReportFromJobParams(final JobParams jobParams) {
 
         // Config and set path of the file
         final String absolutePath = (path + "/" + jobParams.getRequester() + "/" + jobParams.getType() + "-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATETIME_PATTERN))).toLowerCase(); // TODO MASTIGAÇÃO
@@ -186,19 +182,23 @@ public class ReportService {
         return eReport;
     }
 
-    public void createBasicReport(final JobParams jobParams) {
-        BackgroundJob.enqueue(() -> startBasicReport(jobParams, reportRepository.save(create(jobParams))));
+    @Transactional
+    public EReport save(final EReport eReport) {
+        return this.reportRepository.save(eReport);
     }
+
+    int teste = 0;
 
     /**
      * @param eReport EReport
      */
     @Job(name = "Saving in the database")
     public void saveAsync(final EReport eReport) {
-        if (test.getCurrentLine() < eReport.getCurrentLine() || eReport.getCurrentLine() == eReport.getCountLines()) {
-            test.setCurrentLine(eReport.getCurrentLine());
+
+        if (teste < eReport.getCurrentLine() || eReport.getCurrentLine() == eReport.getCountLines()) {
+            teste = eReport.getCurrentLine();
             eReport.calculatePercentage();
-            reportRepository.save(eReport);
+            save(eReport);
         }
     }
 
@@ -207,11 +207,11 @@ public class ReportService {
     public void startBasicReport(final JobParams jobParams, final EReport eReport) {
         eReport.setCountLines(proposalRepository.getCountBasicReport(jobParams.getInstitution(), jobParams.getServiceContract(), jobParams.getInitialDate(), jobParams.getFinalDate(), jobParams.getNotIn(), jobParams.getResponsesTypes(), jobParams.getStatus()));
         final Stream<BasicReport> basicStream = proposalRepository.getBasicReport(jobParams.getInstitution(), jobParams.getServiceContract(), jobParams.getInitialDate(), jobParams.getFinalDate(), jobParams.getNotIn(), jobParams.getResponsesTypes(), jobParams.getStatus());
-        basicReportRepository.convertToCSV(basicStream, eReport, jobParams, e -> BackgroundJob.enqueue(() -> saveAsync(e)));
-    }
-
-    public void createCompleteReport(final JobParams jobParams) {
-        BackgroundJob.enqueue(() -> startCompleteReport(jobParams, reportRepository.save(create(jobParams))));
+//        basicReportRepository.convertToCSV(basicStream, eReport, jobParams, e -> BackgroundJob.enqueue(() -> saveAsync(e)));
+        basicReportRepository.convertToCSV(basicStream, eReport, jobParams, eRport -> {
+            eReport.setCurrentLine(eReport.getCurrentLine() + 1);
+            BackgroundJob.enqueue(() -> saveAsync(eRport));
+        });
     }
 
     @Transactional
@@ -221,10 +221,6 @@ public class ReportService {
         final Stream<CompleteReport> completeStream = proposalRepository.getCompleteReport(jobParams.getInstitution(), jobParams.getServiceContract(), jobParams.getInitialDate(), jobParams.getFinalDate(), jobParams.getNotIn(), jobParams.getResponsesTypes(), jobParams.getStatus());
         completeReportRepository.convertToCSV(completeStream, eReport, jobParams, e -> BackgroundJob.enqueue(() -> saveAsync(e)));
 
-    }
-
-    public void createQuantitativeReport(final JobParams jobParams) {
-        BackgroundJob.enqueue(() -> startQuantitativeReport(jobParams, reportRepository.save(create(jobParams))));
     }
 
     @Transactional

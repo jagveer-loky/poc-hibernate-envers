@@ -6,11 +6,13 @@ import com.fiserv.preproposal.api.domain.entity.EReport;
 import com.fiserv.preproposal.api.domain.entity.TypeReport;
 import com.fiserv.preproposal.api.domain.service.ReportService;
 import lombok.RequiredArgsConstructor;
+import org.jobrunr.scheduling.BackgroundJob;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletRequest;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -25,9 +27,10 @@ public class ReportResource {
     private final ReportService reportService;
 
     @PostMapping(TypeReport.BASIC_VALUE)
-    public Boolean createBasicReport(@RequestBody JobParams jobParams) {
+    public Boolean createBasicReport( @RequestBody JobParams jobParams) {
         jobParams.setType(TypeReport.BASIC);
-        reportService.createBasicReport(jobParams);
+
+        BackgroundJob.enqueue(() -> reportService.startBasicReport( jobParams, reportService.save(reportService.createEReportFromJobParams(jobParams))));
 
         return true;
     }
@@ -35,7 +38,8 @@ public class ReportResource {
     @PostMapping(TypeReport.COMPLETE_VALUE)
     public Boolean createCompleteReport(@RequestBody JobParams jobParams) {
         jobParams.setType(TypeReport.COMPLETE);
-        reportService.createCompleteReport(jobParams);
+
+        BackgroundJob.enqueue(() -> reportService.startCompleteReport(jobParams, reportService.save(reportService.createEReportFromJobParams(jobParams))));
 
         return true;
     }
@@ -43,7 +47,8 @@ public class ReportResource {
     @PostMapping(TypeReport.QUANTITATIVE_VALUE)
     public Boolean createQuantitativeReport(@RequestBody JobParams jobParams) {
         jobParams.setType(TypeReport.QUANTITATIVE);
-        reportService.createQuantitativeReport(jobParams);
+
+        BackgroundJob.enqueue(() -> reportService.startQuantitativeReport(jobParams, reportService.save(reportService.createEReportFromJobParams(jobParams))));
 
         return true;
     }
