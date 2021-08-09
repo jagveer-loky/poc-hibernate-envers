@@ -57,22 +57,10 @@ public class ReportService {
      */
     private final QuantitativeReportRepository quantitativeReportRepository;
 
-    public EReport save(final EReport eReport) {
-        return this.reportRepository.save(eReport);
-    }
-
-    int teste = 0;
-
-    /**
-     * @param eReport EReport
-     */
     @Job(name = "Saving in the database")
-    public void saveAsync(final EReport eReport) {
-        if (teste < eReport.getCurrentLine() || eReport.getCurrentLine() == eReport.getCountLines()) {
-            teste = eReport.getCurrentLine();
-            eReport.calculatePercentage();
-            save(eReport);
-        }
+    public EReport save(final EReport eReport) {
+        eReport.calculatePercentage();
+        return this.reportRepository.save(eReport);
     }
 
     @Transactional
@@ -87,7 +75,7 @@ public class ReportService {
 
             eReport.setCurrentLine(eReport.getCurrentLine() + 1);
 
-            BackgroundJob.enqueue(() -> saveAsync(eReport));
+            BackgroundJob.enqueue(() -> save(eReport));
         });
     }
 
@@ -103,7 +91,7 @@ public class ReportService {
 
             eReport.setCurrentLine(eReport.getCurrentLine() + 1);
 
-            BackgroundJob.enqueue(() -> saveAsync(eReport));
+            BackgroundJob.enqueue(() -> save(eReport));
         });
     }
 
@@ -119,7 +107,7 @@ public class ReportService {
 
             eReport.setCurrentLine(eReport.getCurrentLine() + 1);
 
-            BackgroundJob.enqueue(() -> saveAsync(eReport));
+            BackgroundJob.enqueue(() -> save(eReport));
         });
     }
 
