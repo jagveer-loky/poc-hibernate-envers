@@ -70,12 +70,12 @@ public class ReportService {
         eReport.setCountLines(proposalRepository.getCountBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
 
         final Stream<BasicReport> basicStream = proposalRepository.getBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
-
         basicReportRepository.convertToCSV(basicStream, new File(eReport.getPath()), reportParams.getFields(), basicReport -> {
 
             eReport.setCurrentLine(eReport.getCurrentLine() + 1);
 
-            BackgroundJob.enqueue(() -> save(eReport));
+            if (eReport.getConcludedPercentage() % 5 == 0)
+                BackgroundJob.enqueue(() -> save(eReport));
         });
     }
 
@@ -91,7 +91,8 @@ public class ReportService {
 
             eReport.setCurrentLine(eReport.getCurrentLine() + 1);
 
-            BackgroundJob.enqueue(() -> save(eReport));
+            if (eReport.getConcludedPercentage() % 5 == 0)
+                BackgroundJob.enqueue(() -> save(eReport));
         });
     }
 
@@ -107,7 +108,8 @@ public class ReportService {
 
             eReport.setCurrentLine(eReport.getCurrentLine() + 1);
 
-            BackgroundJob.enqueue(() -> save(eReport));
+            if (eReport.getConcludedPercentage() % 5 == 0)
+                BackgroundJob.enqueue(() -> save(eReport));
         });
     }
 

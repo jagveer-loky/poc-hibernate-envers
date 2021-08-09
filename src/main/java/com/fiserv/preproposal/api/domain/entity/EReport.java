@@ -92,11 +92,19 @@ public class EReport implements Serializable {
      */
     public void calculatePercentage() {
         concludedPercentage = countLines == 0 ? concludedPercentage : (currentLine * 100) / countLines;
-        if(currentLine == countLines)
-            concludedPercentage = 100;
+//        if(currentLine == countLines)
+//            concludedPercentage = 100;
         if (concludedPercentage == 100)
             concludedDate = LocalDateTime.now();
         if (concludedDate != null)
             concludedPercentage = 100;
+    }
+
+    /**
+     * @return int
+     */
+    public int getConcludedPercentage() {
+        calculatePercentage();
+        return concludedPercentage;
     }
 }
