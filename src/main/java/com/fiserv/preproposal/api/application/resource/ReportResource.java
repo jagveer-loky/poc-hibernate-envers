@@ -36,10 +36,17 @@ public class ReportResource {
     @Value("${io.output}")
     private String path;
 
+    /**
+     *
+     */
     private final ReportService reportService;
 
+    /**
+     * @param reportParams ReportParams
+     * @return Boolean
+     */
     @PostMapping(TypeReport.BASIC_VALUE)
-    public Boolean createBasicReport(@RequestBody ReportParams reportParams) {
+    public Boolean createBasicReport(@RequestBody final ReportParams reportParams) {
 
         reportParams.setType(TypeReport.BASIC);
 
@@ -50,8 +57,12 @@ public class ReportResource {
         return true;
     }
 
+    /**
+     * @param reportParams ReportParams
+     * @return Boolean
+     */
     @PostMapping(TypeReport.COMPLETE_VALUE)
-    public Boolean createCompleteReport(@RequestBody ReportParams reportParams) {
+    public Boolean createCompleteReport(@RequestBody final ReportParams reportParams) {
 
         reportParams.setType(TypeReport.COMPLETE);
 
@@ -62,8 +73,12 @@ public class ReportResource {
         return true;
     }
 
+    /**
+     * @param reportParams ReportParams
+     * @return Boolean
+     */
     @PostMapping(TypeReport.QUANTITATIVE_VALUE)
-    public Boolean createQuantitativeReport(@RequestBody ReportParams reportParams) {
+    public Boolean createQuantitativeReport(@RequestBody final ReportParams reportParams) {
 
         reportParams.setType(TypeReport.QUANTITATIVE);
 
@@ -74,21 +89,43 @@ public class ReportResource {
         return true;
     }
 
+    /**
+     * @param id Long
+     * @return ResponseEntity<byte [ ]>
+     * @throws IOException
+     * @throws NotFound
+     */
     @GetMapping("{id}/download")
     public ResponseEntity<byte[]> downloadById(@PathVariable final Long id) throws IOException, NotFound {
+
         return ResponseEntity
                 .ok()
-                .header("Content-Disposition", "attachment;filename=report.csv") // TODO ver necessidade do nome
-                .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
+                .cacheControl(CacheControl.noCache())
                 .body(reportService.downloadById(id));
     }
 
+    /**
+     * @param requester String
+     * @return List<EReport>
+     */
     @GetMapping
-    public List<EReport> findByRequester(@RequestParam final String requester) {
+    public List<EReport> listByRequester(@RequestParam final String requester) {
         return reportService.findByRequester(requester);
     }
 
-    public EReport createEReportFromJobParams(final ReportParams reportParams) {
+    /**
+     * @return HashMap<String, Set < String>>
+     */
+    @GetMapping("pre-proposal-fields")
+    public HashMap<String, Set<String>> getFieldsFromReports() {
+        return reportService.getFieldsFromReports();
+    }
+
+    /**
+     * @param reportParams ReportParams
+     * @return EReport
+     */
+    private EReport createEReportFromJobParams(final ReportParams reportParams) {
 
         // Instancing the jpa Entity to persist
         // This entity will save the percentage done of the job
@@ -98,13 +135,5 @@ public class ReportResource {
         eReport.setRequester(reportParams.getRequester());
 
         return eReport;
-    }
-
-    /**
-     * @return
-     */
-    @GetMapping("fields")
-    public HashMap<String, Set<String>> getFieldsFromReports() {
-        return reportService.getFieldsFromReports();
     }
 }

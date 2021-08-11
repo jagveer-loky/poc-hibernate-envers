@@ -52,7 +52,7 @@ public class EReport implements Serializable {
      */
     @Max(3)
     @NotNull
-    @Column(name = "PERCENTAGE_TO_DONE", nullable = false)
+    @Column(name = "CONCLUDED_PERCENTAGE", nullable = false)
     private int concludedPercentage;
 
     /**
@@ -68,11 +68,14 @@ public class EReport implements Serializable {
     private int countLines;
 
     /**
-     * TODO Verificar se dá pra deixar no singleton
+     *
      */
-    @Transient
+    @Column(name = "CURRENT_LINE")
     private int currentLine;
 
+    /**
+     *
+     */
     @Column(name = "TYPE")
     @Enumerated(value = EnumType.STRING)
     private TypeReport type;
@@ -91,13 +94,12 @@ public class EReport implements Serializable {
      *
      */
     public void calculatePercentage() {
-        concludedPercentage = countLines == 0 ? concludedPercentage : (currentLine * 100) / countLines;
-//        if(currentLine == countLines)
-//            concludedPercentage = 100;
-        if (concludedPercentage == 100)
+        if (concludedPercentage == 100) {
             concludedDate = LocalDateTime.now();
-        if (concludedDate != null)
+        } else if (concludedDate != null) {
             concludedPercentage = 100;
+        } else
+            concludedPercentage = countLines == 0 ? concludedPercentage : (currentLine * 100) / countLines;
     }
 
     /**

@@ -27,7 +27,6 @@ spring:
 #            sql:
 #              BasicBinder: TRACE
 #        SQL: DEBUG
-#logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
 
 fdsecurity:
   url: https://cat-webfarm.1dc.com/fd-security/permission-check

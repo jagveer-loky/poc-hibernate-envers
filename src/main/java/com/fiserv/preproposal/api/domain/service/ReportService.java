@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -57,30 +58,56 @@ public class ReportService {
      */
     private final QuantitativeReportRepository quantitativeReportRepository;
 
-    @Job(name = "Saving in the database")
+    private HashMap<Long, Integer> counter = new HashMap<>();
+
+    /**
+     * @param eReport EReport
+     * @return EReport
+     */
     public EReport save(final EReport eReport) {
-        eReport.calculatePercentage();
         return this.reportRepository.save(eReport);
     }
 
+    /**
+     * @param eReport EReport
+     */
+    @Job(name = "Updating in the database")
+    public void update(final EReport eReport) {
+        eReport.setConcludedPercentage(counter.get(eReport.getId()));
+        eReport.calculatePercentage();
+        save(eReport);
+    }
+
+    /**
+     * @param reportParams ReportParams
+     * @param eReport      EReport
+     */
     @Transactional
-    @Job(name = "Generating basic report", retries = 2)
+    @Job(name = "Generating basic report")
     public void startBasicReport(final ReportParams reportParams, final EReport eReport) {
 
         eReport.setCountLines(proposalRepository.getCountBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
 
         final Stream<BasicReport> basicStream = proposalRepository.getBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
+
         basicReportRepository.convertToCSV(basicStream, new File(eReport.getPath()), reportParams.getFields(), basicReport -> {
 
             eReport.setCurrentLine(eReport.getCurrentLine() + 1);
 
             if (eReport.getConcludedPercentage() % 5 == 0)
-                BackgroundJob.enqueue(() -> save(eReport));
+                if (counter.get(eReport.getId()) == null || counter.get(eReport.getId()) < eReport.getConcludedPercentage()) {
+                    counter.put(eReport.getId(), eReport.getConcludedPercentage());
+                    BackgroundJob.enqueue(() -> update(eReport));
+                }
         });
     }
 
+    /**
+     * @param reportParams ReportParams
+     * @param eReport      EReport
+     */
     @Transactional
-    @Job(name = "Generating complete report", retries = 2)
+    @Job(name = "Generating complete report")
     public void startCompleteReport(final ReportParams reportParams, final EReport eReport) {
 
         eReport.setCountLines(proposalRepository.getCountCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
@@ -92,12 +119,19 @@ public class ReportService {
             eReport.setCurrentLine(eReport.getCurrentLine() + 1);
 
             if (eReport.getConcludedPercentage() % 5 == 0)
-                BackgroundJob.enqueue(() -> save(eReport));
+                if (counter.get(eReport.getId()) == null || counter.get(eReport.getId()) < eReport.getConcludedPercentage()) {
+                    counter.put(eReport.getId(), eReport.getConcludedPercentage());
+                    BackgroundJob.enqueue(() -> update(eReport));
+                }
         });
     }
 
+    /**
+     * @param reportParams ReportParams
+     * @param eReport      EReport
+     */
     @Transactional
-    @Job(name = "Generating quantitative report", retries = 2)
+    @Job(name = "Generating quantitative report")
     public void startQuantitativeReport(final ReportParams reportParams, final EReport eReport) {
 
         eReport.setCountLines(proposalRepository.getCountQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
@@ -109,21 +143,40 @@ public class ReportService {
             eReport.setCurrentLine(eReport.getCurrentLine() + 1);
 
             if (eReport.getConcludedPercentage() % 5 == 0)
-                BackgroundJob.enqueue(() -> save(eReport));
+                if (counter.get(eReport.getId()) == null || counter.get(eReport.getId()) < eReport.getConcludedPercentage()) {
+                    counter.put(eReport.getId(), eReport.getConcludedPercentage());
+                    BackgroundJob.enqueue(() -> update(eReport));
+                }
         });
     }
 
+    /**
+     * @param id Long
+     * @return byte[]
+     * @throws NotFound
+     * @throws IOException
+     */
+    @Transactional
     public byte[] downloadById(final Long id) throws NotFound, IOException {
         final EReport eReport = reportRepository.findById(id).orElseThrow(NotFound::new);
+        if(eReport.getConcludedPercentage() == 100){
+            final File file = new File(eReport.getPath());
+            file.deleteOnExit();
+            reportRepository.deleteById(eReport.getId());
+        }
         return Files.readAllBytes(new File(eReport.getPath()).toPath());
     }
 
+    /**
+     * @param requester String
+     * @return List<EReport>
+     */
     public List<EReport> findByRequester(final String requester) {
-        return this.reportRepository.findByRequester(requester);
+        return this.reportRepository.findByRequesterOrderByRequestedDateDesc(requester);
     }
 
     /**
-     * @return Set<String>
+     * @return HashMap<String, Set < String>>
      */
     public HashMap<String, Set<String>> getFieldsFromReports() {
         final HashMap<String, Set<String>> fieldsFromReports = new HashMap<>();

@@ -1,8 +1,6 @@
 package com.fiserv.preproposal.api.domain.repository.report;
 
-import com.fiserv.preproposal.api.domain.dtos.ReportParams;
 import com.fiserv.preproposal.api.infrastrucutre.normalizer.Normalizer;
-import com.univocity.parsers.common.processor.BeanWriterProcessor;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
 import lombok.NonNull;
@@ -10,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 

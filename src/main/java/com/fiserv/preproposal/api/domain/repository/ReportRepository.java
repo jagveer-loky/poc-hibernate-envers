@@ -9,5 +9,9 @@ import java.util.List;
 @Repository
 public interface ReportRepository extends JpaRepository<EReport, Long> {
 
-    List<EReport> findByRequester(final String requester);
+    /**
+     * @param requester String
+     * @return List<EReport>
+     */
+    List<EReport> findByRequesterOrderByRequestedDateDesc(final String requester);
 }
