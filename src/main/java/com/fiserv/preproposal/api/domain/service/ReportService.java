@@ -25,7 +25,6 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -58,6 +57,9 @@ public class ReportService {
      */
     private final QuantitativeReportRepository quantitativeReportRepository;
 
+    /**
+     *
+     */
     private HashMap<Long, Integer> counter = new HashMap<>();
 
     /**
@@ -158,13 +160,23 @@ public class ReportService {
      */
     @Transactional
     public byte[] downloadById(final Long id) throws NotFound, IOException {
+
         final EReport eReport = reportRepository.findById(id).orElseThrow(NotFound::new);
-        if(eReport.getConcludedPercentage() == 100){
-            final File file = new File(eReport.getPath());
-            file.deleteOnExit();
+
+        final byte[] fileToReturn = Files.readAllBytes(new File(eReport.getPath()).toPath());
+
+        if (eReport.getConcludedPercentage() == 100) {
+
+            // Delete from system of file
+            Files.deleteIfExists(new File(eReport.getPath()).toPath());
+
+            // Delete from Database
             reportRepository.deleteById(eReport.getId());
+
+            // Delete from Counter
+            counter.remove(eReport.getId());
         }
-        return Files.readAllBytes(new File(eReport.getPath()).toPath());
+        return fileToReturn;
     }
 
     /**

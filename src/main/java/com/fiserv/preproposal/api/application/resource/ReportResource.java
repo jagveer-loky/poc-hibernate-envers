@@ -96,7 +96,7 @@ public class ReportResource {
      * @throws NotFound
      */
     @GetMapping("{id}/download")
-    public ResponseEntity<byte[]> downloadById(@PathVariable final Long id) throws IOException, NotFound {
+    public ResponseEntity<byte[]> downloadById(@PathVariable final Long id, @RequestParam final Integer noCache) throws IOException, NotFound {
 
         return ResponseEntity
                 .ok()
