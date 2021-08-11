@@ -18,16 +18,6 @@ spring:
         show_sql: true
         use_sql_comments: true
 
-#logging:
-#  level:
-#    org:
-#      hibernate:
-#        type:
-#          descriptor:
-#            sql:
-#              BasicBinder: TRACE
-#        SQL: DEBUG
-
 fdsecurity:
   url: https://cat-webfarm.1dc.com/fd-security/permission-check
 
@@ -49,3 +39,14 @@ org:
 
 io:
   output: src/main/resources/output
+
+logging:
+#  level:
+#    org:
+#      hibernate:
+#        type:
+#          descriptor:
+#            sql:
+#              BasicBinder: TRACE
+#        SQL: DEBUG
+  config: classpath:logs/log4j2-spring.dev.xml
