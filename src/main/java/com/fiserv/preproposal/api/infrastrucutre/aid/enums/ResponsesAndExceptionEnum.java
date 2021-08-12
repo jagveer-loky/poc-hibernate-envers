@@ -15,7 +15,7 @@ public enum ResponsesAndExceptionEnum {
 	ERRO_VALIDATION						( 10, "error.validation"		),
 	FDSECURITY_EXCEPTION				( 11, "error.fdsecurity"		),
 	INCOMPLETE_FILTER                   ( 12, "error.filter"            ),
-
+	NSA_NOT_FOUND                       ( 13, "error.nsa.notfound"      ),
 	// O range a partir do 101 -> 300 destinado a exeções especificas da api
 
 

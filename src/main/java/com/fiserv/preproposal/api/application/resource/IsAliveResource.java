@@ -9,6 +9,14 @@ import com.fiserv.preproposal.api.domain.repository.git.IGitRepository;
 import com.fiserv.preproposal.api.infrastrucutre.aid.DateUtil;
 import com.fiserv.preproposal.api.infrastrucutre.aid.MessageSourceUtil;
 import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ResponsesAndExceptionEnum;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -20,12 +28,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/isAlive")
+@Tag(name = "INFO", description = "Resource with the requests that allow to query API info.")
 public class IsAliveResource {
 
 	@Autowired
 	private IGitRepository gitMapper;
 
-	@Value("${git.commit.id.abbrev}")
+	@Value("${git.commit.id}")
 	private String commitId;
 
 	@Value("${git.build.time}")
@@ -39,7 +48,15 @@ public class IsAliveResource {
 	
 	@Value("${application.jenkins.build.version}")
 	private String buildVersion;
-	
+
+	@Operation(
+			summary = "Get API Information",
+			description = "Returns the information of the version of the API being executed.",
+			tags = "INFO"
+	)
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Sucessful Operation",content = @Content(schema = @Schema(implementation = GitRespDTO.class)))
+	})
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> isAlive() {
 		String now = DateUtil.dateTimeNowToString("dd/MM/yyyy HH:mm:ss", ZoneId.of("America/Sao_Paulo"));

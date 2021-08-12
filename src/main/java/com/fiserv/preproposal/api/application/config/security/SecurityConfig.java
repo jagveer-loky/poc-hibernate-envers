@@ -1,7 +1,7 @@
 package com.fiserv.preproposal.api.application.config.security;
 
-import com.fiserv.preproposal.api.application.config.security.FDSecurity;
 import com.fiserv.preproposal.api.application.config.security.filter.AuthorizationFilter;
+import com.fiserv.preproposal.api.application.properties.CorsProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -18,8 +18,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-
-import com.fiserv.preproposal.api.application.properties.CorsProperties;
 
 import java.util.Arrays;
 
@@ -55,6 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers("/v*/**").permitAll()
                         .anyRequest().permitAll().and().addFilterBefore(new AuthorizationFilter(fdSecurity, resolver), UsernamePasswordAuthenticationFilter.class))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//        r.antMatchers("/**").permitAll());
 //			 .anyRequest().permitAll().and().addFilterBefore(new AuthorizationFilter(fdSecurity, resolver), UsernamePasswordAuthenticationFilter.class))
 //			 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }

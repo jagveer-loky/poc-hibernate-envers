@@ -1,6 +1,6 @@
 package com.fiserv.preproposal.api.application.handler;
 
-import com.fiserv.preproposal.api.application.exceptions.FilterException;
+import com.fiserv.preproposal.api.application.exceptions.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.nio.file.AccessDeniedException;
@@ -25,13 +25,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ApplicationEnum;
 import com.fiserv.preproposal.api.infrastrucutre.aid.enums.EventActivityEnum;
 import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ResponsesAndExceptionEnum;
-import com.fiserv.preproposal.api.application.exceptions.APIException;
-import com.fiserv.preproposal.api.application.exceptions.DuplicatedException;
-import com.fiserv.preproposal.api.application.exceptions.InvalidTokenKeycloakException;
-import com.fiserv.preproposal.api.application.exceptions.ItemNotFoundException;
-import com.fiserv.preproposal.api.application.exceptions.MandatoryFieldException;
-import com.fiserv.preproposal.api.application.exceptions.UnauthorizedException;
-import com.fiserv.preproposal.api.application.exceptions.FDSecurityException;
 import com.fiserv.preproposal.api.application.pagination.DResponse;
 import com.fiserv.preproposal.api.infrastrucutre.aid.LogUtil;
 
@@ -105,6 +98,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	private ResponseEntity<Object> filterException(FilterException e, WebRequest request) {
 		LOGGER.info(LogUtil.buildMessage(ApplicationEnum.SBA, request, "Incomplete filter."));
 		return handleException(ResponsesAndExceptionEnum.INCOMPLETE_FILTER, new Object[] { e.getMessage() }, e, request, HttpStatus.BAD_REQUEST);
+	}
+
+
+	@ExceptionHandler(NsaNotFoundException.class)
+	private ResponseEntity<Object> nsaNotFoundException(NsaNotFoundException e, WebRequest request) {
+		LOGGER.info(LogUtil.buildMessage(ApplicationEnum.SBA, request, "Nsa parameter not found."));
+		return handleException(ResponsesAndExceptionEnum.NSA_NOT_FOUND, new Object[] {}, e, request, HttpStatus.NOT_FOUND);
 	}
 
 	@Override
