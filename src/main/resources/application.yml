@@ -21,4 +21,7 @@ management:
     web:
       base-path: /_monitor
 
-layout: 'src/main/resources/io/cef/output/layout.xml'
+org:
+  jobrunr:
+    background-job-server:
+      enabled: true

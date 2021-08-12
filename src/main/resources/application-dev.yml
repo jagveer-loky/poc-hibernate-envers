@@ -18,17 +18,6 @@ spring:
         show_sql: true
         use_sql_comments: true
 
-logging:
-  level:
-    org:
-      hibernate:
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
-        SQL: DEBUG
-#logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
-
 fdsecurity:
   url: https://cat-webfarm.1dc.com/fd-security/permission-check
 
@@ -42,3 +31,22 @@ cors:
 springdoc:
   swagger-ui:
     url: /v3/api-docs/
+
+org:
+  jobrunr:
+    dashboard:
+      enabled: true
+
+io:
+  output: src/main/resources/output
+
+logging:
+#  level:
+#    org:
+#      hibernate:
+#        type:
+#          descriptor:
+#            sql:
+#              BasicBinder: TRACE
+#        SQL: DEBUG
+  config: classpath:logs/log4j2-spring.dev.xml

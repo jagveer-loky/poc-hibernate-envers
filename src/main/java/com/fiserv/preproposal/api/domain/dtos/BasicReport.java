@@ -7,13 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BasicReport {
-
-    public static final String NAME = "basic";
+public class BasicReport extends AbstractReport implements Serializable {
 
     @Parsed(field = "Id da Proposta")
     @Schema(
