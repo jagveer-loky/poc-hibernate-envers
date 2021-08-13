@@ -1,4 +1,4 @@
-package com.fiserv.preproposal.api.domain.service;
+package com.fiserv.preproposal.api.domain.repository;
 
 import com.fiserv.preproposal.api.domain.dtos.BasicReport;
 import com.fiserv.preproposal.api.domain.dtos.CompleteReport;
