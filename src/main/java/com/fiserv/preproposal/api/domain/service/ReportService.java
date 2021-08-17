@@ -1,5 +1,6 @@
 package com.fiserv.preproposal.api.domain.service;
 
+import com.fiserv.preproposal.api.application.exceptions.NotFoundException;
 import com.fiserv.preproposal.api.domain.dtos.BasicReport;
 import com.fiserv.preproposal.api.domain.dtos.CompleteReport;
 import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
@@ -15,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jobrunr.jobs.annotations.Job;
 import org.jobrunr.scheduling.BackgroundJob;
-import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -155,13 +155,13 @@ public class ReportService {
     /**
      * @param id Long
      * @return byte[]
-     * @throws NotFound
+     * @throws NotFoundException
      * @throws IOException
      */
     @Transactional
-    public byte[] downloadById(final Long id) throws NotFound, IOException {
+    public byte[] downloadById(final Long id) throws NotFoundException, IOException {
 
-        final EReport eReport = reportRepository.findById(id).orElseThrow(NotFound::new);
+        final EReport eReport = reportRepository.findById(id).orElseThrow(NotFoundException::new);
 
         final byte[] fileToReturn = Files.readAllBytes(new File(eReport.getPath()).toPath());
 

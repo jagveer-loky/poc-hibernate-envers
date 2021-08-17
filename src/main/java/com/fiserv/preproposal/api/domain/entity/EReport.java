@@ -50,7 +50,6 @@ public class EReport implements Serializable {
     /**
      *
      */
-    @Max(3)
     @NotNull
     @Column(name = "CONCLUDED_PERCENTAGE", nullable = false)
     private int concludedPercentage;

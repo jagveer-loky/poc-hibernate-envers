@@ -1,5 +1,6 @@
 package com.fiserv.preproposal.api.application.resource;
 
+import com.fiserv.preproposal.api.application.exceptions.NotFoundException;
 import com.fiserv.preproposal.api.domain.dtos.ReportParams;
 import com.fiserv.preproposal.api.domain.entity.EReport;
 import com.fiserv.preproposal.api.domain.entity.TypeReport;
@@ -18,7 +19,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequiredArgsConstructor
@@ -93,10 +93,10 @@ public class ReportResource {
      * @param id Long
      * @return ResponseEntity<byte [ ]>
      * @throws IOException
-     * @throws NotFound
+     * @throws NotFoundException
      */
     @GetMapping("{id}/download")
-    public ResponseEntity<byte[]> downloadById(@PathVariable final Long id, @RequestParam final Integer noCache) throws IOException, NotFound {
+    public ResponseEntity<byte[]> downloadById(@PathVariable final Long id, @RequestParam final Integer noCache) throws IOException, NotFoundException {
 
         return ResponseEntity
                 .ok()
