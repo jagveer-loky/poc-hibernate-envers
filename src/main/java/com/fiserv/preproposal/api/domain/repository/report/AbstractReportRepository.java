@@ -27,7 +27,7 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
      * @param consumer TODO must be complemented
      */
     @Transactional
-    public void convertToCSV(@NonNull final Stream<T> stream, final File file, final Collection<String> fields, final Consumer<T> consumer) {
+    public void convertToCSV(@NonNull final Stream<T> stream, final File file, final Collection<String> fields, final Consumer<T> consumer, final Consumer<Exception> errorConsumer) {
 
         final CsvWriterSettings writerSettings = new CsvWriterSettings();
         writerSettings.getFormat().setLineSeparator("\r\n");
@@ -44,11 +44,16 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
 
         stream.forEach(object -> {
 
-            // Writing in file
-            csvWriter.processRecord(normalizer.normalize(object));
+            try {
+                // Writing in file
+                csvWriter.processRecord(normalizer.normalize(object));
 
-            //
-            consumer.accept(object);
+                //
+                consumer.accept(object);
+            } catch (final Exception e) {
+                errorConsumer.accept(e);
+            }
+
         });
 
         csvWriter.close();

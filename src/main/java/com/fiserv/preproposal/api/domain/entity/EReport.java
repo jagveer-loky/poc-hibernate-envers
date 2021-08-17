@@ -93,7 +93,7 @@ public class EReport implements Serializable {
      *
      */
     public void calculatePercentage() {
-        if (concludedPercentage == 100) {
+        if (concludedPercentage == 100 && concludedDate == null) {
             concludedDate = LocalDateTime.now();
         } else if (concludedDate != null) {
             concludedPercentage = 100;

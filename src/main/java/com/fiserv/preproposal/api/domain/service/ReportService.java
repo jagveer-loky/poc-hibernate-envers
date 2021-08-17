@@ -60,7 +60,7 @@ public class ReportService {
     /**
      *
      */
-    private HashMap<Long, Integer> counter = new HashMap<>();
+    private final HashMap<Long, Integer> counter = new HashMap<>();
 
     /**
      * @param eReport EReport
@@ -73,7 +73,7 @@ public class ReportService {
     /**
      * @param eReport EReport
      */
-    @Job(name = "Updating in the database")
+    @Job(name = "Updating in the database", retries = 2)
     public void update(final EReport eReport) {
         eReport.setConcludedPercentage(counter.get(eReport.getId()));
         eReport.calculatePercentage();
@@ -85,23 +85,19 @@ public class ReportService {
      * @param eReport      EReport
      */
     @Transactional
-    @Job(name = "Generating basic report")
+    @Job(name = "Generating basic report", retries = 2)
     public void startBasicReport(final ReportParams reportParams, final EReport eReport) {
 
         eReport.setCountLines(proposalRepository.getCountBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
 
         final Stream<BasicReport> basicStream = proposalRepository.getBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
-        basicReportRepository.convertToCSV(basicStream, new File(eReport.getPath()), reportParams.getFields(), basicReport -> {
-
-            eReport.setCurrentLine(eReport.getCurrentLine() + 1);
-
-            if (eReport.getConcludedPercentage() % 5 == 0)
-                if (counter.get(eReport.getId()) == null || counter.get(eReport.getId()) < eReport.getConcludedPercentage()) {
-                    counter.put(eReport.getId(), eReport.getConcludedPercentage());
-                    BackgroundJob.enqueue(() -> update(eReport));
-                }
-        });
+        basicReportRepository.convertToCSV(basicStream, new File(eReport.getPath()), reportParams.getFields(),
+                completeReport -> next(eReport),
+                exception -> {
+                    show(exception);
+                    next(eReport);
+                });
     }
 
     /**
@@ -109,23 +105,42 @@ public class ReportService {
      * @param eReport      EReport
      */
     @Transactional
-    @Job(name = "Generating complete report")
+    @Job(name = "Generating complete report", retries = 2)
     public void startCompleteReport(final ReportParams reportParams, final EReport eReport) {
 
         eReport.setCountLines(proposalRepository.getCountCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
 
         final Stream<CompleteReport> completeStream = proposalRepository.getCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
-        completeReportRepository.convertToCSV(completeStream, new File(eReport.getPath()), reportParams.getFields(), completeReport -> {
+        completeReportRepository.convertToCSV(completeStream, new File(eReport.getPath()), reportParams.getFields(),
+                completeReport -> next(eReport),
+                exception -> {
+                    show(exception);
+                    next(eReport);
+                });
+    }
 
-            eReport.setCurrentLine(eReport.getCurrentLine() + 1);
+    /**
+     * @param exception Exception
+     */
+    private void show(final Exception exception) {
+        exception.printStackTrace();
+        log.error("");
+        log.error(exception.getMessage());
+        System.err.println(exception.getMessage());
+    }
 
-            if (eReport.getConcludedPercentage() % 5 == 0)
-                if (counter.get(eReport.getId()) == null || counter.get(eReport.getId()) < eReport.getConcludedPercentage()) {
-                    counter.put(eReport.getId(), eReport.getConcludedPercentage());
-                    BackgroundJob.enqueue(() -> update(eReport));
-                }
-        });
+    /**
+     * @param eReport EReport
+     */
+    private void next(final EReport eReport) {
+        eReport.setCurrentLine(eReport.getCurrentLine() + 1);
+
+        if (eReport.getConcludedPercentage() % 5 == 0)
+            if (counter.get(eReport.getId()) == null || counter.get(eReport.getId()) < eReport.getConcludedPercentage()) {
+                counter.put(eReport.getId(), eReport.getConcludedPercentage());
+                BackgroundJob.enqueue(() -> update(eReport));
+            }
     }
 
     /**
@@ -133,23 +148,19 @@ public class ReportService {
      * @param eReport      EReport
      */
     @Transactional
-    @Job(name = "Generating quantitative report")
+    @Job(name = "Generating quantitative report", retries = 2)
     public void startQuantitativeReport(final ReportParams reportParams, final EReport eReport) {
 
         eReport.setCountLines(proposalRepository.getCountQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
 
         final Stream<QuantitativeReport> quantitativeStream = proposalRepository.getQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
-        quantitativeReportRepository.convertToCSV(quantitativeStream, new File(eReport.getPath()), reportParams.getFields(), quantitativeReport -> {
-
-            eReport.setCurrentLine(eReport.getCurrentLine() + 1);
-
-            if (eReport.getConcludedPercentage() % 5 == 0)
-                if (counter.get(eReport.getId()) == null || counter.get(eReport.getId()) < eReport.getConcludedPercentage()) {
-                    counter.put(eReport.getId(), eReport.getConcludedPercentage());
-                    BackgroundJob.enqueue(() -> update(eReport));
-                }
-        });
+        quantitativeReportRepository.convertToCSV(quantitativeStream, new File(eReport.getPath()), reportParams.getFields(),
+                completeReport -> next(eReport),
+                exception -> {
+                    show(exception);
+                    next(eReport);
+                });
     }
 
     /**

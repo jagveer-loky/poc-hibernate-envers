@@ -23,6 +23,12 @@ spring:
     sql-dialect: org.hibernate.dialect.Oracle10gDialect
   jpa:
     database-platform: org.hibernate.dialect.Oracle10gDialect
+    properties:
+      hibernate:
+        format_sql: false
+        order_inserts: true
+        show_sql: true
+        use_sql_comments: true
 
 cors:
   enabled: true
