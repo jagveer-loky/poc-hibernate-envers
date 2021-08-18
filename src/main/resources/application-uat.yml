@@ -40,8 +40,15 @@ cors:
 io:
   output: /appserver/tmp/pre-proposal-api
 
+# configuracoes de logging
 logging:
   level:
-    org.springframework.web: INFO
+    root: INFO
     org.hibernate: INFO
+    org.springframework: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.springframework.web.client: INFO
+    org.springframework.context.support: INFO
+    org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl: WARN
   config: classpath:logs/log4j2-spring.uat.xml
