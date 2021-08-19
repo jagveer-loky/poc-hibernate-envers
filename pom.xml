@@ -30,6 +30,7 @@
         <lombok.version>1.18.20</lombok.version>
         <springdoc-openapi.version>1.5.4</springdoc-openapi.version>
         <git-commit-id-plugin.version>2.2.1</git-commit-id-plugin.version>
+        <log4j.version>2.6.2</log4j.version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
         <jaxb.version>2.3.1</jaxb.version>
         <mockito.version>2.22.0</mockito.version>

@@ -1,10 +1,12 @@
 package com.fiserv.preproposal.api.infrastrucutre.normalizer;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.stream.Stream;
+import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
+
+@Slf4j
 public final class Normalizer<T> {
 
     /**
@@ -24,8 +26,7 @@ public final class Normalizer<T> {
      */
     public T normalize(final T object) {
 
-        final Stream<String> attributes = extractAttributesFromObject(object);
-
+        final Set<String> attributes = extractAttributesFromObject(object);
         attributes.forEach(attribute -> normalize(object, attribute));
 
         return object;
@@ -55,8 +56,11 @@ public final class Normalizer<T> {
 
                         }
                     }
-        } catch (final IllegalAccessException | InvocationTargetException e) {
+        } catch (final Exception e) {
             e.printStackTrace();
+            log.error("");
+            log.error("Erro durante a normalização do atributo: '" + attribute + "' com o valor: '" + object + "'");
+            System.err.println("Erro durante a normalização do atributo: '" + attribute + "' com o valor: '" + object + "'");
         }
 
         return object;
@@ -66,16 +70,31 @@ public final class Normalizer<T> {
      * @param object Object
      * @return Set<String>
      */
-    public static Stream<String> extractAttributesFromObject(final Object object) {
+    public static Set<String> extractAttributesFromObject(final Object object) {
 
-        return Arrays.stream(object.getClass().getDeclaredMethods())
-                .map(Method::getName)
-                .filter(method -> method.contains("get") || method.contains("set"))
-                .map(method -> {
-                    final String attribute = method.replace("get", "").replace("set", "");
-                    return attribute.substring(0, 1).toLowerCase() + attribute.substring(1);
-                });
+        final Set<String> attributes = new HashSet<>();
 
+        try {
+            for (final Method declaredMethod : object.getClass().getDeclaredMethods()) {
+                try {
+                    if (declaredMethod.getName().contains("get") || declaredMethod.getName().contains("set")) {
+                        final String attribute = declaredMethod.getName().replace("get", "").replace("set", "");
+                        attributes.add(attribute.substring(0, 1).toLowerCase() + attribute.substring(1));
+                    }
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    log.error("");
+                    log.error("Erro durante a extração dos atributos dos objetos");
+                    System.err.println("Erro durante a extração dos atributos dos objetos");
+                }
+            }
+        } catch (final Exception e) {
+            e.printStackTrace();
+            log.error("");
+            log.error("Erro durante a extração dos atributos dos objetos");
+            System.err.println("Erro durante a extração dos atributos dos objetos");
+        }
+        return attributes;
     }
 
 }

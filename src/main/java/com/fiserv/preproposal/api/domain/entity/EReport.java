@@ -50,7 +50,6 @@ public class EReport implements Serializable {
     /**
      *
      */
-    @Max(3)
     @NotNull
     @Column(name = "CONCLUDED_PERCENTAGE", nullable = false)
     private int concludedPercentage;
@@ -94,7 +93,7 @@ public class EReport implements Serializable {
      *
      */
     public void calculatePercentage() {
-        if (concludedPercentage == 100) {
+        if (concludedPercentage == 100 && concludedDate == null) {
             concludedDate = LocalDateTime.now();
         } else if (concludedDate != null) {
             concludedPercentage = 100;
