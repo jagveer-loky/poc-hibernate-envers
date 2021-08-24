@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 import static com.fiserv.preproposal.api.infrastrucutre.aid.util.ListUtil.toArray;
 
-public abstract class AbstractReportRepository<T> implements IWriteReportRepository {
+public abstract class AbstractReportRepository<T> implements IWriteReportRepository<T> {
 
     /**
      *
@@ -21,42 +21,50 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
     private final Normalizer<T> normalizer = new Normalizer<>();
 
     /**
-     * @param stream   Stream<T> To running when writing file. At each new iteration, a new register is written in file.
-     * @param file     File who will written
-     * @param fields   Fields to write in file
-     * @param consumer TODO must be complemented
+     * @param stream               Stream<T> To running when writing file. At each new iteration, a new register is written in file.
+     * @param file                 File who will written
+     * @param fields               Fields to write in file
+     * @param consumer             Consumer<T>
+     * @param lineErrorConsumer    Consumer<Exception>
+     * @param generalErrorConsumer Consumer<Exception>
      */
     @Transactional
-    public void convertToCSV(@NonNull final Stream<T> stream, final File file, final Collection<String> fields, final Consumer<T> consumer, final Consumer<Exception> errorConsumer) {
+    public void convertToCSV(@NonNull final Stream<T> stream, final File file, final Collection<String> fields, final Consumer<T> consumer, final Consumer<Exception> lineErrorConsumer, final Consumer<Exception> generalErrorConsumer) {
 
-        final CsvWriterSettings writerSettings = new CsvWriterSettings();
-        writerSettings.getFormat().setLineSeparator("\r\n");
-        writerSettings.getFormat().setDelimiter(';');
-        writerSettings.setQuoteAllFields(true);
-        writerSettings.setColumnReorderingEnabled(true);
-        writerSettings.setHeaderWritingEnabled(true);
-        writerSettings.setHeaders(toArray(fields));
-        writerSettings.excludeFields(extractFieldsToIgnore(toArray(fields)));
+        try {
 
-        writerSettings.setRowWriterProcessor(configProcessor());
+            final CsvWriterSettings writerSettings = new CsvWriterSettings();
+            writerSettings.getFormat().setLineSeparator("\r\n");
+            writerSettings.getFormat().setDelimiter(';');
+            writerSettings.setQuoteAllFields(true);
+            writerSettings.setColumnReorderingEnabled(true);
+            writerSettings.setHeaderWritingEnabled(true);
+            writerSettings.setHeaders(toArray(fields));
+            writerSettings.excludeFields(extractFieldsToIgnore(toArray(fields)));
 
-        final CsvWriter csvWriter = new CsvWriter(file, writerSettings);
+            writerSettings.setRowWriterProcessor(configProcessor());
 
-        stream.forEach(object -> {
+            final CsvWriter csvWriter = new CsvWriter(file, writerSettings);
 
-            try {
-                // Writing in file
-                csvWriter.processRecord(normalizer.normalize(object));
+            stream.forEach(object -> {
 
-                //
-                consumer.accept(object);
-            } catch (final Exception e) {
-                errorConsumer.accept(e);
-            }
+                try {
+                    // Writing in file
+                    csvWriter.processRecord(normalizer.normalize(object));
 
-        });
+                    //
+                    consumer.accept(object);
+                } catch (final Exception e) {
+                    lineErrorConsumer.accept(e);
+                }
 
-        csvWriter.close();
+            });
+
+            csvWriter.close();
+
+        } catch (final Exception e) {
+            generalErrorConsumer.accept(e);
+        }
 
     }
 

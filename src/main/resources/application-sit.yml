@@ -34,12 +34,4 @@ io:
   output: /appserver/tmp/pre-proposal-api
 
 logging:
-  level:
-    org:
-      hibernate:
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
-        SQL: DEBUG
   config: classpath:logs/log4j2-spring.sit.xml

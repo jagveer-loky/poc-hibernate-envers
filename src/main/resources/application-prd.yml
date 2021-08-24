@@ -35,7 +35,4 @@ io:
   output: /appserver/tmp/pre-proposal-api
 
 logging:
-  level:
-    org.springframework.web: INFO
-    org.hibernate: INFO
   config: classpath:logs/log4j2-spring.prd.xml
