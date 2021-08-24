@@ -75,9 +75,11 @@ public class ReportService {
      */
     @Job(name = "Updating in the database", retries = 2)
     public void update(final EReport eReport) {
-        eReport.setConcludedPercentage(counter.get(eReport.getId()));
-        eReport.calculatePercentage();
-        save(eReport);
+        if (counter.get(eReport.getId()) != null) {
+            eReport.setConcludedPercentage(counter.get(eReport.getId()));
+            eReport.calculatePercentage();
+            save(eReport);
+        }
     }
 
     /**
@@ -93,11 +95,13 @@ public class ReportService {
         final Stream<BasicReport> basicStream = proposalRepository.getBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
         basicReportRepository.convertToCSV(basicStream, new File(eReport.getPath()), reportParams.getFields(),
-                completeReport -> next(eReport),
-                exception -> {
-                    show(exception);
+                report -> next(eReport),
+                lineException -> {
+                    show(lineException);
                     next(eReport);
-                });
+                },
+                this::show
+        );
     }
 
     /**
@@ -113,34 +117,13 @@ public class ReportService {
         final Stream<CompleteReport> completeStream = proposalRepository.getCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
         completeReportRepository.convertToCSV(completeStream, new File(eReport.getPath()), reportParams.getFields(),
-                completeReport -> next(eReport),
-                exception -> {
-                    show(exception);
+                report -> next(eReport),
+                lineException -> {
+                    show(lineException);
                     next(eReport);
-                });
-    }
-
-    /**
-     * @param exception Exception
-     */
-    private void show(final Exception exception) {
-        exception.printStackTrace();
-        log.error("");
-        log.error(exception.getMessage());
-        System.err.println(exception.getMessage());
-    }
-
-    /**
-     * @param eReport EReport
-     */
-    private void next(final EReport eReport) {
-        eReport.setCurrentLine(eReport.getCurrentLine() + 1);
-
-        if (eReport.getConcludedPercentage() % 5 == 0)
-            if (counter.get(eReport.getId()) == null || counter.get(eReport.getId()) < eReport.getConcludedPercentage()) {
-                counter.put(eReport.getId(), eReport.getConcludedPercentage());
-                BackgroundJob.enqueue(() -> update(eReport));
-            }
+                },
+                this::show
+        );
     }
 
     /**
@@ -156,18 +139,40 @@ public class ReportService {
         final Stream<QuantitativeReport> quantitativeStream = proposalRepository.getQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
         quantitativeReportRepository.convertToCSV(quantitativeStream, new File(eReport.getPath()), reportParams.getFields(),
-                completeReport -> next(eReport),
-                exception -> {
-                    show(exception);
+                report -> next(eReport),
+                lineException -> {
+                    show(lineException);
                     next(eReport);
-                });
+                },
+                this::show
+        );
+    }
+
+    /**
+     * @param exception Exception
+     */
+    private void show(final Exception exception) {
+        exception.printStackTrace();
+        log.error(exception.getMessage());
+    }
+
+    /**
+     * @param eReport EReport
+     */
+    private void next(final EReport eReport) {
+
+        eReport.setCurrentLine(eReport.getCurrentLine() + 1);
+
+        if (eReport.getConcludedPercentage() % 5 == 0)
+            if (counter.get(eReport.getId()) == null || counter.get(eReport.getId()) < eReport.getConcludedPercentage()) {
+                counter.put(eReport.getId(), eReport.getConcludedPercentage());
+                BackgroundJob.enqueue(() -> update(eReport));
+            }
     }
 
     /**
      * @param id Long
      * @return byte[]
-     * @throws NotFoundException
-     * @throws IOException
      */
     @Transactional
     public byte[] downloadById(final Long id) throws NotFoundException, IOException {
@@ -187,6 +192,7 @@ public class ReportService {
             // Delete from Counter
             counter.remove(eReport.getId());
         }
+
         return fileToReturn;
     }
 
