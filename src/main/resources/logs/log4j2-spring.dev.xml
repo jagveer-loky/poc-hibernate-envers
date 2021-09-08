@@ -3,7 +3,7 @@
 
     <Properties>
         <Property name="PATH">
-            ./target/log/
+            ./target/logs/
         </Property>
         <Property name="LOG_PATTERN">
             %style{%d{MM-dd-yyyy HH:mm:ss}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow} | %m%n%throwable

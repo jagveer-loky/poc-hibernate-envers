@@ -94,13 +94,17 @@ public class ReportService {
 
         final Stream<BasicReport> basicStream = proposalRepository.getBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
-        basicReportRepository.convertToCSV(basicStream, new File(eReport.getPath()), reportParams.getFields(),
+        basicReportRepository.convertToCSV(basicStream, eReport, reportParams.getFields(),
                 report -> next(eReport),
                 lineException -> {
                     show(lineException);
                     next(eReport);
                 },
-                this::show
+                generalException -> {
+                    show(generalException);
+                    eReport.setError(generalException.getMessage());
+                    save(eReport);
+                }
         );
     }
 
@@ -116,13 +120,17 @@ public class ReportService {
 
         final Stream<CompleteReport> completeStream = proposalRepository.getCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
-        completeReportRepository.convertToCSV(completeStream, new File(eReport.getPath()), reportParams.getFields(),
+        completeReportRepository.convertToCSV(completeStream, eReport, reportParams.getFields(),
                 report -> next(eReport),
                 lineException -> {
                     show(lineException);
                     next(eReport);
                 },
-                this::show
+                generalException -> {
+                    show(generalException);
+                    eReport.setError(generalException.getMessage());
+                    save(eReport);
+                }
         );
     }
 
@@ -138,13 +146,17 @@ public class ReportService {
 
         final Stream<QuantitativeReport> quantitativeStream = proposalRepository.getQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
-        quantitativeReportRepository.convertToCSV(quantitativeStream, new File(eReport.getPath()), reportParams.getFields(),
+        quantitativeReportRepository.convertToCSV(quantitativeStream, eReport, reportParams.getFields(),
                 report -> next(eReport),
                 lineException -> {
                     show(lineException);
                     next(eReport);
                 },
-                this::show
+                generalException -> {
+                    show(generalException);
+                    eReport.setError(generalException.getMessage());
+                    save(eReport);
+                }
         );
     }
 

@@ -38,7 +38,7 @@ org:
       enabled: true
 
 io:
-  output: src/main/resources/output
+  output: target/output
 
 logging:
   config: classpath:logs/log4j2-spring.dev.xml

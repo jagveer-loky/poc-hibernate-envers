@@ -5,9 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -82,6 +84,13 @@ public class EReport implements Serializable {
     /**
      *
      */
+    @NotBlank
+    @Column(name = "ERROR")
+    private String error;
+
+    /**
+     *
+     */
     @PrePersist
     public void prePersist() {
         countLines = 0;
@@ -107,5 +116,12 @@ public class EReport implements Serializable {
     public int getConcludedPercentage() {
         calculatePercentage();
         return concludedPercentage;
+    }
+
+    /**
+     * @return boolean return if has error
+     */
+    public boolean hasError() {
+        return this.error != null && !this.error.trim().isEmpty();
     }
 }
