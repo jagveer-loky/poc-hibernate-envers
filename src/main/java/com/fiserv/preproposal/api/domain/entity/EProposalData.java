@@ -198,7 +198,7 @@ import javax.persistence.*;
                 "       tpd.AGENT_CPF_CNPJ AS \"AGENTCPFCNPJ\",\n" +
                 "       tfc.institution AS \"INSTITUTION\",\n" +
                 "       tfc.service_contract AS \"SERVICECONTRACT\",\n" +
-                "       tpd.opt_in AS \"OPTIN\"," +
+                "       tpd.optin AS \"OPTIN\"," +
                 "       tpd.seller_registration AS \"SELLERREGISTRATION\"," +
                 "       tpd.SUB_CHANNEL AS \"SUBCHANNEL\", \n" +
                 "       tcs.service_id || '-' || TCS.TECHNOLOGY AS \"TECNOLOGY\",\n" +
@@ -543,7 +543,7 @@ import javax.persistence.*;
                 "       tpd.AGENT_CPF_CNPJ AS \"AGENTCPFCNPJ\",\n" +
                 "       tfc.institution AS \"INSTITUTION\",\n" +
                 "       tfc.service_contract AS \"SERVICECONTRACT\",\n" +
-                "       tpd.opt_in AS \"OPTIN\"," +
+                "       tpd.optin AS \"OPTIN\"," +
                 "       tpd.seller_registration AS \"SELLERREGISTRATION\"," +
                 "       tpd.SUB_CHANNEL AS \"SUBCHANNEL\", \n" +
                 "       tcs.service_id || '-' || TCS.TECHNOLOGY AS \"TECHNOLOGY\",\n" +
