@@ -84,7 +84,6 @@ public class EReport implements Serializable {
     /**
      *
      */
-    @NotBlank
     @Column(name = "ERROR")
     private String error;
 
