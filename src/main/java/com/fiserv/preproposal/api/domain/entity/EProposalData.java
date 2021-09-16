@@ -183,8 +183,8 @@ import javax.persistence.*;
 })
 @NamedNativeQueries(value = {
         @NamedNativeQuery(name = "getBasicReport", query = "SELECT\n" +
-                "       tpd.id AS \"ID\",\n" +
-                "       tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
+                "       tpd.proposal_number AS \"ID\",\n" +
+                "       tpd.id AS \"PROPOSALNUMBER\",\n" +
                 "       CASE tpd.proposal_type WHEN 'F' THEN tppp.CPF\n" +
                 "       ELSE tpplp.CNPJ END AS \"CPFCNPJ\",\n" +
                 "       CASE tpd.proposal_type WHEN 'F' THEN tppp.FANTASY_NAME\n" +
@@ -536,8 +536,8 @@ import javax.persistence.*;
                         "        )"
         ),
         @NamedNativeQuery(name = "getCompleteReport", query = "SELECT  \n" +
-                "       tpd.id AS \"PREPROPOSALID\",\n" +
-                "      tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
+                "       tpd.proposal_number AS \"PREPROPOSALID\",\n" +
+                "       tpd.id AS \"PROPOSALNUMBER\",\n" +
                 "       tpd.merchant_id AS \"MERCHANT\",\n" +
                 "       tpd.AGENT_CHANNEL AS \"USERID\", \n" +
                 "       tpd.AGENT_CPF_CNPJ AS \"AGENTCPFCNPJ\",\n" +
