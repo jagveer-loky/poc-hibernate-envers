@@ -18,18 +18,18 @@ public class CompleteReport extends AbstractReport implements Serializable {
     @Parsed(field = "ID da proposta")
     @Schema(
             description = "ID da Pre Proposta",
-            example = "5763",
-            type = "number"
+            example = "O00000001976443",
+            type = "String"
     )
-    private Long preproposalId;
+    private String preproposalId;
 
     @Parsed(field = "Numero da pre proposta")
     @Schema(
             description = "Numero da Proposta no Fiserv Online",
-            example = "O00000001976443",
-            type = "String"
+            example = "5763",
+            type = "number"
     )
-    private String proposalNumber;
+    private Long proposalNumber;
 
     @Parsed(field = "Merchant ID")
     @Schema(

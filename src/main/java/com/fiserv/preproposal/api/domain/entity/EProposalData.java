@@ -79,8 +79,8 @@ import javax.persistence.*;
                         @ConstructorResult(
                                 targetClass = CompleteReport.class,
                                 columns = {
-                                        @ColumnResult(name = "PREPROPOSALID", type = Long.class),
-                                        @ColumnResult(name = "PROPOSALNUMBER", type = String.class),
+                                        @ColumnResult(name = "PREPROPOSALID", type = String.class),
+                                        @ColumnResult(name = "PROPOSALNUMBER", type = Long.class),
                                         @ColumnResult(name = "MERCHANT", type = String.class),
                                         @ColumnResult(name = "USERID", type = String.class),
                                         @ColumnResult(name = "AGENTCPFCNPJ", type = String.class),
@@ -536,7 +536,7 @@ import javax.persistence.*;
                         "        )"
         ),
         @NamedNativeQuery(name = "getCompleteReport", query = "SELECT  \n" +
-                "       tpd.proposal_number AS \"PREPROPOSALID\",\n" +
+                "       tpd.PROPOSAL_NUMBER AS \"PREPROPOSALID\",\n" +
                 "       tpd.id AS \"PROPOSALNUMBER\",\n" +
                 "       tpd.merchant_id AS \"MERCHANT\",\n" +
                 "       tpd.AGENT_CHANNEL AS \"USERID\", \n" +
