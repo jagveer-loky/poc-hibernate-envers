@@ -79,8 +79,8 @@ import javax.persistence.*;
                         @ConstructorResult(
                                 targetClass = CompleteReport.class,
                                 columns = {
-                                        @ColumnResult(name = "PREPROPOSALID", type = Long.class),
-                                        @ColumnResult(name = "PROPOSALNUMBER", type = String.class),
+                                        @ColumnResult(name = "PREPROPOSALID", type = String.class),
+                                        @ColumnResult(name = "PROPOSALNUMBER", type = Long.class),
                                         @ColumnResult(name = "MERCHANT", type = String.class),
                                         @ColumnResult(name = "USERID", type = String.class),
                                         @ColumnResult(name = "AGENTCPFCNPJ", type = String.class),
@@ -174,7 +174,9 @@ import javax.persistence.*;
                                         @ColumnResult(name = "ACCOUNTOWNER", type = String.class),
                                         @ColumnResult(name = "ACCOUNTTYPE", type = String.class),
                                         @ColumnResult(name = "WORKDAYS", type = String.class),
-                                        @ColumnResult(name = "RESPONSETYPE", type = String.class)
+                                        @ColumnResult(name = "RESPONSETYPE", type = String.class),
+                                        @ColumnResult(name = "TYPEOFESTABLISHMENT", type = String.class),
+                                        @ColumnResult(name = "ACCEPTTERM", type = String.class)
                                 }
                         )
                 }
@@ -183,8 +185,8 @@ import javax.persistence.*;
 })
 @NamedNativeQueries(value = {
         @NamedNativeQuery(name = "getBasicReport", query = "SELECT\n" +
-                "       tpd.id AS \"ID\",\n" +
-                "       tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
+                "       tpd.proposal_number AS \"ID\",\n" +
+                "       tpd.id AS \"PROPOSALNUMBER\",\n" +
                 "       CASE tpd.proposal_type WHEN 'F' THEN tppp.CPF\n" +
                 "       ELSE tpplp.CNPJ END AS \"CPFCNPJ\",\n" +
                 "       CASE tpd.proposal_type WHEN 'F' THEN tppp.FANTASY_NAME\n" +
@@ -198,7 +200,7 @@ import javax.persistence.*;
                 "       tpd.AGENT_CPF_CNPJ AS \"AGENTCPFCNPJ\",\n" +
                 "       tfc.institution AS \"INSTITUTION\",\n" +
                 "       tfc.service_contract AS \"SERVICECONTRACT\",\n" +
-                "       tpd.opt_in AS \"OPTIN\"," +
+                "       tpd.optin AS \"OPTIN\"," +
                 "       tpd.seller_registration AS \"SELLERREGISTRATION\"," +
                 "       tpd.SUB_CHANNEL AS \"SUBCHANNEL\", \n" +
                 "       tcs.service_id || '-' || TCS.TECHNOLOGY AS \"TECNOLOGY\",\n" +
@@ -536,14 +538,14 @@ import javax.persistence.*;
                         "        )"
         ),
         @NamedNativeQuery(name = "getCompleteReport", query = "SELECT  \n" +
-                "       tpd.id AS \"PREPROPOSALID\",\n" +
-                "      tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
+                "       tpd.PROPOSAL_NUMBER AS \"PREPROPOSALID\",\n" +
+                "       tpd.id AS \"PROPOSALNUMBER\",\n" +
                 "       tpd.merchant_id AS \"MERCHANT\",\n" +
                 "       tpd.AGENT_CHANNEL AS \"USERID\", \n" +
                 "       tpd.AGENT_CPF_CNPJ AS \"AGENTCPFCNPJ\",\n" +
                 "       tfc.institution AS \"INSTITUTION\",\n" +
                 "       tfc.service_contract AS \"SERVICECONTRACT\",\n" +
-                "       tpd.opt_in AS \"OPTIN\"," +
+                "       tpd.optin AS \"OPTIN\"," +
                 "       tpd.seller_registration AS \"SELLERREGISTRATION\"," +
                 "       tpd.SUB_CHANNEL AS \"SUBCHANNEL\", \n" +
                 "       tcs.service_id || '-' || TCS.TECHNOLOGY AS \"TECHNOLOGY\",\n" +
@@ -668,6 +670,8 @@ import javax.persistence.*;
                 "        WHEN 'Friday' THEN ' Sexta-feira das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO\n" +
                 "        WHEN 'Saturday' THEN 'Sábado das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO\n" +
                 "       ELSE 'Domingo'|| tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO END AS \"WORKDAYS\"," +
+                "       'Comercial' AS \"TYPEOFESTABLISHMENT\"," +
+                "       'Sim' AS \"ACCEPTTERM\"," +
                 "       tpd.RESPONSE_TYPE AS \"RESPONSETYPE\"" +
                 "       from tb_proposal_data tpd\n" +
                 "  LEFT join TB_PROPOSAL_PHYSICAL_PERSON tppp on tpd.proposal_type = 'F' and tpd.id = tppp.ID_FILE_PROPOSAL_DTA\n" +
