@@ -174,7 +174,9 @@ import javax.persistence.*;
                                         @ColumnResult(name = "ACCOUNTOWNER", type = String.class),
                                         @ColumnResult(name = "ACCOUNTTYPE", type = String.class),
                                         @ColumnResult(name = "WORKDAYS", type = String.class),
-                                        @ColumnResult(name = "RESPONSETYPE", type = String.class)
+                                        @ColumnResult(name = "RESPONSETYPE", type = String.class),
+                                        @ColumnResult(name = "TYPEOFESTABLISHMENT", type = String.class),
+                                        @ColumnResult(name = "ACCEPTTERM", type = String.class)
                                 }
                         )
                 }
@@ -668,6 +670,8 @@ import javax.persistence.*;
                 "        WHEN 'Friday' THEN ' Sexta-feira das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO\n" +
                 "        WHEN 'Saturday' THEN 'Sábado das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO\n" +
                 "       ELSE 'Domingo'|| tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO END AS \"WORKDAYS\"," +
+                "       'Comercial' AS \"TYPEOFESTABLISHMENT\"," +
+                "       'Sim' AS \"ACCEPTTERM\"," +
                 "       tpd.RESPONSE_TYPE AS \"RESPONSETYPE\"" +
                 "       from tb_proposal_data tpd\n" +
                 "  LEFT join TB_PROPOSAL_PHYSICAL_PERSON tppp on tpd.proposal_type = 'F' and tpd.id = tppp.ID_FILE_PROPOSAL_DTA\n" +
