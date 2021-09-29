@@ -4,6 +4,7 @@ import com.fiserv.preproposal.api.application.exceptions.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.nio.file.AccessDeniedException;
+import java.nio.file.NoSuchFileException;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -107,6 +108,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return handleException(ResponsesAndExceptionEnum.NSA_NOT_FOUND, new Object[] {}, e, request, HttpStatus.NOT_FOUND);
 	}
 
+	@ExceptionHandler(NoSuchFileException.class)
+	private ResponseEntity<Object> nsaNotFoundException(NoSuchFileException e, WebRequest request) {
+		LOGGER.info(LogUtil.buildMessage(ApplicationEnum.SBA, request, "File not found."));
+		return handleException(ResponsesAndExceptionEnum.FILE_NOT_FOUND, new Object[] {}, e, request, HttpStatus.NOT_FOUND);
+	}
+
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		 List<String> errors = e.getBindingResult()
@@ -125,7 +132,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	private ResponseEntity<Object> handleException(ResponsesAndExceptionEnum exceptionEnum, Object[] params, Exception e, WebRequest request, HttpStatus status) {
 		return handleException(exceptionEnum.getCode(), exceptionEnum.getMessageKey(), params, e, request, status);
 	}
-	
+
 	private ResponseEntity<Object> handleException(Integer codigo, String messageKey, Object[] params, Exception e, WebRequest request, HttpStatus status) {
 		LOGGER.info(ExceptionUtils.getStackTrace(e));
 		String message = messageSource.getMessage(messageKey, params, Locale.getDefault());
