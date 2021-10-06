@@ -16,7 +16,7 @@ public enum EnumWorkflowStatus {
     PENDING_FISERV_SUBMISSION("Pendente envio da proposta para o Fiserv Online"),
     CAMPAING_ERROR("Erro ao buscar informacoes com base na Campanha"),
     RANGE_ERROR("Erro ao busscar o Range"),
-    FISERV_SUBMISSION_ERROR("Erro ao enviar proposta apra o Fiserv Online"),
+    FISERV_SUBMISSION_ERROR("Erro ao enviar proposta para o Fiserv Online"),
     PENDING_FISERV_RETURN("Pendente retorno do Fiserv Online"),
     FISERV_RETURN_ERROR("Erro no retorno do Fiserv Online"),
     PENDING_BW ("Integração com o BW pendente"),

@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.MessageSource;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -119,7 +120,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		 List<String> errors = e.getBindingResult()
 				                .getFieldErrors()
 				                .stream()
-				                .map(x -> x.getDefaultMessage())
+				                .map(DefaultMessageSourceResolvable::getDefaultMessage)
 				                .collect(Collectors.toList());
 		return handleException(ResponsesAndExceptionEnum.ERRO_VALIDATION, new Object[] { errors }, e, request, HttpStatus.PARTIAL_CONTENT);
 	}
