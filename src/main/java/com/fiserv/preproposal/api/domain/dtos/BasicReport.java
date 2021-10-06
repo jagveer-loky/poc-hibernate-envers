@@ -223,4 +223,60 @@ public class BasicReport extends AbstractReport implements Serializable {
     )
     private String submissionDate;
 
+    @Index(25)
+    @Parsed(field = "Campo de erro")
+    @Schema(
+            description = "Campo de erro",
+            type = "String"
+    )
+    private String errorField;
+
+    @Index(26)
+    @Parsed(field = "Descricao do erro")
+    @Schema(
+            description = "Descricao do erro",
+            type = "String"
+    )
+    private String errorDescription;
+
+    @Index(27)
+    @Parsed(field = "Mensagem de erro")
+    @Schema(
+            description = "Mensagem de erro",
+            type = "String"
+    )
+    private String errorMessage;
+
+    @Index(28)
+    @Parsed(field = "Detalhe")
+    @Schema(
+            description = "Detalhe",
+            type = "String"
+    )
+    private String detail;
+
+    @Index(29)
+    @Parsed(field = "Etapa da proposta")
+    @Schema(
+            description = "Etapa da proposta",
+            type = "String"
+    )
+    private String step;
+
+    @Index(30)
+    @Parsed(field = "Informacoes adicionais")
+    @Schema(
+            description = "Informacoes adicionais",
+            type = "String"
+    )
+    private String moreInformation;
+
+    @Index(31)
+    @Parsed(field = "Resposta FO")
+    @Schema(
+            description = "Resposta FO",
+            type = "String"
+    )
+    private String fiservOnlineResponse;
+
 }
