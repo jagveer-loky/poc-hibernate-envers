@@ -4,6 +4,7 @@ import com.fiserv.preproposal.api.application.exceptions.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.nio.file.AccessDeniedException;
+import java.nio.file.NoSuchFileException;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.MessageSource;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -26,7 +28,7 @@ import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ApplicationEnum;
 import com.fiserv.preproposal.api.infrastrucutre.aid.enums.EventActivityEnum;
 import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ResponsesAndExceptionEnum;
 import com.fiserv.preproposal.api.application.pagination.DResponse;
-import com.fiserv.preproposal.api.infrastrucutre.aid.LogUtil;
+import com.fiserv.preproposal.api.infrastrucutre.aid.util.LogUtil;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
@@ -107,12 +109,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return handleException(ResponsesAndExceptionEnum.NSA_NOT_FOUND, new Object[] {}, e, request, HttpStatus.NOT_FOUND);
 	}
 
+	@ExceptionHandler(NoSuchFileException.class)
+	private ResponseEntity<Object> nsaNotFoundException(NoSuchFileException e, WebRequest request) {
+		LOGGER.info(LogUtil.buildMessage(ApplicationEnum.SBA, request, "File not found."));
+		return handleException(ResponsesAndExceptionEnum.FILE_NOT_FOUND, new Object[] {}, e, request, HttpStatus.NOT_FOUND);
+	}
+
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		 List<String> errors = e.getBindingResult()
 				                .getFieldErrors()
 				                .stream()
-				                .map(x -> x.getDefaultMessage())
+				                .map(DefaultMessageSourceResolvable::getDefaultMessage)
 				                .collect(Collectors.toList());
 		return handleException(ResponsesAndExceptionEnum.ERRO_VALIDATION, new Object[] { errors }, e, request, HttpStatus.PARTIAL_CONTENT);
 	}
@@ -125,7 +133,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	private ResponseEntity<Object> handleException(ResponsesAndExceptionEnum exceptionEnum, Object[] params, Exception e, WebRequest request, HttpStatus status) {
 		return handleException(exceptionEnum.getCode(), exceptionEnum.getMessageKey(), params, e, request, status);
 	}
-	
+
 	private ResponseEntity<Object> handleException(Integer codigo, String messageKey, Object[] params, Exception e, WebRequest request, HttpStatus status) {
 		LOGGER.info(ExceptionUtils.getStackTrace(e));
 		String message = messageSource.getMessage(messageKey, params, Locale.getDefault());

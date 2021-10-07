@@ -1,4 +1,4 @@
-package com.fiserv.preproposal.api.infrastrucutre.aid;
+package com.fiserv.preproposal.api.infrastrucutre.aid.util;
 
 import javax.servlet.http.HttpServletRequest;
 

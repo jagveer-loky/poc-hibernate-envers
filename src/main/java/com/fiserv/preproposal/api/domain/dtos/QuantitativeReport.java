@@ -1,5 +1,6 @@
 package com.fiserv.preproposal.api.domain.dtos;
 
+import com.fiserv.preproposal.api.application.annotation.Index;
 import com.univocity.parsers.annotations.Parsed;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -7,14 +8,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuantitativeReport {
+public class QuantitativeReport extends AbstractReport implements Serializable {
 
-    public static final String NAME = "quantitative";
-
+    //@Index(1)
     @Parsed(field = "Nome do Arquivo")
     @Schema(
             description = "Nome do arquivo",
@@ -23,6 +25,7 @@ public class QuantitativeReport {
     )
     private String filename;
 
+    @Index(2)
     @Parsed(field = "Instituicao")
     @Schema(
             description = "Instituicao",
@@ -31,6 +34,7 @@ public class QuantitativeReport {
     )
     private String institution;
 
+    @Index(3)
     @Parsed(field = "Data de processamento")
     @Schema(
             description = "Data de Processamento",
@@ -39,6 +43,7 @@ public class QuantitativeReport {
     )
     private String processingDate;
 
+    @Index(4)
     @Parsed(field = "Status do Arquivo")
     @Schema(
             description = "Status do arquivo",
@@ -47,6 +52,7 @@ public class QuantitativeReport {
     )
     private String fileStatus;
 
+    @Index(5)
     @Parsed(field = "Qtd. de Propostas")
     @Schema(
             description = "Numero de Propostas",
@@ -55,6 +61,7 @@ public class QuantitativeReport {
     )
     private Long proposals;
 
+    @Index(6)
     @Parsed(field = "Qtd. Rejeitado no Online")
     @Schema(
             description = "Numero de Propostas Rejeitadas pelo Fiserv Online",
@@ -63,6 +70,7 @@ public class QuantitativeReport {
     )
     private Long onlineRejected;
 
+    @Index(7)
     @Parsed(field = "Qtd. Pendente no Online")
     @Schema(
             description = "Numero de Propostas Pendentes pelo Fiserv Online",
@@ -71,6 +79,7 @@ public class QuantitativeReport {
     )
     private Long pendingInFiservOnline;
 
+    @Index(8)
     @Parsed(field = "Qtd. Pendente Complemento")
     @Schema(
             description = "Numero de Propostas Pendentes Complemento",
@@ -79,6 +88,7 @@ public class QuantitativeReport {
     )
     private Long pendingComplement;
 
+    @Index(9)
     @Parsed(field = "Qtd. erro pre proposta")
     @Schema(
             description = "Numero de Propostas Com Erro",
@@ -87,6 +97,7 @@ public class QuantitativeReport {
     )
     private Long preproposalError;
 
+    @Index(10)
     @Parsed(field = "Qtd. Concluida")
     @Schema(
             description = "Numero de Propostas Finalizadas",
@@ -95,6 +106,7 @@ public class QuantitativeReport {
     )
     private Long finished;
 
+    @Index(11)
     @Parsed(field = "Qtd. Cancelada TMP")
     @Schema(
             description = "Numero de Propostas Canceladas no TMP",
@@ -103,6 +115,7 @@ public class QuantitativeReport {
     )
     private Long tmpCanceled;
 
+    @Index(12)
     @Parsed(field = "Qtd. Credenciada Online")
     @Schema(
             description = "Numero de Propostas no Cred Online",

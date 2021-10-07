@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+    <Properties>
+        <Property name="PATH">
+            ./target/logs/
+        </Property>
+        <Property name="LOG_PATTERN">
+            %style{%d{MM-dd-yyyy HH:mm:ss}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow} | %m%n%throwable
+        </Property>
+        <Property name="PROJECT_NAME">
+            pre-proposal-api
+        </Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}" />
+        </Console>
+
+        <RollingFile name="RollingFile"
+                     fileName="${PATH}/${PROJECT_NAME}.log"
+                     filePattern="${PATH}/$${date:MM-yyyy}/${PROJECT_NAME}-%d{dd-MM-yyyy}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <!-- rollover on startup, daily and when the file reaches
+                    10 MegaBytes -->
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy
+                        size="10 MB" />
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- LOG everything at INFO level -->
+        <Root level="info">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="RollingFile" />
+        </Root>
+
+        <Logger name="org.jobrunr" level="INFO"/>
+        <Logger name="com.fiserv" level="INFO"/>
+
+    </Loggers>
+
+</Configuration>

@@ -21,7 +21,7 @@ import com.fiserv.preproposal.api.application.config.security.FDSecurityEnum;
 import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ApplicationEnum;
 import com.fiserv.preproposal.api.infrastrucutre.aid.enums.EventActivityEnum;
 import com.fiserv.preproposal.api.application.pagination.DSecurity;
-import com.fiserv.preproposal.api.infrastrucutre.aid.LogUtil;
+import com.fiserv.preproposal.api.infrastrucutre.aid.util.LogUtil;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

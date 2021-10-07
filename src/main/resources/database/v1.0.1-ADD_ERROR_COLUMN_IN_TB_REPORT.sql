@@ -1,0 +1,1 @@
+ALTER TABLE "TB_REPORT" ADD "ERROR" varchar2(4000 char);

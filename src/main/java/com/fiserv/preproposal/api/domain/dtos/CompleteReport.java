@@ -1,5 +1,6 @@
 package com.fiserv.preproposal.api.domain.dtos;
 
+import com.fiserv.preproposal.api.application.annotation.Index;
 import com.univocity.parsers.annotations.Parsed;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -7,30 +8,33 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompleteReport {
+public class CompleteReport extends AbstractReport implements Serializable {
 
-    public static final String NAME = "complete";
-
+    @Index(2)
     @Parsed(field = "ID da proposta")
     @Schema(
             description = "ID da Pre Proposta",
-            example = "5763",
-            type = "number"
-    )
-    private Long preproposalId;
-
-    @Parsed(field = "Numero da pre proposta")
-    @Schema(
-            description = "Numero da Proposta no Fiserv Online",
             example = "O00000001976443",
             type = "String"
     )
-    private String proposalNumber;
+    private String preproposalId;
 
+    @Index(1)
+    @Parsed(field = "Numero da pre proposta")
+    @Schema(
+            description = "Numero da Proposta no Fiserv Online",
+            example = "5763",
+            type = "number"
+    )
+    private Long proposalNumber;
+
+    @Index(3)
     @Parsed(field = "Merchant ID")
     @Schema(
             description = "Merchant do Fiserv Online",
@@ -39,6 +43,7 @@ public class CompleteReport {
     )
     private String merchant;
 
+    @Index(4)
     @Parsed(field = "UserId")
     @Schema(
             description = "ID do Usuario",
@@ -47,6 +52,7 @@ public class CompleteReport {
     )
     private String userId;
 
+    @Index(5)
     @Parsed(field = "CPF ou CNPJ do agente")
     @Schema(
             description = "CPF/CNPJ do agente",
@@ -55,6 +61,7 @@ public class CompleteReport {
     )
     private String agentCpfCnpj;
 
+    @Index(6)
     @Parsed(field = "Instituicao")
     @Schema(
             description = "Instituicao",
@@ -63,7 +70,8 @@ public class CompleteReport {
     )
     private String institution;
 
-    @Parsed(field = "service_contract")
+    @Index(7)
+    @Parsed(field = "SERVICE_CONTRACT")
     @Schema(
             description = "Service Contract",
             example = "149",
@@ -71,6 +79,7 @@ public class CompleteReport {
     )
     private Integer serviceContract;
 
+    @Index(95)
     @Parsed(field = "Opt In")
     @Schema(
             description = "Opt In",
@@ -79,6 +88,7 @@ public class CompleteReport {
     )
     private String optIn;
 
+    @Index(94)
     @Parsed(field = "Matricula do Vendedor")
     @Schema(
             description = "Matrícula do Vendedor",
@@ -87,6 +97,7 @@ public class CompleteReport {
     )
     private String sellerRegistration;
 
+    @Index(8)
     @Parsed(field = "Sub Canal")
     @Schema(
             description = "Sub Canal",
@@ -95,6 +106,7 @@ public class CompleteReport {
     )
     private String subChannel;
 
+    @Index(9)
     @Parsed(field = "Tecnologia")
     @Schema(
             description = "Tecnologia",
@@ -103,6 +115,7 @@ public class CompleteReport {
     )
     private String technology;
 
+    @Index(10)
     @Parsed(field = "Numero de terminais")
     @Schema(
             description = "Numero de Terminais",
@@ -111,6 +124,7 @@ public class CompleteReport {
     )
     private Long terminalsNumber;
 
+    @Index(11)
     @Parsed(field = "Valor unitario")
     @Schema(
             description = "Valor Unitario",
@@ -119,6 +133,7 @@ public class CompleteReport {
     )
     private String unitaryValue;
 
+    @Index(12)
     @Parsed(field = "Status - FISERV")
     @Schema(
             description = "Fiserv Status",
@@ -127,6 +142,7 @@ public class CompleteReport {
     )
     private String fiservStatus;
 
+    @Index(14)
     @Parsed(field = "Status - CAIXA")
     @Schema(
             description = "Caixa Status",
@@ -135,6 +151,7 @@ public class CompleteReport {
     )
     private String caixaStatus;
 
+    @Index(15)
     @Parsed(field = "Mensagem Caixa")
     @Schema(
             description = "Caixa Mensagem",
@@ -143,6 +160,7 @@ public class CompleteReport {
     )
     private String caixaMessage;
 
+    @Index(13)
     @Parsed(field = "Erros")
     @Schema(
             description = "Erros de processamento dos bulks",
@@ -151,6 +169,7 @@ public class CompleteReport {
     )
     private String errors;
 
+    @Index(16)
     @Parsed(field = "Inclusao em")
     @Schema(
             description = "Data de Inclusao",
@@ -159,6 +178,7 @@ public class CompleteReport {
     )
     private String includeIn;
 
+    @Index(17)
     @Parsed(field = "Conclusao em")
     @Schema(
             description = "Data de Conclusao",
@@ -167,6 +187,7 @@ public class CompleteReport {
     )
     private String finishedIn;
 
+    @Index(18)
     @Parsed(field = "Submissao ao online em")
     @Schema(
             description = "Data de Envio para o Fiserv Online",
@@ -175,6 +196,7 @@ public class CompleteReport {
     )
     private String submissionOnlineDate;
 
+    @Index(19)
     @Parsed(field = "Tipo de pessoa")
     @Schema(
             description = "Tipo de Pessoa",
@@ -183,6 +205,7 @@ public class CompleteReport {
     )
     private String personType;
 
+    @Index(20)
     @Parsed(field = "CPF/CNPJ")
     @Schema(
             description = "CPF/CNPJ",
@@ -191,6 +214,7 @@ public class CompleteReport {
     )
     private String cpfCnpj;
 
+    @Index(21)
     @Parsed(field = "Nome Fantasia")
     @Schema(
             description = "Nome Fantasia",
@@ -199,6 +223,7 @@ public class CompleteReport {
     )
     private String fantasyName;
 
+    @Index(22)
     @Parsed(field = "Razao Social")
     @Schema(
             description = "Razao Social",
@@ -207,6 +232,7 @@ public class CompleteReport {
     )
     private String socialReason;
 
+    @Index(23)
     @Parsed(field = "Nome Plaqueta (Comprovante)")
     @Schema(
             description = "Nome da Plaqueta",
@@ -215,6 +241,7 @@ public class CompleteReport {
     )
     private String plateletName;
 
+    @Index(24)
     @Parsed(field = "Faturamento Mensal")
     @Schema(
             description = "Faturamento Mensal",
@@ -223,6 +250,7 @@ public class CompleteReport {
     )
     private String montlyBilling;
 
+    @Index(25)
     @Parsed(field = "Nascimento/Constituicao")
     @Schema(
             description = "Data de Nascimento",
@@ -231,6 +259,7 @@ public class CompleteReport {
     )
     private String birthDate;
 
+    @Index(26)
     @Parsed(field = "Genero")
     @Schema(
             description = "Genero (M - Masculino, F - Feminino)",
@@ -239,6 +268,7 @@ public class CompleteReport {
     )
     private String gender;
 
+    @Index(27)
     @Parsed(field = "Pronome de tratamento")
     @Schema(
             description = "Pronome de Tratamento",
@@ -247,6 +277,7 @@ public class CompleteReport {
     )
     private String treatmentPronoun;
 
+    @Index(28)
     @Parsed(field = "Local de nascimento")
     @Schema(
             description = "Local de Nascimento",
@@ -255,6 +286,7 @@ public class CompleteReport {
     )
     private String birthPlace;
 
+    @Index(29)
     @Parsed(field = "Nacionalidade")
     @Schema(
             description = "Nacionalidade",
@@ -263,6 +295,7 @@ public class CompleteReport {
     )
     private String nacionality;
 
+    @Index(30)
     @Parsed(field = "Nome completo")
     @Schema(
             description = "Nome Completo",
@@ -271,6 +304,7 @@ public class CompleteReport {
     )
     private String fullName;
 
+    @Index(31)
     @Parsed(field = "Inscricao Municipal")
     @Schema(
             description = "Inscricao Municipal",
@@ -278,6 +312,7 @@ public class CompleteReport {
     )
     private String municipalRegistration;
 
+    @Index(32)
     @Parsed(field = "Inscricao estadual")
     @Schema(
             description = "Inscricao Estadual",
@@ -286,6 +321,7 @@ public class CompleteReport {
     )
     private String stateRegistration;
 
+    @Index(33)
     @Parsed(field = "Forma de constituicao")
     @Schema(
             description = "Forma de Constituicao",
@@ -294,6 +330,7 @@ public class CompleteReport {
     )
     private String constitutionForm;
 
+    @Index(34)
     @Parsed(field = "Data de abertura")
     @Schema(
             description = "Data de Abertura",
@@ -302,6 +339,7 @@ public class CompleteReport {
     )
     private String openDate;
 
+    @Index(35)
     @Parsed(field = "ANNUAL_BILLING_VOL")
     @Schema(
             description = "Faturamento Anual",
@@ -310,6 +348,7 @@ public class CompleteReport {
     )
     private String annualBillingVol;
 
+    @Index(36)
     @Parsed(field = "ANNUAL_VOL_CASH")
     @Schema(
             description = "Volume Anual de Faturamento",
@@ -318,6 +357,7 @@ public class CompleteReport {
     )
     private String annualVolCash;
 
+    @Index(37)
     @Parsed(field = "ANNUAL_VOL_SALES_CARD")
     @Schema(
             description = "Volume Anual de Vendas de Cartao",
@@ -326,6 +366,7 @@ public class CompleteReport {
     )
     private String annualVolSalesCard;
 
+    @Index(38)
     @Parsed(field = "ANNUAL_VOL_SALES_CARD_GROUP")
     @Schema(
             description = "Volume Anual de Venda de Cartao por Grupo",
@@ -334,6 +375,7 @@ public class CompleteReport {
     )
     private String annualVolSalesCardGroup;
 
+    @Index(39)
     @Parsed(field = "AVERAGE_TICKET")
     @Schema(
             description = "Faturamento Mensal",
@@ -342,6 +384,7 @@ public class CompleteReport {
     )
     private String averageTicket;
 
+    @Index(40)
     @Parsed(field = "Permissao Bacen")
     @Schema(
             description = "Permissao do Bacen",
@@ -350,6 +393,7 @@ public class CompleteReport {
     )
     private String bacenPermission;
 
+    @Index(41)
     @Parsed(field = "Codigo da campanha")
     @Schema(
             description = "Codigo da Campanha",
@@ -358,6 +402,7 @@ public class CompleteReport {
     )
     private String campaingId;
 
+    @Index(42)
     @Parsed(field = "CNAE")
     @Schema(
             description = "CNAE",
@@ -366,6 +411,7 @@ public class CompleteReport {
     )
     private String cnae;
 
+    @Index(43)
     @Parsed(field = "ECOMMERCE")
     @Schema(
             description = "E-Commerce",
@@ -374,6 +420,7 @@ public class CompleteReport {
     )
     private String eCommerce;
 
+    @Index(44)
     @Parsed(field = "Cartao estrangeiro")
     @Schema(
             description = "Cartao Extrangeiro",
@@ -382,6 +429,7 @@ public class CompleteReport {
     )
     private String foreignCard;
 
+    @Index(45)
     @Parsed(field = "MANUAL_PREPAYMENT_ENABLED")
     @Schema(
             description = "Antecipacao Manual",
@@ -390,6 +438,7 @@ public class CompleteReport {
     )
     private String manualPrepaymentEnabled;
 
+    @Index(46)
     @Parsed(field = "BOARDING_BRANCHING")
     @Schema(
             description = "Agencia de Boarding",
@@ -398,6 +447,7 @@ public class CompleteReport {
     )
     private String boardingBranching;
 
+    @Index(47)
     @Parsed(field = "Porc. cartao n/ presente")
     @Schema(
             description = "Percentual de Cartao Nao Presente",
@@ -406,6 +456,7 @@ public class CompleteReport {
     )
     private String percCardNotPresent;
 
+    @Index(48)
     @Parsed(field = "Porc. cartao presente")
     @Schema(
             description = "Percentual de Cartao Presente",
@@ -414,6 +465,7 @@ public class CompleteReport {
     )
     private String percCardPresent;
 
+    @Index(49)
     @Parsed(field = "Porc. Internet")
     @Schema(
             description = "Percentual Internet",
@@ -422,6 +474,7 @@ public class CompleteReport {
     )
     private String percInternet;
 
+    @Index(50)
     @Parsed(field = "PREPAYMENT_INDICATOR")
     @Schema(
             description = "Indicador de Antecipacao",
@@ -430,6 +483,7 @@ public class CompleteReport {
     )
     private String prepaymentIndicator;
 
+    @Index(51)
     @Parsed(field = "Transacao recorrente")
     @Schema(
             description = "Transação Recorrente",
@@ -438,6 +492,7 @@ public class CompleteReport {
     )
     private String recurringTransaction;
 
+    @Index(52)
     @Parsed(field = "SERVICE_DAY_0")
     @Schema(
             description = "Dia de Servico 0",
@@ -446,6 +501,7 @@ public class CompleteReport {
     )
     private String serviceDay0;
 
+    @Index(53)
     @Parsed(field = "SERVICE_DAY_15_30")
     @Schema(
             description = "Dia de Servico 15-30",
@@ -454,6 +510,7 @@ public class CompleteReport {
     )
     private String serviceDay1530;
 
+    @Index(54)
     @Parsed(field = "SERVICE_DAY_1_7")
     @Schema(
             description = "Dia de Servico 1-7",
@@ -462,6 +519,7 @@ public class CompleteReport {
     )
     private String serviceDay17;
 
+    @Index(55)
     @Parsed(field = "SERVICE_DAY_8_14")
     @Schema(
             description = "Dia de Servico 8-14",
@@ -470,6 +528,7 @@ public class CompleteReport {
     )
     private String serviceDay814;
 
+    @Index(56)
     @Parsed(field = "SERVICE_DAY_OVER_30")
     @Schema(
             description = "Dia de Servico Mais de 30",
@@ -478,6 +537,7 @@ public class CompleteReport {
     )
     private String serviceDayOver30;
 
+    @Index(57)
     @Parsed(field = "Pendente BW em")
     @Schema(
             description = "Data em que foi para o BW",
@@ -486,6 +546,7 @@ public class CompleteReport {
     )
     private String pendingBwDate;
 
+    @Index(58)
     @Parsed(field = "Data de instalacao")
     @Schema(
             description = "Data de Instalacao",
@@ -494,6 +555,7 @@ public class CompleteReport {
     )
     private String installationDate;
 
+    @Index(59)
     @Parsed(field = "Tipo de endereco")
     @Schema(
             description = "Tipo de Endereco",
@@ -502,6 +564,7 @@ public class CompleteReport {
     )
     private String addressType;
 
+    @Index(60)
     @Parsed(field = "CEP")
     @Schema(
             description = "CEP",
@@ -510,6 +573,7 @@ public class CompleteReport {
     )
     private String cep;
 
+    @Index(61)
     @Parsed(field = "Rua")
     @Schema(
             description = "Rua",
@@ -518,7 +582,8 @@ public class CompleteReport {
     )
     private String street;
 
-    @Parsed(field = "Numero")
+    @Index(62)
+    @Parsed(field = "Numero do Endereco")
     @Schema(
             description = "Numero do Endereco",
             example = "123",
@@ -526,6 +591,7 @@ public class CompleteReport {
     )
     private String number;
 
+    @Index(63)
     @Parsed(field = "Bairro")
     @Schema(
             description = "Distrito",
@@ -534,6 +600,7 @@ public class CompleteReport {
     )
     private String district;
 
+    @Index(64)
     @Parsed(field = "Complemento")
     @Schema(
             description = "Complemento",
@@ -542,6 +609,7 @@ public class CompleteReport {
     )
     private String complement;
 
+    @Index(65)
     @Parsed(field = "Cidade")
     @Schema(
             description = "Cidade",
@@ -550,6 +618,7 @@ public class CompleteReport {
     )
     private String city;
 
+    @Index(66)
     @Parsed(field = "Estado")
     @Schema(
             description = "Estado",
@@ -558,6 +627,7 @@ public class CompleteReport {
     )
     private String state;
 
+    @Index(67)
     @Parsed(field = "Tipo do socio")
     @Schema(
             description = "Tipo de Socio",
@@ -566,14 +636,16 @@ public class CompleteReport {
     )
     private String partnerType;
 
-    @Parsed(field = "CPF/CNPJ do socio")
+    @Index(68)
+    @Parsed(field = "CPF ou CNPJ do socio")
     @Schema(
-            description = "CPF/CNPJ do Socio",
+            description = "CPF ou CNPJ do socio",
             example = "61999503058",
             type = "String"
     )
     private String cpfCnpjPartner;
 
+    @Index(69)
     @Parsed(field = "Dta. Nasc. do socio")
     @Schema(
             description = "Data de Nascimento do Socio",
@@ -582,6 +654,7 @@ public class CompleteReport {
     )
     private String partnerBirthdate;
 
+    @Index(70)
     @Parsed(field = "Tipo de constituicao - socio")
     @Schema(
             description = "Forma de constituicao",
@@ -590,6 +663,7 @@ public class CompleteReport {
     )
     private String constitutionType;
 
+    @Index(71)
     @Parsed(field = "Contato - socio")
     @Schema(
             description = "Numero do Telefone de Contato do Socio",
@@ -598,6 +672,7 @@ public class CompleteReport {
     )
     private String contract;
 
+    @Index(72)
     @Parsed(field = "Nome do socio")
     @Schema(
             description = "Nome do Socio",
@@ -606,6 +681,7 @@ public class CompleteReport {
     )
     private String partnerName;
 
+    @Index(73)
     @Parsed(field = "Pronome de tratamento - Socio")
     @Schema(
             description = "Pronome de Tratamento",
@@ -614,6 +690,7 @@ public class CompleteReport {
     )
     private String pronounTreatmentPartner;
 
+    @Index(74)
     @Parsed(field = "Nacionalidade do socio")
     @Schema(
             description = "Nacionalidade do Socio",
@@ -622,6 +699,7 @@ public class CompleteReport {
     )
     private String partnerNacionality;
 
+    @Index(75)
     @Parsed(field = "Funcao do socio")
     @Schema(
             description = "Nacionalidade do Socio",
@@ -630,6 +708,7 @@ public class CompleteReport {
     )
     private String partnerFunction;
 
+    @Index(76)
     @Parsed(field = "Perc. Participacao do socio")
     @Schema(
             description = "Percentual do Socio",
@@ -638,6 +717,7 @@ public class CompleteReport {
     )
     private String percPartner;
 
+    @Index(77)
     @Parsed(field = "Dta. nasc. contato")
     @Schema(
             description = "Data de Nascimento do Contato",
@@ -646,6 +726,7 @@ public class CompleteReport {
     )
     private String contactBirthdate;
 
+    @Index(78)
     @Parsed(field = "CPF contato")
     @Schema(
             description = "CPF do Contato",
@@ -654,6 +735,7 @@ public class CompleteReport {
     )
     private String contactCpf;
 
+    @Index(79)
     @Parsed(field = "EMAIL contato")
     @Schema(
             description = "Email do Contato",
@@ -662,6 +744,7 @@ public class CompleteReport {
     )
     private String contactEmail;
 
+    @Index(80)
     @Parsed(field = "Nome contato")
     @Schema(
             description = "Nome do Contato",
@@ -670,6 +753,7 @@ public class CompleteReport {
     )
     private String contactName;
 
+    @Index(81)
     @Parsed(field = "telefone contato")
     @Schema(
             description = "Telefone do Contato",
@@ -678,6 +762,7 @@ public class CompleteReport {
     )
     private String contactPhone;
 
+    @Index(82)
     @Parsed(field = "Celular contato")
     @Schema(
             description = "Celular do Contato",
@@ -686,6 +771,7 @@ public class CompleteReport {
     )
     private String contactCellphone;
 
+    @Index(83)
     @Parsed(field = "DESCRIPTION")
     @Schema(
             description = "Descricao do Account Fee",
@@ -694,6 +780,7 @@ public class CompleteReport {
     )
     private String description;
 
+    @Index(84)
     @Parsed(field = "DISCOUNT_FEE")
     @Schema(
             description = "Desconto do Account Fee",
@@ -702,6 +789,7 @@ public class CompleteReport {
     )
     private String discountFee;
 
+    @Index(85)
     @Parsed(field = "FEE")
     @Schema(
             description = "Fee do Account Fee",
@@ -710,6 +798,7 @@ public class CompleteReport {
     )
     private String fee;
 
+    @Index(86)
     @Parsed(field = "FEE_ID_NUMBER")
     @Schema(
             description = "ID do Account Fee",
@@ -718,6 +807,7 @@ public class CompleteReport {
     )
     private String feeIdNumber;
 
+    @Index(87)
     @Parsed(field = "Codigo do banco")
     @Schema(
             description = "Codigo do Banco",
@@ -726,6 +816,7 @@ public class CompleteReport {
     )
     private String bankCode;
 
+    @Index(88)
     @Parsed(field = "Agencia")
     @Schema(
             description = "Agencia do Banco",
@@ -734,6 +825,7 @@ public class CompleteReport {
     )
     private String agency;
 
+    @Index(89)
     @Parsed(field = "Dig. conta")
     @Schema(
             description = "Digito da Conta",
@@ -742,6 +834,7 @@ public class CompleteReport {
     )
     private String accountDigit;
 
+    @Index(90)
     @Parsed(field = "Num. Conta")
     @Schema(
             description = "Numero da Conta",
@@ -750,6 +843,7 @@ public class CompleteReport {
     )
     private String accountNumber;
 
+    @Index(91)
     @Parsed(field = "Nome do responsavel")
     @Schema(
             description = "Dono da Conta",
@@ -758,6 +852,7 @@ public class CompleteReport {
     )
     private String accountOwner;
 
+    @Index(92)
     @Parsed(field = "Tipo de conta")
     @Schema(
             description = "Tipo da Conta",
@@ -767,6 +862,7 @@ public class CompleteReport {
     private String accountType;
 
 
+    @Index(97)
     @Parsed(field = "Dias de trabalho")
     @Schema(
             description = "Dias trabalhados",
@@ -775,6 +871,7 @@ public class CompleteReport {
     )
     private String workdays;
 
+    @Index(98)
     @Parsed(field = "Tipo de proposta")
     @Schema(
             description = "Tipo da resposta",
@@ -782,4 +879,22 @@ public class CompleteReport {
             type = "String"
     )
     private String responseType;
+
+    @Index(96)
+    @Parsed(field = "Termo de aceite")
+    @Schema(
+            description = "Termo de aceite",
+            example = "Sim",
+            type = "String"
+    )
+    private String acceptTerm;
+
+    @Index(93)
+    @Parsed(field = "Tipo de Estabelecimento")
+    @Schema(
+            description = "Tipo de Estabelecimento",
+            example = "Comercial",
+            type = "String"
+    )
+    private String typeOfEstablishment;
 }

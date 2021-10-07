@@ -39,6 +39,7 @@
 
         <build.number>${version}</build.number>
         <univocity-parsers.version>2.9.1</univocity-parsers.version>
+        <jobrunr-spring-boot-starter.version>3.2.1</jobrunr-spring-boot-starter.version>
     </properties>
 
     <dependencyManagement>
@@ -55,10 +56,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-            <type>pom</type>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -156,6 +155,23 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.univocity</groupId>
@@ -171,6 +187,12 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-security</artifactId>
             <version>${springdoc-openapi.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jobrunr</groupId>
+            <artifactId>jobrunr-spring-boot-starter</artifactId>
+            <version>${jobrunr-spring-boot-starter.version}</version>
         </dependency>
     </dependencies>
 
@@ -211,7 +233,8 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/classes/src/main/resources/io/cef/output</outputDirectory>
+                            <outputDirectory>${project.build.directory}/classes/src/main/resources/io/cef/output
+                            </outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources/io/cef/output</directory>
@@ -293,7 +316,9 @@
     <profiles>
         <profile>
             <id>dev</id>
-            <activation><activeByDefault>true</activeByDefault></activation>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <activeProfile>dev</activeProfile>
             </properties>

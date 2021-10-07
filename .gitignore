@@ -24,6 +24,7 @@ hs_err_pid*
 
 
 HELP.md
+src/main/resources/output/
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**

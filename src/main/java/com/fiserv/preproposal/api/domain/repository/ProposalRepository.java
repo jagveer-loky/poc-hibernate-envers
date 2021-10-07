@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Stream;
 
 @Repository
@@ -129,4 +130,13 @@ public interface ProposalRepository extends JpaRepository<EProposalData, Long> {
                                @Param("notIn") final boolean notIn,
                                @Param("responsesTypes") final Collection<String> responsesTypes,
                                @Param("status") final Collection<String> status);
+
+
+    @Query(value = "SELECT link" +
+            " FROM EProposalData link " +
+            " WHERE" +
+            "       link.responseType = 'LNK_PAYMENT'" +
+            "   AND ( SELECT COUNT(historyLink.id) FROM EProposalHistory historyLink WHERE historyLink.proposalData.id = link.id AND historyLink.status LIKE '%_ERROR') > 0" +
+            "   AND ( SELECT COUNT(historyOrigin.id) FROM EProposalHistory historyOrigin WHERE historyOrigin.proposalData.id = link.idOrigin AND historyOrigin.status LIKE '%_ERROR') = 0")
+    Set<EProposalData> getLinksPaymentsToReload();
 }

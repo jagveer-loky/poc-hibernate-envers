@@ -1,5 +1,6 @@
 package com.fiserv.preproposal.api.domain.dtos;
 
+import com.fiserv.preproposal.api.application.annotation.Index;
 import com.univocity.parsers.annotations.Parsed;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -7,14 +8,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BasicReport {
+public class BasicReport extends AbstractReport implements Serializable {
 
-    public static final String NAME = "basic";
-
+    @Index(14)
     @Parsed(field = "Id da Proposta")
     @Schema(
             description = "Id da Proposta",
@@ -23,7 +25,8 @@ public class BasicReport {
     )
     private String id;
 
-    @Parsed(field = "Numero da Proposta")
+    @Index(1)
+    @Parsed(field = "Numero da Pre-proposta")
     @Schema(
             description = "Numero da Proposta",
             example = "O00000001965857",
@@ -31,7 +34,8 @@ public class BasicReport {
     )
     private String proposalNumber;
 
-    @Parsed(field = "CPF/CNPJ da Proposta")
+    @Index(2)
+    @Parsed(field = "CPF/CNPJ")
     @Schema(
             description = "CPF/CNPJ da Proposta",
             example = "10167584057",
@@ -39,6 +43,7 @@ public class BasicReport {
     )
     private String cpfCnpj;
 
+    @Index(3)
     @Parsed(field = "Nome Fantasia")
     @Schema(
             description = "Nome Fantasia",
@@ -47,6 +52,7 @@ public class BasicReport {
     )
     private String fantasyName;
 
+    @Index(4)
     @Parsed(field = "Razao Social")
     @Schema(
             description = "Razao Social",
@@ -55,6 +61,7 @@ public class BasicReport {
     )
     private String socialReason;
 
+    @Index(5)
     @Parsed(field = "Nome Plaqueta (Comprovante)")
     @Schema(
             description = "Nome Plaqueta (Comprovante)",
@@ -63,6 +70,7 @@ public class BasicReport {
     )
     private String voucherName;
 
+    @Index(23)
     @Parsed(field = "Tipo da resposta")
     @Schema(
             description = "Tipo da resposta",
@@ -71,6 +79,7 @@ public class BasicReport {
     )
     private String responseType;
 
+    @Index(6)
     @Parsed(field = "ID do Usuario")
     @Schema(
             description = "ID do Usuario",
@@ -79,6 +88,7 @@ public class BasicReport {
     )
     private String userId;
 
+    @Index(7)
     @Parsed(field = "CPF/CNPJ do Agente")
     @Schema(
             description = "CPF/CNPJ do Agente",
@@ -87,6 +97,7 @@ public class BasicReport {
     )
     private String agentCpfCnpj;
 
+    @Index(8)
     @Parsed(field = "Instituicao")
     @Schema(
             description = "Instituicao",
@@ -95,7 +106,8 @@ public class BasicReport {
     )
     private String institution;
 
-    @Parsed(field = "Service Contract")
+    @Index(9)
+    @Parsed(field = "SERVICE_CONTRACT")
     @Schema(
             description = "Service Contract",
             example = "149",
@@ -103,6 +115,7 @@ public class BasicReport {
     )
     private String serviceContract;
 
+    @Index(17)
     @Parsed(field = "Opt In")
     @Schema(
             description = "Opt In",
@@ -111,6 +124,7 @@ public class BasicReport {
     )
     private String optIn;
 
+    @Index(16)
     @Parsed(field = "Matricula do Vendedor")
     @Schema(
             description = "Matricula do Vendedor",
@@ -119,6 +133,7 @@ public class BasicReport {
     )
     private String sellerRegistration;
 
+    @Index(10)
     @Parsed(field = "Sub Canal")
     @Schema(
             description = "Sub Canal",
@@ -127,6 +142,7 @@ public class BasicReport {
     )
     private String subChannel;
 
+    @Index(11)
     @Parsed(field = "Tecnologia")
     @Schema(
             description = "Tecnologia",
@@ -135,7 +151,8 @@ public class BasicReport {
     )
     private String tecnology;
 
-    @Parsed(field = "Data de Inclusao")
+    @Index(12)
+    @Parsed(field = "Inclusao em")
     @Schema(
             description = "Data de Inclusao",
             example = "03/06/2021 12:06",
@@ -143,7 +160,8 @@ public class BasicReport {
     )
     private String includeDate;
 
-    @Parsed(field = "Data de Conclusao")
+    @Index(13)
+    @Parsed(field = "Conclusao em")
     @Schema(
             description = "Data de Conclusao",
             example = "03/06/2021 12:06",
@@ -151,6 +169,7 @@ public class BasicReport {
     )
     private String conclusionDate;
 
+    @Index(15)
     @Parsed(field = "Merchant ID")
     @Schema(
             description = "Merchant ID",
@@ -159,7 +178,8 @@ public class BasicReport {
     )
     private String merchantId;
 
-    @Parsed(field = "Fiserv Status")
+    @Index(18)
+    @Parsed(field = "Status - FISERV")
     @Schema(
             description = "Fiserv Status",
             example = "PRE1-Pendente análise pre proposta",
@@ -167,7 +187,8 @@ public class BasicReport {
     )
     private String fiservStatus;
 
-    @Parsed(field = "Caixa Status")
+    @Index(19)
+    @Parsed(field = "Status - CAIXA")
     @Schema(
             description = "Caixa Status",
             example = "1-Efetivada",
@@ -175,7 +196,8 @@ public class BasicReport {
     )
     private String cefStatus;
 
-    @Parsed(field = "Caixa Mensagem")
+    @Index(20)
+    @Parsed(field = "Mensagem Caixa")
     @Schema(
             description = "Caixa Mensagem",
             example = "Concluido",
@@ -183,6 +205,7 @@ public class BasicReport {
     )
     private String cefMessage;
 
+    @Index(22)
     @Parsed(field = "Erros de processamento dos bulks")
     @Schema(
             description = "Erros de processamento dos bulks",
@@ -191,12 +214,69 @@ public class BasicReport {
     )
     private String errors;
 
-    @Parsed(field = "Data de Submissao")
+    @Index(21)
+    @Parsed(field = "Submissao ao online em")
     @Schema(
             description = "Data de Submissao",
             example = "28/06/2021 12:06",
             type = "String"
     )
     private String submissionDate;
+
+    @Index(25)
+    @Parsed(field = "Campo de erro")
+    @Schema(
+            description = "Campo de erro",
+            type = "String"
+    )
+    private String errorField;
+
+    @Index(26)
+    @Parsed(field = "Descricao do erro")
+    @Schema(
+            description = "Descricao do erro",
+            type = "String"
+    )
+    private String errorDescription;
+
+    @Index(27)
+    @Parsed(field = "Mensagem de erro")
+    @Schema(
+            description = "Mensagem de erro",
+            type = "String"
+    )
+    private String errorMessage;
+
+    @Index(28)
+    @Parsed(field = "Detalhe")
+    @Schema(
+            description = "Detalhe",
+            type = "String"
+    )
+    private String detail;
+
+    @Index(29)
+    @Parsed(field = "Etapa da proposta")
+    @Schema(
+            description = "Etapa da proposta",
+            type = "String"
+    )
+    private String step;
+
+    @Index(30)
+    @Parsed(field = "Informacoes adicionais")
+    @Schema(
+            description = "Informacoes adicionais",
+            type = "String"
+    )
+    private String moreInformation;
+
+    @Index(31)
+    @Parsed(field = "Resposta FO")
+    @Schema(
+            description = "Resposta FO",
+            type = "String"
+    )
+    private String fiservOnlineResponse;
 
 }

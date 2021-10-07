@@ -47,6 +47,13 @@ import javax.persistence.*;
                                         @ColumnResult(name = "CEFMESSAGE", type = String.class),
                                         @ColumnResult(name = "ERRORS", type = String.class),
                                         @ColumnResult(name = "SUBMITIONDATE", type = String.class),
+                                        @ColumnResult(name = "ERROR_FIELD", type = String.class),
+                                        @ColumnResult(name = "ERROR_DESCRIPTION", type = String.class),
+                                        @ColumnResult(name = "ERROR_MESSAGE", type = String.class),
+                                        @ColumnResult(name = "DETAIL", type = String.class),
+                                        @ColumnResult(name = "STEP", type = String.class),
+                                        @ColumnResult(name = "MORE_INFORMATION", type = String.class),
+                                        @ColumnResult(name = "FISERV_ONLINE_RESPONSE", type = String.class)
                                 }
                         )
                 }
@@ -79,8 +86,8 @@ import javax.persistence.*;
                         @ConstructorResult(
                                 targetClass = CompleteReport.class,
                                 columns = {
-                                        @ColumnResult(name = "PREPROPOSALID", type = Long.class),
-                                        @ColumnResult(name = "PROPOSALNUMBER", type = String.class),
+                                        @ColumnResult(name = "PREPROPOSALID", type = String.class),
+                                        @ColumnResult(name = "PROPOSALNUMBER", type = Long.class),
                                         @ColumnResult(name = "MERCHANT", type = String.class),
                                         @ColumnResult(name = "USERID", type = String.class),
                                         @ColumnResult(name = "AGENTCPFCNPJ", type = String.class),
@@ -174,7 +181,9 @@ import javax.persistence.*;
                                         @ColumnResult(name = "ACCOUNTOWNER", type = String.class),
                                         @ColumnResult(name = "ACCOUNTTYPE", type = String.class),
                                         @ColumnResult(name = "WORKDAYS", type = String.class),
-                                        @ColumnResult(name = "RESPONSETYPE", type = String.class)
+                                        @ColumnResult(name = "RESPONSETYPE", type = String.class),
+                                        @ColumnResult(name = "TYPEOFESTABLISHMENT", type = String.class),
+                                        @ColumnResult(name = "ACCEPTTERM", type = String.class)
                                 }
                         )
                 }
@@ -183,8 +192,8 @@ import javax.persistence.*;
 })
 @NamedNativeQueries(value = {
         @NamedNativeQuery(name = "getBasicReport", query = "SELECT\n" +
-                "       tpd.id AS \"ID\",\n" +
-                "       tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
+                "       tpd.proposal_number AS \"ID\",\n" +
+                "       tpd.id AS \"PROPOSALNUMBER\",\n" +
                 "       CASE tpd.proposal_type WHEN 'F' THEN tppp.CPF\n" +
                 "       ELSE tpplp.CNPJ END AS \"CPFCNPJ\",\n" +
                 "       CASE tpd.proposal_type WHEN 'F' THEN tppp.FANTASY_NAME\n" +
@@ -198,7 +207,7 @@ import javax.persistence.*;
                 "       tpd.AGENT_CPF_CNPJ AS \"AGENTCPFCNPJ\",\n" +
                 "       tfc.institution AS \"INSTITUTION\",\n" +
                 "       tfc.service_contract AS \"SERVICECONTRACT\",\n" +
-                "       tpd.opt_in AS \"OPTIN\"," +
+                "       tpd.optin AS \"OPTIN\"," +
                 "       tpd.seller_registration AS \"SELLERREGISTRATION\"," +
                 "       tpd.SUB_CHANNEL AS \"SUBCHANNEL\", \n" +
                 "       tcs.service_id || '-' || TCS.TECHNOLOGY AS \"TECNOLOGY\",\n" +
@@ -224,14 +233,24 @@ import javax.persistence.*;
                 "               LEFT OUTER JOIN TB_PRE_PROPOSAL_HISTORY_ERROR TB_PRE_PROPOSAL_HISTORY_ERROR on TB_PRE_PROPOSAL_HISTORY_ERROR.ID_PROPOSAL_HISTORY = TB_PRE_PROPOSAL_HISTORY.id" +
                 "           WHERE TB_PRE_PROPOSAL_HISTORY.ID_PROPOSAL_DATA = tpd.id AND TB_PRE_PROPOSAL_HISTORY.STATUS LIKE '%_ERROR'" +
                 "       ) AS \"ERRORS\"," +
-                "       TO_CHAR(tpd.ONLINE_DATE, 'dd/MM/yyyy hh:mm') AS \"SUBMITIONDATE\"\n" +
-                "FROM tb_proposal_data tpd\n" +
-                "\t   LEFT JOIN TB_PROPOSAL_PHYSICAL_PERSON tppp on tpd.proposal_type = 'F' and tpd.id = tppp.ID_FILE_PROPOSAL_DTA\n" +
-                "\t   LEFT JOIN TB_PRE_PROPOSAL_LEGAL_PERSON tpplp on tpd.proposal_type = 'J' and tpd.id = tpplp.id_file_proposal_dta\n" +
+                "       TO_CHAR(tpd.ONLINE_DATE, 'dd/MM/yyyy hh:mm') AS \"SUBMITIONDATE\"," +
+                "       tpphe.field AS \"ERROR_FIELD\"," +
+                "       tpphe.field_description AS \"ERROR_DESCRIPTION\"," +
+                "       tpphe.message AS \"ERROR_MESSAGE\"," +
+                "       tpphe.message_detail AS \"DETAIL\"," +
+                "       (select a.STATUS from (SELECT id_proposal_data, STATUS, rank() over (partition by ID_PROPOSAL_DATA order by INSERT_DATA desc) rnk FROM TB_PRE_PROPOSAL_HISTORY order by rnk asc) a where a.id_proposal_data = tpd.id and rownum = 1) AS \"STEP\"," +
+                "       (select a.DESCRIPTION from (SELECT id_proposal_data, DESCRIPTION, rank() over (partition by ID_PROPOSAL_DATA order by INSERT_DATA desc) rnk FROM TB_PRE_PROPOSAL_HISTORY order by rnk asc) a where a.id_proposal_data = tpd.id and rownum = 1) AS \"MORE_INFORMATION\"," +
+                "       dbms_lob.substr(json.RESPONSE_JSON,32767) AS \"FISERV_ONLINE_RESPONSE\"" +
+                "FROM tb_proposal_data tpd" +
+                "       LEFT JOIN TB_PROPOSAL_PHYSICAL_PERSON tppp on tpd.proposal_type = 'F' and tpd.id = tppp.ID_FILE_PROPOSAL_DTA\n" +
+                "       LEFT JOIN TB_PRE_PROPOSAL_LEGAL_PERSON tpplp on tpd.proposal_type = 'J' and tpd.id = tpplp.id_file_proposal_dta\n" +
                 "       LEFT JOIN TB_FILE_CONTROL TFC ON TFC.ID = tpd.id_file_control\n" +
                 "       LEFT JOIN tb_capture_solution TCS ON tcs.id_proposal_data = TPD.ID\n" +
                 "       LEFT JOIN tb_pre_proposal_status tpps on tpps.id = tpd.status_id\n" +
                 "       LEFT JOIN tb_proposal_cx_status tpcs on tpcs.status_id = tpps.id\n" +
+                "       left join tb_pre_proposal_history tpph on tpd.id = tpph.id_proposal_data\n" +
+                "       Left join TB_PRE_PROPOSAL_HISTORY_ERROR tpphe on tpph.id = tpphe.id_proposal_history\n" +
+                "       Left join tb_proposal_json json on json.proposal_id = tpd.id\n" +
                 "  WHERE tfc.INSTITUTION = :institution \n" +
                 "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
                 "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
@@ -262,6 +281,9 @@ import javax.persistence.*;
                         "       LEFT JOIN tb_capture_solution TCS ON tcs.id_proposal_data = TPD.ID " +
                         "       LEFT JOIN tb_pre_proposal_status tpps on tpps.id = tpd.status_id " +
                         "       LEFT JOIN tb_proposal_cx_status tpcs on tpcs.status_id = tpps.id " +
+                        "       left join tb_pre_proposal_history tpph on tpd.id = tpph.id_proposal_data" +
+                        "       Left join TB_PRE_PROPOSAL_HISTORY_ERROR tpphe on tpph.id = tpphe.id_proposal_history" +
+                        "       Left join tb_proposal_json json on json.proposal_id = tpd.id" +
                         "   WHERE tfc.INSTITUTION = :institution " +
                         "       AND tfc.SERVICE_CONTRACT = :serviceContract " +
                         "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate " +
@@ -470,10 +492,12 @@ import javax.persistence.*;
                 "                       )" +
                 "               )" +
                 "             and TFC.id = TFC2.id\n" +
-                "            ) AS \"NUMCREDONLINE\"\n" +
                 "       from TB_FILE_CONTROL TFC\n" +
-                "  left join tb_proposal_data tpd ON TFC.ID = tpd.id_file_control\n" +
-                "  left join tb_pre_proposal_status tpps on tpps.id = tpd.status_id\n" +
+                "           left join tb_proposal_data tpd ON TFC.ID = tpd.id_file_control\n" +
+                "           left join tb_pre_proposal_history tpph on tpd.id = tpph.id_proposal_data\n" +
+                "           Left join TB_PRE_PROPOSAL_HISTORY_ERROR tpphe on tpph.id = tpphe.id_proposal_history\n" +
+                "           Left join tb_proposal_json json on json.proposal_id = tpd.id\n" +
+                "           left join tb_pre_proposal_status tpps on tpps.id = tpd.status_id\n" +
                 "  WHERE tfc.INSTITUTION = :institution \n" +
                 "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
                 "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
@@ -536,14 +560,14 @@ import javax.persistence.*;
                         "        )"
         ),
         @NamedNativeQuery(name = "getCompleteReport", query = "SELECT  \n" +
-                "       tpd.id AS \"PREPROPOSALID\",\n" +
-                "      tpd.proposal_number AS \"PROPOSALNUMBER\",\n" +
+                "       tpd.PROPOSAL_NUMBER AS \"PREPROPOSALID\",\n" +
+                "       tpd.id AS \"PROPOSALNUMBER\",\n" +
                 "       tpd.merchant_id AS \"MERCHANT\",\n" +
                 "       tpd.AGENT_CHANNEL AS \"USERID\", \n" +
                 "       tpd.AGENT_CPF_CNPJ AS \"AGENTCPFCNPJ\",\n" +
                 "       tfc.institution AS \"INSTITUTION\",\n" +
                 "       tfc.service_contract AS \"SERVICECONTRACT\",\n" +
-                "       tpd.opt_in AS \"OPTIN\"," +
+                "       tpd.optin AS \"OPTIN\"," +
                 "       tpd.seller_registration AS \"SELLERREGISTRATION\"," +
                 "       tpd.SUB_CHANNEL AS \"SUBCHANNEL\", \n" +
                 "       tcs.service_id || '-' || TCS.TECHNOLOGY AS \"TECHNOLOGY\",\n" +
@@ -668,6 +692,8 @@ import javax.persistence.*;
                 "        WHEN 'Friday' THEN ' Sexta-feira das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO\n" +
                 "        WHEN 'Saturday' THEN 'Sábado das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO\n" +
                 "       ELSE 'Domingo'|| tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO END AS \"WORKDAYS\"," +
+                "       'Comercial' AS \"TYPEOFESTABLISHMENT\"," +
+                "       'Sim' AS \"ACCEPTTERM\"," +
                 "       tpd.RESPONSE_TYPE AS \"RESPONSETYPE\"" +
                 "       from tb_proposal_data tpd\n" +
                 "  LEFT join TB_PROPOSAL_PHYSICAL_PERSON tppp on tpd.proposal_type = 'F' and tpd.id = tppp.ID_FILE_PROPOSAL_DTA\n" +
@@ -741,5 +767,12 @@ public class EProposalData {
     @Id
     @Column(name = "ID", nullable = false)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "RESPONSE_TYPE")
+    private EnumProposalResponseType responseType;
+
+    @Column(name = "ID_ORIGIN")
+    private Long idOrigin;
 
 }

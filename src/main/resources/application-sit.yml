@@ -13,15 +13,7 @@ spring:
         show_sql: true
         use_sql_comments: true
 
-logging:
-  level:
-    org:
-      hibernate:
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
-        SQL: DEBUG
+
 #logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
 
 fdsecurity:
@@ -37,3 +29,9 @@ cors:
 springdoc:
   swagger-ui:
     url: /v3/api-docs/
+
+io:
+  output: /appserver/tmp/pre-proposal-api
+
+logging:
+  config: classpath:logs/log4j2-spring.sit.xml
