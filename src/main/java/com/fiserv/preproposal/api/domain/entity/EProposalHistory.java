@@ -6,7 +6,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -35,9 +34,8 @@ public class EProposalHistory {
     private String description;
 
     @NotNull(message = "The status cannot be null")
-    @Enumerated(EnumType.STRING)
     @Column(name = "STATUS")
-    private EnumWorkflowStatus status;
+    private String status;
 
     @NotNull(message = "The insertData cannot be null")
     @Column(name = "INSERT_DATA")
@@ -47,24 +45,8 @@ public class EProposalHistory {
     @OneToMany(targetEntity = EProposalHistoryError.class, mappedBy = "proposalHistory", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private Set<EProposalHistoryError> errors;
 
-    /**
-     * EProposalHistory constructor, description will be status description when this field (description) has null.
-     *
-     * @param proposalData EProposalData
-     * @param status       EnumWorkflowStatus
-     */
-    public EProposalHistory(final EProposalData proposalData, final EnumWorkflowStatus status) {
-        this.proposalData = proposalData;
-        this.status = status;
-        this.description = status.getDescription();
-    }
-
-    public EProposalHistory(EProposalData eProposalData, String description, EnumWorkflowStatus status) {
-        if (Objects.isNull(description)) {
-            this.description = status.getDescription();
-        } else {
-            this.description = description;
-        }
+    public EProposalHistory(final EProposalData eProposalData, final String description, final String status) {
+        this.description = description;
         this.status = status;
         this.proposalData = eProposalData;
     }

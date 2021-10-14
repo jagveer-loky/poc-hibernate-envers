@@ -2,7 +2,6 @@ package com.fiserv.preproposal.api.domain.service;
 
 import com.fiserv.preproposal.api.domain.entity.EProposalData;
 import com.fiserv.preproposal.api.domain.entity.EProposalHistory;
-import com.fiserv.preproposal.api.domain.entity.EnumProposalResponseType;
 import com.fiserv.preproposal.api.domain.repository.ProposalHistoryRepository;
 import com.fiserv.preproposal.api.domain.repository.ProposalRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +39,7 @@ public class ProposalService {
         ids.forEach(id -> proposalRepository.findById(id).ifPresent(eProposalData -> {
 
             // Check type of proposal
-            Assert.isTrue(eProposalData.getResponseType().equals(EnumProposalResponseType.LNK_PAYMENT), "Contém propostas que não são links de pagamento");
+            Assert.isTrue(eProposalData.getResponseType().equals("LNK_PAYMENT"), "Contém propostas que não são links de pagamento");
 
             // Check if origin proposal no have errors
             proposalHistoryRepository.findByProposalDataIdOrderByInsertData(eProposalData.getIdOrigin()).forEach(eProposalHistory -> {

@@ -768,9 +768,8 @@ public class EProposalData {
     @Column(name = "ID", nullable = false)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "RESPONSE_TYPE")
-    private EnumProposalResponseType responseType;
+    private String responseType;
 
     @Column(name = "ID_ORIGIN")
     private Long idOrigin;
