@@ -12,6 +12,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.sql.Blob;
 import java.time.LocalDateTime;
 
 @Entity
@@ -27,13 +28,6 @@ public class EReport implements Serializable {
     @SequenceGenerator(name = "TB_REPORT_SEQ", sequenceName = "TB_REPORT_SEQ", allocationSize = 1)
     @Column(name = "ID", nullable = false)
     private Long id;
-
-    /**
-     *
-     */
-    @NotNull
-    @Column(name = "PATH", nullable = false)
-    private String path;
 
     /**
      *
@@ -86,6 +80,38 @@ public class EReport implements Serializable {
      */
     @Column(name = "ERROR")
     private String error;
+
+    /**
+     *
+     */
+    @Lob
+    @Column(name = "CONTENT", columnDefinition = "BLOB")
+    private byte[] content;
+
+    /**
+     * @param id                  Long
+     * @param requester           String
+     * @param requestedDate       LocalDateTime
+     * @param concludedDate       LocalDateTime
+     * @param concludedPercentage int
+     * @param countLines          int
+     * @param currentLine         int
+     * @param type                TypeReport
+     * @param error               String
+     */
+    public EReport(final Long id, final String requester,
+                   final LocalDateTime requestedDate, final LocalDateTime concludedDate,
+                   final int concludedPercentage, final int countLines, final int currentLine, final TypeReport type, final String error) {
+        this.id = id;
+        this.requester = requester;
+        this.requestedDate = requestedDate;
+        this.concludedPercentage = concludedPercentage;
+        this.concludedDate = concludedDate;
+        this.countLines = countLines;
+        this.currentLine = currentLine;
+        this.type = type;
+        this.error = error;
+    }
 
     /**
      *

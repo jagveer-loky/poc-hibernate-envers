@@ -8,7 +8,7 @@ import lombok.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -37,7 +37,8 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
 
             Assert.isTrue(eReport.getCountLines() != 0, "Nenhum registro encontrado para essa solicitação, revise os filtros utilizados e tente novamente!");
 
-            final File file = new File(eReport.getPath());
+            final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//            final File file = new File(eReport.getPath());
 
             final CsvWriterSettings writerSettings = new CsvWriterSettings();
             writerSettings.getFormat().setLineSeparator("\r\n");
@@ -50,13 +51,16 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
 
             writerSettings.setRowWriterProcessor(configProcessor());
 
-            final CsvWriter csvWriter = new CsvWriter(file, writerSettings);
+            final CsvWriter csvWriter = new CsvWriter(byteArrayOutputStream, writerSettings);
 
             stream.forEach(object -> {
 
                 try {
                     // Writing in file
                     csvWriter.processRecord(normalizer.normalize(object));
+
+
+                    eReport.setContent(byteArrayOutputStream.toByteArray());
 
                     //
                     consumer.accept(object);

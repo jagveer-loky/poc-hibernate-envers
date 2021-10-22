@@ -31,8 +31,5 @@ cors:
   allowed-origins: "*"
   exposed-headers: Content-Disposition, Content-Length, Content-Type
 
-io:
-  output: /appserver/tmp/pre-proposal-api
-
 logging:
   config: classpath:logs/log4j2-spring.prd.xml

@@ -19,9 +19,7 @@ import org.jobrunr.scheduling.BackgroundJob;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -66,6 +64,7 @@ public class ReportService {
      * @param eReport EReport
      * @return EReport
      */
+    @Transactional
     public EReport save(final EReport eReport) {
         return this.reportRepository.save(eReport);
     }
@@ -187,25 +186,12 @@ public class ReportService {
      * @return byte[]
      */
     @Transactional
-    public byte[] downloadById(final Long id) throws NotFoundException, IOException {
+    public byte[] downloadById(final Long id) throws NotFoundException {
 
         final EReport eReport = reportRepository.findById(id).orElseThrow(NotFoundException::new);
 
-        final byte[] fileToReturn = Files.readAllBytes(new File(eReport.getPath()).toPath());
+        return eReport.getContent();
 
-        if (eReport.getConcludedPercentage() == 100) {
-
-            // Delete from system of file
-            Files.deleteIfExists(new File(eReport.getPath()).toPath());
-
-            // Delete from Database
-            reportRepository.deleteById(eReport.getId());
-
-            // Delete from Counter
-            counter.remove(eReport.getId());
-        }
-
-        return fileToReturn;
     }
 
     /**
@@ -213,7 +199,7 @@ public class ReportService {
      * @return List<EReport>
      */
     public List<EReport> findByRequester(final String requester) {
-        return this.reportRepository.findByRequesterOrderByRequestedDateDesc(requester);
+        return this.reportRepository.findByRequesterOrAllOrderByRequestedDateDesc(requester);
     }
 
     /**
