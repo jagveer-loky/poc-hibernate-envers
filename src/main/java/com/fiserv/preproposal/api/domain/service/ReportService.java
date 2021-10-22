@@ -64,7 +64,6 @@ public class ReportService {
      * @param eReport EReport
      * @return EReport
      */
-    @Transactional
     public EReport save(final EReport eReport) {
         return this.reportRepository.save(eReport);
     }

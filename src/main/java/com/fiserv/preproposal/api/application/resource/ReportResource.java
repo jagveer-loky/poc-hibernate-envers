@@ -41,7 +41,6 @@ public class ReportResource {
      * @return Boolean
      */
     @PostMapping(TypeReport.BASIC_VALUE)
-    @Transactional
     public Boolean createBasicReport(@RequestBody final ReportParams reportParams) {
 
         reportParams.setType(TypeReport.BASIC);
