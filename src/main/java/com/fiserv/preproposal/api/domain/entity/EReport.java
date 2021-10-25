@@ -1,18 +1,14 @@
 package com.fiserv.preproposal.api.domain.entity;
 
+import com.fiserv.preproposal.api.domain.dtos.ReportParams;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.sql.Blob;
 import java.time.LocalDateTime;
 
 @Entity
@@ -119,7 +115,8 @@ public class EReport implements Serializable {
     @PrePersist
     public void prePersist() {
         countLines = 0;
-        requestedDate = LocalDateTime.now();
+        if (requestedDate == null)
+            requestedDate = LocalDateTime.now();
         calculatePercentage();
     }
 
@@ -148,5 +145,20 @@ public class EReport implements Serializable {
      */
     public boolean hasError() {
         return this.error != null && !this.error.trim().isEmpty();
+    }
+
+    /**
+     * @param reportParams ReportParams
+     * @return EReport
+     */
+    public static EReport createFrom(final ReportParams reportParams) {
+
+        // Instancing the jpa Entity to persist
+        // This entity will save the percentage done of the job
+        final EReport eReport = new EReport();
+        eReport.setType(reportParams.getType());
+        eReport.setRequester(reportParams.getRequester());
+
+        return eReport;
     }
 }

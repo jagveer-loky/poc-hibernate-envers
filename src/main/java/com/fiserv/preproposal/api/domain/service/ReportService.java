@@ -19,7 +19,7 @@ import org.jobrunr.scheduling.BackgroundJob;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -59,6 +59,15 @@ public class ReportService {
      *
      */
     private final HashMap<Long, Integer> counter = new HashMap<>();
+
+
+    /**
+     * @param id long
+     * @return EReport
+     */
+    public EReport findById(final long id)  {
+        return this.reportRepository.findById(id).orElseThrow(NotFoundException::new);
+    }
 
     /**
      * @param eReport EReport
@@ -210,5 +219,13 @@ public class ReportService {
         fieldsFromReports.put(TypeReport.COMPLETE_VALUE, new CompleteReport().extractFields());
         fieldsFromReports.put(TypeReport.QUANTITATIVE_VALUE, new QuantitativeReport().extractFields());
         return fieldsFromReports;
+    }
+
+    /**
+     *
+     */
+    @Transactional
+    public void deleteExpired() {
+        this.reportRepository.getBeforeAt(LocalDateTime.now().minusDays(2)).forEach(eReport -> this.reportRepository.deleteById(eReport.getId()));
     }
 }

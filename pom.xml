@@ -40,6 +40,10 @@
         <build.number>${version}</build.number>
         <univocity-parsers.version>2.9.1</univocity-parsers.version>
         <jobrunr-spring-boot-starter.version>3.2.1</jobrunr-spring-boot-starter.version>
+
+        <!--        versão do quartz-->
+        <quartz.version>2.2.3</quartz.version>
+
     </properties>
 
     <dependencyManagement>
@@ -193,6 +197,13 @@
             <groupId>org.jobrunr</groupId>
             <artifactId>jobrunr-spring-boot-starter</artifactId>
             <version>${jobrunr-spring-boot-starter.version}</version>
+        </dependency>
+
+        <!-- quartz -->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>${quartz.version}</version>
         </dependency>
     </dependencies>
 
