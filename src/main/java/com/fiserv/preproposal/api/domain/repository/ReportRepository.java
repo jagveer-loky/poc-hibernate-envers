@@ -20,6 +20,10 @@ public interface ReportRepository extends JpaRepository<EReport, Long> {
             " FROM EReport e WHERE (e.requester = :requester OR e.requester = 'ALL') order by e.requestedDate")
     List<EReport> findByRequesterOrAllOrderByRequestedDateDesc(@Param("requester") final String requester);
 
+    /**
+     * @param dateTime LocalDateTime
+     * @return List<EReport>
+     */
     @Query("SELECT new EReport( e.id, e.requester,e.requestedDate, e.concludedDate, e.concludedPercentage, e.countLines, e.currentLine, e.type, e.error) " +
             " FROM EReport e WHERE (e.requestedDate <= :dateTime)")
     List<EReport> getBeforeAt(final LocalDateTime dateTime);

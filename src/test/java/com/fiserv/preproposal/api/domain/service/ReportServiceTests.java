@@ -11,15 +11,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.util.Assert;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 @SpringBootTest
 class ReportServiceTests {
@@ -29,91 +30,6 @@ class ReportServiceTests {
      */
     @Autowired
     ReportService reportService;
-
-
-//    /**
-//     *
-//     */
-//    @Test
-//    void quantitativeCSVReportMustReturnAllFieldsMustPass() {
-//
-//        final IOService<QuantitativeReport> ioService = new IOService<>();
-//
-//        final CsvParserSettings parserSettings = new CsvParserSettings();
-//        parserSettings.setLineSeparatorDetectionEnabled(true);
-//        parserSettings.setHeaderExtractionEnabled(true);
-//
-//        final RowListProcessor rowProcessor = new RowListProcessor();
-//        parserSettings.setRowProcessor(rowProcessor);
-//
-//        final CsvParser parser = new CsvParser(parserSettings);
-//        final byte[] completeQuantitativeCSVReport = proposalRepository.getQuantitativeCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), false, Collections.singleton("FISERV_ONLINE"), null, null);
-//        parser.parse(new ByteArrayInputStream(completeQuantitativeCSVReport));
-//
-//        final String[] oldHeaders = rowProcessor.getHeaders();
-//
-//        final Set<String> headersToRemove = new HashSet<>();
-//        headersToRemove.add("Instituicao");
-//        headersToRemove.add("Status do Arquivo");
-//        headersToRemove.add("Nome do Arquivo");
-//
-//        headersToRemove.forEach(header -> Assertions.assertTrue(oldHeaders[0].contains(header)));
-//
-//        final byte[] croppedQuantitativeCSVReport = proposalRepository.getQuantitativeCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, ioService.extractFieldsToIgnore(QuantitativeReport.class, headersToRemove));
-//        parser.parse(new ByteArrayInputStream(croppedQuantitativeCSVReport));
-//
-//        final String[] newHeaders = rowProcessor.getHeaders();
-//
-//        headersToRemove.forEach(header -> Assertions.assertFalse(newHeaders[0].contains(header)));
-//
-//        Assertions.assertNotEquals(oldHeaders[0].split(";").length, newHeaders[0].split(";").length);
-//
-//    }
-//
-//
-//    /**
-//     *
-//     */
-//    @Test
-//    void completeCSVReportMustReturnAllFieldsMustPass() {
-//
-//        final IOService<CompleteReport> ioService = new IOService<>();
-//
-//        final CsvParserSettings parserSettings = new CsvParserSettings();
-//        parserSettings.setLineSeparatorDetectionEnabled(true);
-//        parserSettings.setHeaderExtractionEnabled(true);
-//
-//        final RowListProcessor rowProcessor = new RowListProcessor();
-//        parserSettings.setRowProcessor(rowProcessor);
-//
-//        final CsvParser parser = new CsvParser(parserSettings);
-//        // Get with all fields
-//        final byte[] completeCompleteCSVReport = proposalRepository.getCompleteCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, null);
-//        parser.parse(new ByteArrayInputStream(completeCompleteCSVReport));
-//
-//        final String[] oldHeaders = rowProcessor.getHeaders();
-//
-//        final Set<String> headersToRemove = new HashSet<>();
-//        headersToRemove.add("ID da proposta");
-//        headersToRemove.add("UserId");
-//        headersToRemove.add("Instituicao");
-//        headersToRemove.add("service_contract");
-//        headersToRemove.add("Tecnologia");
-//        headersToRemove.add("Erros");
-//
-//        headersToRemove.forEach(header -> Assertions.assertTrue(oldHeaders[0].contains(header)));
-//
-//        // Get with only some fields
-//        final byte[] croppedCompleteCSVReport = proposalRepository.getCompleteCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, ioService.extractFieldsToIgnore(CompleteReport.class, headersToRemove));
-//        parser.parse(new ByteArrayInputStream(croppedCompleteCSVReport));
-//
-//        final String[] newHeaders = rowProcessor.getHeaders();
-//
-//        headersToRemove.forEach(header -> Assertions.assertFalse(newHeaders[0].contains(header)));
-//
-//        Assertions.assertNotEquals(oldHeaders[0].split(";").length, newHeaders[0].split(";").length);
-//
-//    }
 
     /**
      *
@@ -207,7 +123,7 @@ class ReportServiceTests {
             eReport.setContent(content);
             eReport.setCountLines((int) countLines);
             eReport.setCurrentLine(eReport.getCountLines());
-            eReport.setRequestedDate(LocalDateTime.now().minusDays(2).minusMinutes(30));
+            eReport.setRequestedDate(LocalDateTime.now().minusDays(reportService.getDaysToExpire()).minusMinutes(30));
             eReport.setConcludedDate(LocalDateTime.now());
 
             reportList.add(reportService.save(eReport));
@@ -217,6 +133,23 @@ class ReportServiceTests {
         reportService.deleteExpired();
 
         reportList.forEach(report -> Assertions.assertThrows(NotFoundException.class, () -> reportService.findById(report.getId())));
+    }
+
+    /**
+     *
+     */
+    @Test
+    void createReportsMustPass() {
+
+        // Erase reports
+        reportService.findAll().forEach(eReport -> this.reportService.deleteById(eReport.getId()));
+
+        Assertions.assertEquals(0, reportService.findAll().size());
+
+        // Create reports
+        reportService.createReports();
+
+        Assertions.assertEquals(3, reportService.findAll().size());
     }
 
 }

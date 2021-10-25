@@ -75,6 +75,7 @@ public class CreateReportsJobConfiguration {
          * @param context JobExecutionContext
          */
         public void execute(final JobExecutionContext context) {
+            reportService.createReports();
         }
     }
 
