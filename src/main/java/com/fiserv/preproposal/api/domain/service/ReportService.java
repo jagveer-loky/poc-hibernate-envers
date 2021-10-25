@@ -12,14 +12,18 @@ import com.fiserv.preproposal.api.domain.repository.ReportRepository;
 import com.fiserv.preproposal.api.domain.repository.report.impl.BasicReportRepository;
 import com.fiserv.preproposal.api.domain.repository.report.impl.CompleteReportRepository;
 import com.fiserv.preproposal.api.domain.repository.report.impl.QuantitativeReportRepository;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jobrunr.jobs.annotations.Job;
 import org.jobrunr.scheduling.BackgroundJob;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +33,17 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 public class ReportService {
+
+    private static final String SYSTEM_USER = "SYSTEM";
+    private static final String SERVICE_CONTRACT = "149";
+    private static final String INSTITUTION = "149";
+
+    /**
+     *
+     */
+    @Getter
+    @Value("${reports.days-to-expire:2}")
+    private Long daysToExpire;
 
     /**
      *
@@ -59,6 +74,15 @@ public class ReportService {
      *
      */
     private final HashMap<Long, Integer> counter = new HashMap<>();
+
+
+    /**
+     * @param id long
+     * @return EReport
+     */
+    public EReport findById(final long id) {
+        return this.reportRepository.findById(id).orElseThrow(NotFoundException::new);
+    }
 
     /**
      * @param eReport EReport
@@ -210,5 +234,59 @@ public class ReportService {
         fieldsFromReports.put(TypeReport.COMPLETE_VALUE, new CompleteReport().extractFields());
         fieldsFromReports.put(TypeReport.QUANTITATIVE_VALUE, new QuantitativeReport().extractFields());
         return fieldsFromReports;
+    }
+
+    /**
+     *
+     */
+    @Transactional
+    public void deleteExpired() {
+        this.reportRepository.getBeforeAt(LocalDateTime.now().minusDays(daysToExpire)).forEach(eReport -> this.reportRepository.deleteById(eReport.getId()));
+    }
+
+    /**
+     *
+     */
+    public void createReports() {
+
+        final ReportParams reportParams = new ReportParams();
+        reportParams.setInitialDate(LocalDate.now().minusDays(1));
+        reportParams.setFinalDate(LocalDate.now());
+        reportParams.setRequester(SYSTEM_USER);
+        reportParams.setServiceContract(SERVICE_CONTRACT);
+        reportParams.setInstitution(INSTITUTION);
+        reportParams.setResponsesTypes(Arrays.asList("FISERV_ONLINE", "LEAD", "LEAD_FISERV", "LNK_PAYMENT", "MANUAL_PROC"));
+
+        reportParams.setType(TypeReport.BASIC);
+        reportParams.setFields(new BasicReport().extractFields());
+        final EReport basicReport = save(EReport.createFrom(reportParams));
+        BackgroundJob.enqueue(() -> startBasicReport(reportParams, basicReport));
+
+        reportParams.setType(TypeReport.COMPLETE);
+        reportParams.setFields(new CompleteReport().extractFields());
+        final EReport completeReport = save(EReport.createFrom(reportParams));
+        BackgroundJob.enqueue(() -> startCompleteReport(reportParams, completeReport));
+
+        reportParams.setType(TypeReport.QUANTITATIVE);
+        reportParams.setFields(new QuantitativeReport().extractFields());
+        final EReport quantitativeReport = save(EReport.createFrom(reportParams));
+        BackgroundJob.enqueue(() -> startQuantitativeReport(reportParams, quantitativeReport));
+
+    }
+
+    /**
+     * @return List<EReport>
+     */
+    @Transactional(readOnly = true)
+    public List<EReport> findAll() {
+        return reportRepository.findAll();
+    }
+
+    /**
+     * @param id long
+     */
+    @Transactional
+    public void deleteById(final long id) {
+        reportRepository.deleteById(id);
     }
 }
