@@ -63,7 +63,6 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
                     csvWriter.processRecord(normalizer.normalize(object));
 
                     nextLine.accept(byteArrayOutputStream.toByteArray());
-//                    nextLine.accept(Files.readAllBytes(file.toPath()));
 
                 } catch (final Exception e) {
                     lineErrorConsumer.andThen(lineError -> csvWriter.close()).accept(e);
@@ -71,15 +70,11 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
 
             });
 
-//            done.andThen(bytes -> csvWriter.close()).accept(byteArrayOutputStream.toByteArray());
             csvWriter.close();
             done.accept(byteArrayOutputStream.toByteArray());
 
         } catch (final Exception e) {
             generalErrorConsumer.accept(e);
         }
-
     }
-
-
 }

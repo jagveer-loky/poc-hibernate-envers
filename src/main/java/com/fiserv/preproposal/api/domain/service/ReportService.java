@@ -23,7 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static com.fiserv.preproposal.api.domain.entity.EReport.*;
@@ -104,11 +107,9 @@ public class ReportService {
 
         basicReportRepository.convertToCSV(basicStream, eReport.getCountLines(), reportParams,
                 nextLineByteArray -> {
-//                    eReport.setContent(nextLineByteArray);
                     next(eReport, nextLineByteArray);
                 },
                 doneByteArray -> {
-//                    eReport.setContent(doneByteArray);
                     done(eReport, doneByteArray);
                 },
                 lineException -> {
@@ -140,12 +141,9 @@ public class ReportService {
 
         completeReportRepository.convertToCSV(completeStream, eReport.getCountLines(), reportParams,
                 nextLineByteArray -> {
-//                    eReport.setContent(nextLineByteArray);
                     next(eReport, nextLineByteArray);
                 },
                 doneByteArray -> {
-//                    eReport.setCurrentLine(eReport.getCountLines());
-//                    eReport.setContent(doneByteArray);
                     done(eReport, doneByteArray);
                 },
                 lineException -> {
@@ -170,15 +168,16 @@ public class ReportService {
 
         eReport.setCountLines(proposalRepository.getCountQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
 
+        // Init loading
+        loadings.put(eReport.getId(), eReport.getConcludedPercentage());
+
         final Stream<QuantitativeReport> quantitativeStream = proposalRepository.getQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
         quantitativeReportRepository.convertToCSV(quantitativeStream, eReport.getCountLines(), reportParams,
                 nextLineByteArray -> {
-//                    eReport.setContent(nextLineByteArray);
                     next(eReport, nextLineByteArray);
                 },
                 doneByteArray -> {
-//                    eReport.setContent(doneByteArray);
                     done(eReport, doneByteArray);
                 },
                 lineException -> {
@@ -212,9 +211,9 @@ public class ReportService {
     /**
      * @param eReport EReport
      */
-    @Job(name = "Updating in the database", retries = 2)
+    @Job(name = "startNext", retries = 2)
     public void startNext(final EReport eReport) {
-        if (loadings.get(eReport.getId()) != null /*&& counter.get(eReport.getId()) < 75*/) {
+        if (loadings.get(eReport.getId()) != null && loadings.get(eReport.getId()) < 75) {
 //            log.info("na base " + Objects.requireNonNull(this.reportRepository.findById(eReport.getId()).orElse(null)).getConcludedPercentage() + " fora da base " + eReport.getConcludedPercentage() + " no contador " + counter.get(eReport.getId()));
             eReport.setConcludedPercentage(loadings.get(eReport.getId()));
             eReport.calculatePercentage();
@@ -227,20 +226,21 @@ public class ReportService {
      * @param byteArray byte[]
      */
     private void done(final EReport eReport, final byte[] byteArray) {
-        loadings.remove(eReport.getId());
+//        loadings.remove(eReport.getId());
         eReport.setContent(byteArray);
         eReport.setCurrentLine(eReport.getCountLines());
         eReport.setConcludedDate(LocalDateTime.now());
         eReport.calculatePercentage();
-        BackgroundJob.enqueue(() -> startDone(eReport)); ///TODO falcatrua
+        BackgroundJob.enqueue(() -> startDone(eReport));
     }
 
     /**
      * @param eReport EReport
      */
-    @Job(name = "Updating in the database", retries = 2)
+    @Job(name = "startDone", retries = 2)
     public void startDone(final EReport eReport) {
-        save(eReport); ///TODO falcatrua
+        loadings.remove(eReport.getId());
+        save(eReport);
     }
 
     /**
@@ -289,7 +289,7 @@ public class ReportService {
     public void createReports() {
 
         final ReportParams reportParams = new ReportParams();
-        reportParams.setInitialDate(LocalDate.now().minusDays(30));
+        reportParams.setInitialDate(LocalDate.now().minusDays(daysToExpire));
         reportParams.setFinalDate(LocalDate.now());
         reportParams.setRequester(SYSTEM_USER);
         reportParams.setServiceContract(SERVICE_CONTRACT);
@@ -301,15 +301,15 @@ public class ReportService {
         final EReport basicReport = save(EReport.createFrom(reportParams));
         BackgroundJob.enqueue(() -> startBasicReport(reportParams, basicReport));
 
-//        reportParams.setType(TypeReport.COMPLETE);
-//        reportParams.setFields(new CompleteReport().extractFields());
-//        final EReport completeReport = save(EReport.createFrom(reportParams));
-//        BackgroundJob.enqueue(() -> startCompleteReport(reportParams, completeReport));
-//
-//        reportParams.setType(TypeReport.QUANTITATIVE);
-//        reportParams.setFields(new QuantitativeReport().extractFields());
-//        final EReport quantitativeReport = save(EReport.createFrom(reportParams));
-//        BackgroundJob.enqueue(() -> startQuantitativeReport(reportParams, quantitativeReport));
+        reportParams.setType(TypeReport.COMPLETE);
+        reportParams.setFields(new CompleteReport().extractFields());
+        final EReport completeReport = save(EReport.createFrom(reportParams));
+        BackgroundJob.enqueue(() -> startCompleteReport(reportParams, completeReport));
+
+        reportParams.setType(TypeReport.QUANTITATIVE);
+        reportParams.setFields(new QuantitativeReport().extractFields());
+        final EReport quantitativeReport = save(EReport.createFrom(reportParams));
+        BackgroundJob.enqueue(() -> startQuantitativeReport(reportParams, quantitativeReport));
 
     }
 
