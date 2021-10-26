@@ -6,24 +6,17 @@ import com.fiserv.preproposal.api.infrastrucutre.normalizer.Normalizer;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
 import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static com.fiserv.preproposal.api.infrastrucutre.aid.util.ListUtil.toArray;
 
 public abstract class AbstractReportRepository<T> implements IWriteReportRepository<T> {
-
-    @Value("${reports.tmp-output}")
-    private String tmpOutput;
 
     /**
      *
@@ -60,11 +53,8 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
 
             writerSettings.setRowWriterProcessor(configProcessor());
 
-            final File file = new File(tmpOutput + "/" + UUID.randomUUID() + ".csv");
-            final CsvWriter csvWriter = new CsvWriter(file, writerSettings);
-//
-//            final ByteArrayOutputStream byteArrayOutputStream =  new ByteArrayOutputStream();
-//            final CsvWriter csvWriter = new CsvWriter(byteArrayOutputStream, writerSettings);
+            final ByteArrayOutputStream byteArrayOutputStream =  new ByteArrayOutputStream();
+            final CsvWriter csvWriter = new CsvWriter(byteArrayOutputStream, writerSettings);
 
             stream.forEach(object -> {
 
@@ -72,8 +62,8 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
                     // Writing in file
                     csvWriter.processRecord(normalizer.normalize(object));
 
-////                    nextLine.accept(byteArrayOutputStream.toByteArray());
-                    nextLine.accept(Files.readAllBytes(file.toPath()));
+                    nextLine.accept(byteArrayOutputStream.toByteArray());
+//                    nextLine.accept(Files.readAllBytes(file.toPath()));
 
                 } catch (final Exception e) {
                     lineErrorConsumer.andThen(lineError -> csvWriter.close()).accept(e);
@@ -83,7 +73,7 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
 
 //            done.andThen(bytes -> csvWriter.close()).accept(byteArrayOutputStream.toByteArray());
             csvWriter.close();
-            done.accept(Files.readAllBytes(file.toPath())); /// todo pode voltar pro baos
+            done.accept(byteArrayOutputStream.toByteArray());
 
         } catch (final Exception e) {
             generalErrorConsumer.accept(e);
