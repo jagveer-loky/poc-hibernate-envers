@@ -28,3 +28,4 @@ org:
 
 reports:
   days-to-expire: 2
+  tmp-output: target/output

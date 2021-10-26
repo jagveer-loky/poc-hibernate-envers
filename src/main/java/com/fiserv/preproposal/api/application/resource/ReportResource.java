@@ -26,6 +26,19 @@ public class ReportResource {
      */
     private final ReportService reportService;
 
+
+
+    /**
+     * @return Boolean
+     */
+    @GetMapping("/teste")
+    public Boolean teste() {
+
+        reportService.createReports();
+
+        return true;
+    }
+
     /**
      * @param reportParams ReportParams
      * @return Boolean

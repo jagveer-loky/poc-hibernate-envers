@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -18,6 +19,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(name = "TB_REPORT")
 public class EReport implements Serializable {
+
+    public static final String SYSTEM_USER = "SYSTEM";
+    public static final String SERVICE_CONTRACT = "149";
+    public static final String INSTITUTION = "00000007";
 
     @Id
     @GeneratedValue(generator = "TB_REPORT_SEQ")
