@@ -1,18 +1,16 @@
 package com.fiserv.preproposal.api.domain.entity;
 
+import com.fiserv.preproposal.api.domain.dtos.ReportParams;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -22,18 +20,15 @@ import java.time.LocalDateTime;
 @Table(name = "TB_REPORT")
 public class EReport implements Serializable {
 
+    public static final String SYSTEM_USER = "SYSTEM";
+    public static final String SERVICE_CONTRACT = "149";
+    public static final String INSTITUTION = "00000007";
+
     @Id
     @GeneratedValue(generator = "TB_REPORT_SEQ")
     @SequenceGenerator(name = "TB_REPORT_SEQ", sequenceName = "TB_REPORT_SEQ", allocationSize = 1)
     @Column(name = "ID", nullable = false)
     private Long id;
-
-    /**
-     *
-     */
-    @NotNull
-    @Column(name = "PATH", nullable = false)
-    private String path;
 
     /**
      *
@@ -90,10 +85,43 @@ public class EReport implements Serializable {
     /**
      *
      */
+    @Lob
+    @Column(name = "CONTENT", columnDefinition = "BLOB")
+    private byte[] content;
+
+    /**
+     * @param id                  Long
+     * @param requester           String
+     * @param requestedDate       LocalDateTime
+     * @param concludedDate       LocalDateTime
+     * @param concludedPercentage int
+     * @param countLines          int
+     * @param currentLine         int
+     * @param type                TypeReport
+     * @param error               String
+     */
+    public EReport(final Long id, final String requester,
+                   final LocalDateTime requestedDate, final LocalDateTime concludedDate,
+                   final int concludedPercentage, final int countLines, final int currentLine, final TypeReport type, final String error) {
+        this.id = id;
+        this.requester = requester;
+        this.requestedDate = requestedDate;
+        this.concludedPercentage = concludedPercentage;
+        this.concludedDate = concludedDate;
+        this.countLines = countLines;
+        this.currentLine = currentLine;
+        this.type = type;
+        this.error = error;
+    }
+
+    /**
+     *
+     */
     @PrePersist
     public void prePersist() {
         countLines = 0;
-        requestedDate = LocalDateTime.now();
+        if (requestedDate == null)
+            requestedDate = LocalDateTime.now();
         calculatePercentage();
     }
 
@@ -122,5 +150,20 @@ public class EReport implements Serializable {
      */
     public boolean hasError() {
         return this.error != null && !this.error.trim().isEmpty();
+    }
+
+    /**
+     * @param reportParams ReportParams
+     * @return EReport
+     */
+    public static EReport createFrom(final ReportParams reportParams) {
+
+        // Instancing the jpa Entity to persist
+        // This entity will save the percentage done of the job
+        final EReport eReport = new EReport();
+        eReport.setType(reportParams.getType());
+        eReport.setRequester(reportParams.getRequester());
+
+        return eReport;
     }
 }

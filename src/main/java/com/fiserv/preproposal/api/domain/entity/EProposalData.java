@@ -492,6 +492,7 @@ import javax.persistence.*;
                 "                       )" +
                 "               )" +
                 "             and TFC.id = TFC2.id\n" +
+                "            ) AS \"NUMCREDONLINE\"\n" +
                 "       from TB_FILE_CONTROL TFC\n" +
                 "           left join tb_proposal_data tpd ON TFC.ID = tpd.id_file_control\n" +
                 "           left join tb_pre_proposal_history tpph on tpd.id = tpph.id_proposal_data\n" +

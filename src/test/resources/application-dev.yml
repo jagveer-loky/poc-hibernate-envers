@@ -47,6 +47,3 @@ org:
   jobrunr:
     dashboard:
       enabled: false
-
-io:
-  output: src/test/resources/output
