@@ -37,8 +37,5 @@ org:
     dashboard:
       enabled: true
 
-io:
-  output: target/output
-
 logging:
   config: classpath:logs/log4j2-spring.dev.xml

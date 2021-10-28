@@ -30,8 +30,5 @@ springdoc:
   swagger-ui:
     url: /v3/api-docs/
 
-io:
-  output: /appserver/tmp/pre-proposal-api
-
 logging:
   config: classpath:logs/log4j2-spring.sit.xml
