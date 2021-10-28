@@ -31,8 +31,8 @@ public class ReportResource {
     /**
      * @return Boolean
      */
-    @GetMapping("/teste")
-    public Boolean teste() {
+    @GetMapping("/generate")
+    public Boolean generate() {
 
         reportService.createReports();
 

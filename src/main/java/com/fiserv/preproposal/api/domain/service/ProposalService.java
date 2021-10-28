@@ -34,7 +34,7 @@ public class ProposalService {
      * @param ids Set<Long>
      */
     @Transactional
-    @Job(name = "Deleting errors of the id's ")
+    @Job(name = "reloadLinkPayments")
     public void reloadLinkPayments(final Set<Long> ids) {
         ids.forEach(id -> proposalRepository.findById(id).ifPresent(eProposalData -> {
 

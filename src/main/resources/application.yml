@@ -27,4 +27,4 @@ org:
       enabled: true
 
 reports:
-  days-to-expire: 2
+  days-to-expire: 1

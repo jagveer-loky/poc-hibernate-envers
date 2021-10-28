@@ -50,7 +50,7 @@ public class DeleteExpiredReportsJobConfiguration {
         return TriggerBuilder.newTrigger()
 //                .startNow()
 //                // Start at Eleven-Thirty at night
-                .startAt(DateBuilder.evenHourDate(getMidNight()))
+                .startAt(getMidNight())
                 .forJob(deleteExpiredReportsJobDetail)
                 .withIdentity(DeleteExpiredReportsJob.class.getName())
                 .withSchedule(simpleSchedule()

@@ -50,7 +50,7 @@ public class CreateReportsJobConfiguration {
         return TriggerBuilder.newTrigger()
 //                .startNow()
 //                // Start at Eleven-Thirty at night
-                .startAt(DateBuilder.evenHourDate(getElevenThirtyAtNight()))
+                .startAt(getElevenThirtyAtNight())
                 .forJob(createReportsJobDetail)
                 .withIdentity(CreateReportsJob.class.getName())
                 .withSchedule(simpleSchedule()
