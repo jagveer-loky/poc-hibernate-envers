@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.fiserv</groupId>
-    <artifactId>pre-proposal-api</artifactId>
+    <groupId>com.fiserv.preproposta.api</groupId>
+    <artifactId>preproposta-api</artifactId>
     <version>1</version>
-    <name>pre-proposal-api</name>
+    <name>preproposta-api</name>
     <description>API to generate reports of pre proposals</description>
     <packaging>war</packaging>
 
