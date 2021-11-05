@@ -54,4 +54,11 @@ public class GitRespDTO {
 			type = "String"
 	)
 	private String requestTime;
+
+	@Schema(
+			description = "Host Name",
+			example = "LACVAP1019",
+			type = "String"
+	)
+	private String hostname;
 }

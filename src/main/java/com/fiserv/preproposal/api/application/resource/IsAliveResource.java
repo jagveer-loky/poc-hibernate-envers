@@ -1,5 +1,7 @@
 package com.fiserv.preproposal.api.application.resource;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.ZoneId;
 
 import com.fiserv.preproposal.api.application.pagination.DResponse;
@@ -57,10 +59,16 @@ public class IsAliveResource {
 	})
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> isAlive() {
-		String now = DateUtil.dateTimeNowToString("dd/MM/yyyy HH:mm:ss", ZoneId.of("America/Sao_Paulo"));
-		MessageSourceDTO requestTime = MessageSourceUtil.getProperties(ResponsesAndExceptionEnum.CONSULTA_REALIZADA, now);
-		DResponse<GitRespDTO> resp = gitMapper.gitToDResponse(new GitRespDTO(apiName, commitId, branch, buildTime, buildVersion, requestTime.getMessage()));
-		return new ResponseEntity<DResponse<GitRespDTO>>(resp, HttpStatus.OK);
+		String hostname = null;
+		try {
+			hostname = InetAddress.getLocalHost().getHostName();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		final String now = DateUtil.dateTimeNowToString("dd/MM/yyyy HH:mm:ss", ZoneId.of("America/Sao_Paulo"));
+		final MessageSourceDTO requestTime = MessageSourceUtil.getProperties(ResponsesAndExceptionEnum.CONSULTA_REALIZADA, now);
+		final DResponse<GitRespDTO> resp = gitMapper.gitToDResponse(new GitRespDTO(apiName, commitId, branch, buildTime, buildVersion, requestTime.getMessage(), hostname));
+		return new ResponseEntity<>(resp, HttpStatus.OK);
 	}
 
 }
