@@ -16,11 +16,11 @@
                     <state state_id="install">
                         <execute module="Transfer" action="Transfer" argument="/tmp/ENTRADA/" />
                         <execute module="File" action="ChangeAllAttributes" argument="/tmp/ENTRADA/,websrvr,web,0755" />
-                        <execute module="Command" action="Command" argument="su - websrvr -c '/appserver/automation/auto_deploy.sh pre-proposal-api'" />
+                        <execute module="Command" action="Command" argument="su - websrvr -c '/appserver/automation/autocm.sh pre-proposal-api'" />
                     </state>
                     <state state_id="post_install"></state>
                     <state state_id="backout">
-                        <execute module="Command" action="Command" argument="su - websrvr -c '/appserver/automation/auto_deploy.sh pre-proposal-api.war rollback'" />
+                        <execute module="Command" action="Command" argument="su - websrvr -c '/appserver/automation/autocm.sh pre-proposal-api.war rollback'" />
                     </state>
                 </system>
             </environment>
@@ -32,11 +32,11 @@
                     <state state_id="install">
                         <execute module="Transfer" action="Transfer" argument="/tmp/ENTRADA/" />
                         <execute module="File" action="ChangeAllAttributes" argument="/tmp/ENTRADA/,websrvr,web,0755" />
-                        <execute module="Command" action="Command" argument="su - websrvr -c '/appserver/automation/auto_deploy.sh pre-proposal-api'" />
+                        <execute module="Command" action="Command" argument="su - websrvr -c '/appserver/automation/autocm.sh pre-proposal-api'" />
                     </state>
                     <state state_id="post_install"></state>
                     <state state_id="backout">
-                        <execute module="Command" action="Command" argument="su - websrvr -c '/appserver/automation/auto_deploy.sh pre-proposal-api.war rollback'" />
+                        <execute module="Command" action="Command" argument="su - websrvr -c '/appserver/automation/autocm.sh pre-proposal-api.war rollback'" />
                     </state>
                 </system>
             </environment>
