@@ -1,19 +1,19 @@
 package com.fiserv.preproposal.api.domain.repository.report;
 
+import com.fiserv.preproposal.api.domain.dtos.ReportParams;
 import com.fiserv.preproposal.api.domain.entity.EReport;
+import com.fiserv.preproposal.api.infrastrucutre.aid.util.ListUtil;
 import com.fiserv.preproposal.api.infrastrucutre.normalizer.Normalizer;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
 import lombok.NonNull;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
-import java.io.File;
-import java.util.Collection;
+import java.io.ByteArrayOutputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-
-import static com.fiserv.preproposal.api.infrastrucutre.aid.util.ListUtil.toArray;
 
 public abstract class AbstractReportRepository<T> implements IWriteReportRepository<T> {
 
@@ -24,20 +24,22 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
 
     /**
      * @param stream               Stream<T> To running when writing file. At each new iteration, a new register is written in file.
-     * @param eReport              Entity who will written in database
-     * @param fields               Fields to write in file
-     * @param consumer             Consumer<T>
+     * @param reportParams         ReportParams
+     * @param nextLine             Consumer<byte[]>
+     * @param done                 Consumer<byte[]> in the end of the process, update EReport register on database with the file saved in the system file.
      * @param lineErrorConsumer    Consumer<Exception>
      * @param generalErrorConsumer Consumer<Exception>
      */
     @Transactional
-    public void convertToCSV(@NonNull final Stream<T> stream, final EReport eReport, final Collection<String> fields, final Consumer<T> consumer, final Consumer<Exception> lineErrorConsumer, final Consumer<Exception> generalErrorConsumer) {
+    public void convertToCSV(@NonNull final Stream<T> stream, final int countLines, final ReportParams reportParams, final Consumer<byte[]> nextLine, final Consumer<byte[]> done, final Consumer<Exception> lineErrorConsumer, final Consumer<Exception> generalErrorConsumer) {
 
         try {
 
-            Assert.isTrue(eReport.getCountLines() != 0, "Nenhum registro encontrado para essa solicitação, revise os filtros utilizados e tente novamente!");
-
-            final File file = new File(eReport.getPath());
+            if (countLines == 0) {
+                if (reportParams.getRequester().equals(EReport.SYSTEM_USER))
+                    throw new RuntimeException("Nenhum registro encontrado para a data " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(LocalDate.now().minusDays(1)));
+                throw new RuntimeException("Nenhum registro encontrado para essa solicitação, revise os filtros e tente novamente!");
+            }
 
             final CsvWriterSettings writerSettings = new CsvWriterSettings();
             writerSettings.getFormat().setLineSeparator("\r\n");
@@ -45,12 +47,13 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
             writerSettings.setQuoteAllFields(true);
             writerSettings.setColumnReorderingEnabled(true);
             writerSettings.setHeaderWritingEnabled(true);
-            writerSettings.setHeaders(toArray(fields));
-            writerSettings.excludeFields(extractFieldsToIgnore(toArray(fields)));
+            writerSettings.setHeaders(ListUtil.toArray(reportParams.getFields()));
+            writerSettings.excludeFields(extractFieldsToIgnore(ListUtil.toArray(reportParams.getFields())));
 
             writerSettings.setRowWriterProcessor(configProcessor());
 
-            final CsvWriter csvWriter = new CsvWriter(file, writerSettings);
+            final ByteArrayOutputStream byteArrayOutputStream =  new ByteArrayOutputStream();
+            final CsvWriter csvWriter = new CsvWriter(byteArrayOutputStream, writerSettings);
 
             stream.forEach(object -> {
 
@@ -58,21 +61,19 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
                     // Writing in file
                     csvWriter.processRecord(normalizer.normalize(object));
 
-                    //
-                    consumer.accept(object);
+                    nextLine.accept(byteArrayOutputStream.toByteArray());
+
                 } catch (final Exception e) {
-                    lineErrorConsumer.accept(e);
+                    lineErrorConsumer.andThen(lineError -> csvWriter.close()).accept(e);
                 }
 
             });
 
             csvWriter.close();
+            done.accept(byteArrayOutputStream.toByteArray());
 
         } catch (final Exception e) {
             generalErrorConsumer.accept(e);
         }
-
     }
-
-
 }

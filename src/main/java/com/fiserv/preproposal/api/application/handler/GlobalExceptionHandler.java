@@ -1,6 +1,11 @@
 package com.fiserv.preproposal.api.application.handler;
 
 import com.fiserv.preproposal.api.application.exceptions.*;
+import com.fiserv.preproposal.api.application.pagination.DResponse;
+import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ApplicationEnum;
+import com.fiserv.preproposal.api.infrastrucutre.aid.enums.EventActivityEnum;
+import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ResponsesAndExceptionEnum;
+import com.fiserv.preproposal.api.infrastrucutre.aid.util.LogUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.nio.file.AccessDeniedException;
@@ -23,12 +28,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ApplicationEnum;
-import com.fiserv.preproposal.api.infrastrucutre.aid.enums.EventActivityEnum;
-import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ResponsesAndExceptionEnum;
-import com.fiserv.preproposal.api.application.pagination.DResponse;
-import com.fiserv.preproposal.api.infrastrucutre.aid.util.LogUtil;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice

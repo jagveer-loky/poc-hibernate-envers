@@ -1,5 +1,6 @@
 package com.fiserv.preproposal.api.application.config.security;
 
+import com.fiserv.preproposal.api.application.pagination.DSecurity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -8,8 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import com.fiserv.preproposal.api.application.pagination.DSecurity;
 
 @Component
 public class FDSecurityClient {

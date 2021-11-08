@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.fiserv</groupId>
+    <groupId>com.fiserv.preproposal.api</groupId>
     <artifactId>pre-proposal-api</artifactId>
     <version>1</version>
     <name>pre-proposal-api</name>
@@ -40,6 +40,7 @@
         <build.number>${version}</build.number>
         <univocity-parsers.version>2.9.1</univocity-parsers.version>
         <jobrunr-spring-boot-starter.version>3.2.1</jobrunr-spring-boot-starter.version>
+
     </properties>
 
     <dependencyManagement>
@@ -193,6 +194,12 @@
             <groupId>org.jobrunr</groupId>
             <artifactId>jobrunr-spring-boot-starter</artifactId>
             <version>${jobrunr-spring-boot-starter.version}</version>
+        </dependency>
+
+        <!-- quartz -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-quartz</artifactId>
         </dependency>
     </dependencies>
 

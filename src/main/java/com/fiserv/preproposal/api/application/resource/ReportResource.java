@@ -7,14 +7,11 @@ import com.fiserv.preproposal.api.domain.entity.TypeReport;
 import com.fiserv.preproposal.api.domain.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.jobrunr.scheduling.BackgroundJob;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -27,18 +24,20 @@ public class ReportResource {
     /**
      *
      */
-    public final static String DATETIME_PATTERN = "ddMMyyyyHHmmss";
-
-    /**
-     *
-     */
-    @Value("${io.output}")
-    private String path;
-
-    /**
-     *
-     */
     private final ReportService reportService;
+
+
+
+    /**
+     * @return Boolean
+     */
+    @GetMapping("/generate")
+    public Boolean generate() {
+
+        reportService.createReports();
+
+        return true;
+    }
 
     /**
      * @param reportParams ReportParams
@@ -49,7 +48,7 @@ public class ReportResource {
 
         reportParams.setType(TypeReport.BASIC);
 
-        final EReport eReport = reportService.save(createEReportFromJobParams(reportParams));
+        final EReport eReport = reportService.save(EReport.createFrom(reportParams));
 
         BackgroundJob.enqueue(() -> reportService.startBasicReport(reportParams, eReport));
 
@@ -65,7 +64,7 @@ public class ReportResource {
 
         reportParams.setType(TypeReport.COMPLETE);
 
-        final EReport eReport = reportService.save(createEReportFromJobParams(reportParams));
+        final EReport eReport = reportService.save(EReport.createFrom(reportParams));
 
         BackgroundJob.enqueue(() -> reportService.startCompleteReport(reportParams, eReport));
 
@@ -81,7 +80,7 @@ public class ReportResource {
 
         reportParams.setType(TypeReport.QUANTITATIVE);
 
-        final EReport eReport = reportService.save(createEReportFromJobParams(reportParams));
+        final EReport eReport = reportService.save(EReport.createFrom(reportParams));
 
         BackgroundJob.enqueue(() -> reportService.startQuantitativeReport(reportParams, eReport));
 
@@ -95,7 +94,7 @@ public class ReportResource {
      * @throws NotFoundException
      */
     @GetMapping("{id}/download")
-    public ResponseEntity<byte[]> downloadById(@PathVariable final Long id, @RequestParam final Integer noCache) throws IOException, NotFoundException {
+    public ResponseEntity<byte[]> downloadById(@PathVariable final Long id, @RequestParam final Integer noCache) throws NotFoundException {
 
         return ResponseEntity
                 .ok()
@@ -120,19 +119,4 @@ public class ReportResource {
         return reportService.getFieldsFromReports();
     }
 
-    /**
-     * @param reportParams ReportParams
-     * @return EReport
-     */
-    private EReport createEReportFromJobParams(final ReportParams reportParams) {
-
-        // Instancing the jpa Entity to persist
-        // This entity will save the percentage done of the job
-        final EReport eReport = new EReport();
-        eReport.setPath((path + "/" + reportParams.getRequester() + "/" + reportParams.getType() + "-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATETIME_PATTERN))).toLowerCase());
-        eReport.setType(reportParams.getType());
-        eReport.setRequester(reportParams.getRequester());
-
-        return eReport;
-    }
 }

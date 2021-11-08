@@ -1,4 +1,4 @@
-package com.fiserv.preproposal.api.application.schedulling;
+package com.fiserv.preproposal.api.application.config;
 
 import org.jobrunr.jobs.mappers.JobMapper;
 import org.jobrunr.storage.InMemoryStorageProvider;
