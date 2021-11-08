@@ -1,12 +1,11 @@
 package com.fiserv.preproposal.api.domain.dtos;
 
+import com.fiserv.preproposal.api.infrastrucutre.aid.reflection.Reflection;
 import com.fiserv.preproposal.api.application.annotation.Index;
 import com.univocity.parsers.annotations.Parsed;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.fiserv.preproposal.api.infrastrucutre.aid.reflection.Reflection.getAttributesFromClass;
 
 public abstract class AbstractReport {
 
@@ -17,7 +16,7 @@ public abstract class AbstractReport {
 
         final Set<Field> fields = new HashSet<>();
 
-        final Set<String> attributes = getAttributesFromClass(this.getClass());
+        final Set<String> attributes = Reflection.getAttributesFromClass(this.getClass());
 
         try {
             for (final String attribute : attributes) {

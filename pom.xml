@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.fiserv</groupId>
+    <groupId>com.fiserv.preproposal.api</groupId>
     <artifactId>pre-proposal-api</artifactId>
     <version>1</version>
     <name>pre-proposal-api</name>
