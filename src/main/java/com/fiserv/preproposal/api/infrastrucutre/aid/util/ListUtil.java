@@ -1,10 +1,5 @@
 package com.fiserv.preproposal.api.infrastrucutre.aid.util;
 
-import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ApplicationEnum;
-import com.fiserv.preproposal.api.infrastrucutre.aid.enums.EventActivityEnum;
-import org.springframework.web.context.request.WebRequest;
-
-import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;

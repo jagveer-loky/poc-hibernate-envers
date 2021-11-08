@@ -2,6 +2,7 @@ package com.fiserv.preproposal.api.domain.repository.report;
 
 import com.fiserv.preproposal.api.domain.dtos.ReportParams;
 import com.fiserv.preproposal.api.domain.entity.EReport;
+import com.fiserv.preproposal.api.infrastrucutre.aid.util.ListUtil;
 import com.fiserv.preproposal.api.infrastrucutre.normalizer.Normalizer;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
@@ -13,8 +14,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-
-import static com.fiserv.preproposal.api.infrastrucutre.aid.util.ListUtil.toArray;
 
 public abstract class AbstractReportRepository<T> implements IWriteReportRepository<T> {
 
@@ -48,8 +47,8 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
             writerSettings.setQuoteAllFields(true);
             writerSettings.setColumnReorderingEnabled(true);
             writerSettings.setHeaderWritingEnabled(true);
-            writerSettings.setHeaders(toArray(reportParams.getFields()));
-            writerSettings.excludeFields(extractFieldsToIgnore(toArray(reportParams.getFields())));
+            writerSettings.setHeaders(ListUtil.toArray(reportParams.getFields()));
+            writerSettings.excludeFields(extractFieldsToIgnore(ListUtil.toArray(reportParams.getFields())));
 
             writerSettings.setRowWriterProcessor(configProcessor());
 

@@ -1,0 +1,45 @@
+<manifest>
+    <component component_id="pre-proposal-api">
+        <file file_type="common" />
+        <file file_type="environment" />
+        <file file_type="system" />
+        <file file_type="tree">
+            <file_path>.</file_path>
+        </file>
+        <file file_type="type" />
+        <command command_type="command_system">
+            <environment environment_id="ESCM_GPDSBA-pre-proposal-api-UAT">
+                <system system_id="lacvap1019">
+                    <state state_id="pre_install">
+					 <execute module="Backout" action="Backup" argument="/tmp/ENTRADA/" />
+					</state>
+                    <state state_id="install">
+                        <execute module="Transfer" action="Transfer" argument="/tmp/ENTRADA/" />
+                        <execute module="File" action="ChangeAllAttributes" argument="/tmp/ENTRADA/,websrvr,web,0755" />
+                        <execute module="Command" action="Command" argument="su - websrvr -c '/appserver/automation/autocm.sh pre-proposal-api'" />
+                    </state>
+                    <state state_id="post_install"></state>
+                    <state state_id="backout">
+                        <execute module="Command" action="Command" argument="su - websrvr -c '/appserver/automation/auto_deploy.sh pre-proposal-api.war rollback'" />
+                    </state>
+                </system>
+            </environment>
+            <environment environment_id="ESCM_GPDSBA-pre-proposal-api-PRD">
+                <system system_id="lbpvap1015">
+                    <state state_id="pre_install">
+                        <execute module="Backout" action="Backup" argument="/tmp/ENTRADA/" />
+                    </state>
+                    <state state_id="install">
+                        <execute module="Transfer" action="Transfer" argument="/tmp/ENTRADA/" />
+                        <execute module="File" action="ChangeAllAttributes" argument="/tmp/ENTRADA/,websrvr,web,0755" />
+                        <execute module="Command" action="Command" argument="su - websrvr -c '/appserver/automation/autocm.sh pre-proposal-api'" />
+                    </state>
+                    <state state_id="post_install"></state>
+                    <state state_id="backout">
+                        <execute module="Command" action="Command" argument="su - websrvr -c '/appserver/automation/auto_deploy.sh pre-proposal-api.war rollback'" />
+                    </state>
+                </system>
+            </environment>
+        </command>
+    </component>
+</manifest>

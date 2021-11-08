@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.fiserv.preproposal.api.domain.entity.EReport.SYSTEM_USER;
-
 @Repository
 public interface ReportRepository extends JpaRepository<EReport, Long> {
 
@@ -19,7 +17,7 @@ public interface ReportRepository extends JpaRepository<EReport, Long> {
      * @return List<EReport>
      */
     @Query("SELECT new EReport( e.id, e.requester,e.requestedDate, e.concludedDate, e.concludedPercentage, e.countLines, e.currentLine, e.type, e.error) " +
-            " FROM EReport e WHERE (e.requester = :requester OR e.requester = '" + SYSTEM_USER + "') order by e.requestedDate desc")
+            " FROM EReport e WHERE (e.requester = :requester OR e.requester = '" + EReport.SYSTEM_USER + "') order by e.requestedDate desc")
     List<EReport> findByRequesterOrAllOrderByRequestedDateDesc(@Param("requester") final String requester);
 
     /**
