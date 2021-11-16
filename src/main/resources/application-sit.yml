@@ -1,3 +1,11 @@
+#put specific configuration in this file
+application:
+  name: pre-proposal-api
+  description: @project.description@
+  version: @project.version@
+  path.pkg: com.fiserv.preproposal.api
+  jenkins.build.version: @build.number@
+
 spring:
   datasource:
     url: jdbc:oracle:thin:@recdbq1.1dc.com:1521:RECQA?cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
@@ -32,3 +40,8 @@ springdoc:
 
 logging:
   config: classpath:logs/log4j2-spring.sit.xml
+
+management:
+  endpoint:
+    logfile:
+      external-file: /appserver/logs/${spring.application.name}/${spring.application.name}.log
