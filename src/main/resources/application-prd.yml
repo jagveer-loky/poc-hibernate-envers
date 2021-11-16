@@ -33,3 +33,8 @@ cors:
 
 logging:
   config: classpath:logs/log4j2-spring.prd.xml
+
+management:
+  endpoint:
+    logfile:
+      external-file: /appserver/logs/${spring.application.name}/${spring.application.name}.log

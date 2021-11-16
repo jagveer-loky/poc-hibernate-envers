@@ -1,6 +1,6 @@
-#put specific configuration in this file
-
 spring:
+  application:
+    name: pre-proposal-api
   profiles:
     active: @activeProfile@
 
@@ -13,13 +13,18 @@ springdoc:
     path: /swagger-ui.html
 
 management:
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: [ 'health', 'info', 'logfile' ]
   endpoint:
+    health:
+      enabled: true
     info:
       enabled: true
-  endpoints:
-    enabled-by-default: false
-    web:
-      base-path: /_monitor
+    logfile:
+      enabled: true
 
 org:
   jobrunr:
