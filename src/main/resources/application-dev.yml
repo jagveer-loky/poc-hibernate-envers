@@ -39,3 +39,8 @@ org:
 
 logging:
   config: classpath:logs/log4j2-spring.dev.xml
+
+management:
+  endpoint:
+    logfile:
+      external-file: ./target/logs/${spring.application.name}.log

@@ -41,7 +41,7 @@ public class ReportService {
      *
      */
     @Getter
-    @Value("${reports.days-to-expire:2}")
+    @Value("${reports.days-to-expire:1}")
     private Long daysToExpire;
 
     /**
@@ -182,6 +182,14 @@ public class ReportService {
     }
 
     /**
+     * @param exception Exception
+     */
+    private void show(final Exception exception) {
+        exception.printStackTrace();
+        log.error(exception.getMessage());
+    }
+
+    /**
      * @param eReport EReport
      */
     private void next(final EReport eReport, final byte[] byteArray) {
@@ -271,7 +279,15 @@ public class ReportService {
     @Transactional
     public void deleteExpired() {
         log.info("DELETING EXPIRED REPORTS");
-        this.reportRepository.deleteInBatch(this.reportRepository.getBeforeAt(LocalDateTime.now().minusDays(daysToExpire)));
+        reportRepository.deleteInBatch(this.reportRepository.getBeforeAt(LocalDateTime.now().minusDays(daysToExpire)));
+    }
+
+    /**
+     * @param id long
+     */
+    @Transactional
+    public void deleteById(final long id) {
+        reportRepository.deleteById(id);
     }
 
     /**
@@ -314,19 +330,4 @@ public class ReportService {
         return reportRepository.findAll();
     }
 
-    /**
-     * @param id long
-     */
-    @Transactional
-    public void deleteById(final long id) {
-        reportRepository.deleteById(id);
-    }
-
-    /**
-     * @param exception Exception
-     */
-    private void show(final Exception exception) {
-        exception.printStackTrace();
-        log.error(exception.getMessage());
-    }
 }

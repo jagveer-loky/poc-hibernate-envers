@@ -26,7 +26,16 @@ public class ReportResource {
      */
     private final ReportService reportService;
 
+    /**
+     * @return Boolean
+     */
+    @DeleteMapping("/delete-expired")
+    public Boolean deleteExpired() {
 
+        reportService.deleteExpired();
+
+        return true;
+    }
 
     /**
      * @return Boolean
