@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.fiserv.preproposal.api</groupId>
     <artifactId>pre-proposal-api</artifactId>
-    <version>1</version>
+    <version>${build.number}</version>
     <name>pre-proposal-api</name>
     <description>API to generate reports of pre proposals</description>
     <packaging>war</packaging>
@@ -37,7 +37,6 @@
         <javassist.version>3.20.0-GA</javassist.version>
         <hibernate.version>5.4.25.Final</hibernate.version>
 
-        <build.number>${version}</build.number>
         <univocity-parsers.version>2.9.1</univocity-parsers.version>
         <jobrunr-spring-boot-starter.version>3.2.1</jobrunr-spring-boot-starter.version>
 
