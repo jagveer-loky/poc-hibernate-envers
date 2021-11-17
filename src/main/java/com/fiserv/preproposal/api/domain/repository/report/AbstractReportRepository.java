@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -54,14 +55,15 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
 
             final ByteArrayOutputStream byteArrayOutputStream =  new ByteArrayOutputStream();
             final CsvWriter csvWriter = new CsvWriter(byteArrayOutputStream, writerSettings);
-
+final AtomicInteger i = new AtomicInteger();
             stream.forEach(object -> {
 
                 try {
                     // Writing in file
                     csvWriter.processRecord(normalizer.normalize(object));
 
-                    nextLine.accept(byteArrayOutputStream.toByteArray());
+                    i.getAndIncrement();
+                    nextLine.accept(byteArrayOutputStream.toByteArray()/*, i.get()*/);
 
                 } catch (final Exception e) {
                     lineErrorConsumer.andThen(lineError -> csvWriter.close()).accept(e);

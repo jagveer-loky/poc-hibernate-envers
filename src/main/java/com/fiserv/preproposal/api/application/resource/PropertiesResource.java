@@ -28,7 +28,7 @@ import org.springframework.web.context.annotation.RequestScope;
 @Tag(name = "PROPERTIES", description = "Resource with the requests that allow to manipulate pre proprosal properties.")
 public class PropertiesResource {
 
-    private static final Logger LOG = LogManager.getLogger(PropertiesResource.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private final PropertiesService propertiesService;
 
