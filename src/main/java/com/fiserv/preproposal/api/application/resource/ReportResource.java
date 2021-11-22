@@ -51,10 +51,10 @@ public class ReportResource {
 
     /**
      * @param reportParams ReportParams
-     * @return Boolean
+     * @return Long
      */
     @PostMapping(TypeReport.BASIC_VALUE)
-    public Boolean createBasicReport(@RequestBody final ReportParams reportParams) {
+    public Long createBasicReport(@RequestBody final ReportParams reportParams) {
 
         reportParams.setType(TypeReport.BASIC);
 
@@ -62,15 +62,15 @@ public class ReportResource {
 
         BackgroundJob.enqueue(() -> reportService.startBasicReport(reportParams, eReport));
 
-        return true;
+        return eReport.getId();
     }
 
     /**
      * @param reportParams ReportParams
-     * @return Boolean
+     * @return Long
      */
     @PostMapping(TypeReport.COMPLETE_VALUE)
-    public Boolean createCompleteReport(@RequestBody final ReportParams reportParams) {
+    public Long createCompleteReport(@RequestBody final ReportParams reportParams) {
 
         reportParams.setType(TypeReport.COMPLETE);
 
@@ -78,15 +78,15 @@ public class ReportResource {
 
         BackgroundJob.enqueue(() -> reportService.startCompleteReport(reportParams, eReport));
 
-        return true;
+        return eReport.getId();
     }
 
     /**
      * @param reportParams ReportParams
-     * @return Boolean
+     * @return Long
      */
     @PostMapping(TypeReport.QUANTITATIVE_VALUE)
-    public Boolean createQuantitativeReport(@RequestBody final ReportParams reportParams) {
+    public Long createQuantitativeReport(@RequestBody final ReportParams reportParams) {
 
         reportParams.setType(TypeReport.QUANTITATIVE);
 
@@ -94,13 +94,12 @@ public class ReportResource {
 
         BackgroundJob.enqueue(() -> reportService.startQuantitativeReport(reportParams, eReport));
 
-        return true;
+        return eReport.getId();
     }
 
     /**
      * @param id Long
      * @return ResponseEntity<byte [ ]>
-     * @throws IOException
      * @throws NotFoundException
      */
     @GetMapping("{id}/download")

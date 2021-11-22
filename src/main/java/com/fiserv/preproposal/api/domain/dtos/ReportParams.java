@@ -2,6 +2,7 @@ package com.fiserv.preproposal.api.domain.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fiserv.preproposal.api.domain.entity.TypeReport;
+import com.fiserv.preproposal.api.domain.repository.report.IInputReport;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,7 @@ import java.util.Objects;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReportParams implements Serializable {
+public class ReportParams implements Serializable , IInputReport {
 
     private static final String DATE_TIME_PATTERN = "dd/MM/yyyy";
 

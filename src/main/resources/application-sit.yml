@@ -24,9 +24,6 @@ spring:
         show_sql: true
         use_sql_comments: true
 
-
-#logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
-
 fdsecurity:
   url: https://cat-webfarm.1dc.com/fd-security/permission-check
 

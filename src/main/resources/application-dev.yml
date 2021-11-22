@@ -5,9 +5,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:oracle:thin:@recdbq1.1dc.com:1521:RECQA?cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
-    username: PRE_PROPOSAL_SIT
-    password: PPS#01923
+    url: jdbc:oracle:thin:@recdbc1.1dc.com:1521:RECCAT?cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
+    username: PRE_PROPOSAL_UAT
+    password: proposal#91232
     driver-class-name: oracle.jdbc.OracleDriver
   jpa:
     properties:
