@@ -75,7 +75,7 @@ public class DeleteExpiredReportsJobConfiguration {
          * @param context JobExecutionContext
          */
         public void execute(final JobExecutionContext context) {
-            reportService.deleteExpired();
+            reportService.deleteExpiredReports();
         }
     }
 

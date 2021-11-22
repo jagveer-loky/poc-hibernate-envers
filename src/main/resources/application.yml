@@ -3,6 +3,10 @@ spring:
     name: pre-proposal-api
   profiles:
     active: @activeProfile@
+  cache:
+    type: redis
+  redis:
+    port: 6379
 
 springdoc:
   show-actuator: true
