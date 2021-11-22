@@ -25,7 +25,7 @@ public class CreateReportsJobConfiguration {
         elevenThirtyAtNight.set(elevenThirtyAtNight.get(Calendar.YEAR),
                 elevenThirtyAtNight.get(Calendar.MONTH),
                 elevenThirtyAtNight.get(Calendar.DAY_OF_MONTH),
-                22,
+                23,
                 0,
                 0);
         return elevenThirtyAtNight.getTime();
