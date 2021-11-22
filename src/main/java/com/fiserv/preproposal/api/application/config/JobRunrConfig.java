@@ -16,7 +16,6 @@ public class JobRunrConfig {
     public StorageProvider provider(final JobMapper jobMapper) {
         final InMemoryStorageProvider provider = new InMemoryStorageProvider();
         provider.setJobMapper(jobMapper);
-
         return provider;
     }
 }

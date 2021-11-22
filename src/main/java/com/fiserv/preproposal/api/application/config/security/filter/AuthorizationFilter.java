@@ -1,6 +1,8 @@
 package com.fiserv.preproposal.api.application.config.security.filter;
 
 import java.io.IOException;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -15,8 +17,6 @@ import com.fiserv.preproposal.api.infrastrucutre.aid.enums.EventActivityEnum;
 import com.fiserv.preproposal.api.infrastrucutre.aid.util.LogUtil;
 import com.fiserv.preproposal.api.application.config.security.FDSecurity;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
@@ -27,7 +27,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class AuthorizationFilter extends GenericFilterBean {
 
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = Logger.getLogger(AuthorizationFilter.class.getName());
 	
 	FDSecurity fdSecurity;
 	HandlerExceptionResolver resolver;

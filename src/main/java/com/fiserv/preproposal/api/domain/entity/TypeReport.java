@@ -13,13 +13,13 @@ public enum TypeReport {
     QUANTITATIVE(QuantitativeReport.class);
 
     public final static String BASIC_VALUE = "basic";
-    public final static int BASIC_MULTIPLIER_TO_SAVE = 5;
+    public final static int BASIC_DIVISOR_TO_SAVE = 2;
 
     public final static String COMPLETE_VALUE = "complete";
-    public final static int COMPLETE_MULTIPLIER_TO_SAVE = 5;
+    public final static int COMPLETE_DIVISOR_TO_SAVE = 2;
 
     public final static String QUANTITATIVE_VALUE = "quantitative";
-    public final static int QUANTITATIVE_MULTIPLIER_TO_SAVE = 2;
+    public final static int QUANTITATIVE_DIVISOR_TO_SAVE = 100;
 
     @Setter
     @Getter
@@ -33,12 +33,12 @@ public enum TypeReport {
         return this.type.getName().toLowerCase();
     }
 
-    public int getMultiplierToSave() {
+    public int getDivisorToSave() {
         if (this.equals(BASIC))
-            return BASIC_MULTIPLIER_TO_SAVE;
+            return BASIC_DIVISOR_TO_SAVE;
         else if (this.equals(COMPLETE))
-            return COMPLETE_MULTIPLIER_TO_SAVE;
+            return COMPLETE_DIVISOR_TO_SAVE;
         else
-            return QUANTITATIVE_MULTIPLIER_TO_SAVE;
+            return QUANTITATIVE_DIVISOR_TO_SAVE;
     }
 }

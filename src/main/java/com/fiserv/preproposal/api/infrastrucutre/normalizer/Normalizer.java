@@ -1,13 +1,19 @@
 package com.fiserv.preproposal.api.infrastrucutre.normalizer;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
 
-@Slf4j
 public final class Normalizer<T> {
+
+    /**
+     *
+     */
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Normalize the words to write CEF return bulk
@@ -58,8 +64,8 @@ public final class Normalizer<T> {
                     }
         } catch (final Exception e) {
             e.printStackTrace();
-            log.error("");
-            log.error("Erro durante a normalização do atributo: '" + attribute + "' com o valor: '" + object + "'");
+            LOGGER.error("");
+            LOGGER.error("Erro durante a normalização do atributo: '" + attribute + "' com o valor: '" + object + "'");
             System.err.println("Erro durante a normalização do atributo: '" + attribute + "' com o valor: '" + object + "'");
         }
 
@@ -83,15 +89,15 @@ public final class Normalizer<T> {
                     }
                 } catch (final Exception e) {
                     e.printStackTrace();
-                    log.error("");
-                    log.error("Erro durante a extração dos atributos dos objetos");
+                    LOGGER.error("");
+                    LOGGER.error("Erro durante a extração dos atributos dos objetos");
                     System.err.println("Erro durante a extração dos atributos dos objetos");
                 }
             }
         } catch (final Exception e) {
             e.printStackTrace();
-            log.error("");
-            log.error("Erro durante a extração dos atributos dos objetos");
+            LOGGER.error("");
+            LOGGER.error("Erro durante a extração dos atributos dos objetos");
             System.err.println("Erro durante a extração dos atributos dos objetos");
         }
         return attributes;

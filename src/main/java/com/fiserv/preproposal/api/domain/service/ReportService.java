@@ -9,17 +9,20 @@ import com.fiserv.preproposal.api.domain.entity.EReport;
 import com.fiserv.preproposal.api.domain.entity.TypeReport;
 import com.fiserv.preproposal.api.domain.repository.ProposalRepository;
 import com.fiserv.preproposal.api.domain.repository.ReportRepository;
+import com.fiserv.preproposal.api.domain.repository.report.IOutputReport;
 import com.fiserv.preproposal.api.domain.repository.report.impl.BasicReportRepository;
 import com.fiserv.preproposal.api.domain.repository.report.impl.CompleteReportRepository;
 import com.fiserv.preproposal.api.domain.repository.report.impl.QuantitativeReportRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jobrunr.jobs.annotations.Job;
 import org.jobrunr.scheduling.BackgroundJob;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,11 +34,16 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static com.fiserv.preproposal.api.domain.entity.EReport.*;
+import static com.fiserv.preproposal.api.infrastrucutre.aid.util.MessageSourceUtil.cropMessage;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReportService {
+
+    /**
+     *
+     */
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      *
@@ -70,12 +78,6 @@ public class ReportService {
     private final QuantitativeReportRepository quantitativeReportRepository;
 
     /**
-     *
-     */
-    private final HashMap<Long, Integer> loadings = new HashMap<>();
-
-
-    /**
      * @param id long
      * @return EReport
      */
@@ -84,11 +86,11 @@ public class ReportService {
     }
 
     /**
-     * @param eReport EReport
+     * @param eReport IOutputReport
      * @return EReport
      */
-    public EReport save(final EReport eReport) {
-        return this.reportRepository.save(eReport);
+    public EReport save(final IOutputReport eReport) {
+        return this.reportRepository.save((EReport) eReport);
     }
 
     /**
@@ -96,149 +98,114 @@ public class ReportService {
      * @param eReport      EReport
      */
     @Transactional
-    @Job(name = "startBasicReport", retries = 2)
+    @Job(name = "startBasicReport")
     public void startBasicReport(final ReportParams reportParams, final EReport eReport) {
 
-        eReport.setCountLines(proposalRepository.getCountBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
+        try {
 
-        // Init loading
-        loadings.put(eReport.getId(), eReport.getConcludedPercentage());
+            LOGGER.info("STARTING " + eReport.getId() + " BASIC REPORT!     REQUESTER:" + reportParams.getRequester() + "; INSTITUTION: " + reportParams.getInstitution() + "; SERVICE CONTRACT: " + reportParams.getServiceContract() + "; INITIAL DATE: " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(reportParams.getInitialDate()) + "; FINAL DATE: " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(reportParams.getFinalDate()) + "; NOT IN: " + reportParams.getNotIn() + "; RESPONSES TYPES: " + reportParams.getResponsesTypes() + "; STATUS: " + reportParams.getStatus());
 
-        final Stream<BasicReport> basicStream = proposalRepository.getBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
+            eReport.setCountLines(proposalRepository.getCountBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
 
-        basicReportRepository.convertToCSV(basicStream, eReport.getCountLines(), reportParams,
-                nextLineByteArray -> next(eReport, nextLineByteArray),
-                doneByteArray -> done(eReport, doneByteArray),
-                lineException -> {
-                    show(lineException);
-                    next(eReport, eReport.getContent());
-                },
-                generalException -> {
-                    show(generalException);
-                    eReport.setError(generalException.getMessage());
-                    save(eReport);
-                }
-        );
-    }
+            final Stream<BasicReport> basicStream = proposalRepository.getBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
-    /**
-     * @param reportParams ReportParams
-     * @param eReport      EReport
-     */
-    @Transactional
-    @Job(name = "startCompleteReport", retries = 2)
-    public void startCompleteReport(final ReportParams reportParams, final EReport eReport) {
-
-        eReport.setCountLines(proposalRepository.getCountCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
-
-        // Init counter
-        loadings.put(eReport.getId(), eReport.getConcludedPercentage());
-
-        final Stream<CompleteReport> completeStream = proposalRepository.getCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
-
-        completeReportRepository.convertToCSV(completeStream, eReport.getCountLines(), reportParams,
-                nextLineByteArray -> next(eReport, nextLineByteArray),
-                doneByteArray -> done(eReport, doneByteArray),
-                lineException -> {
-                    show(lineException);
-                    next(eReport, eReport.getContent());
-                },
-                generalException -> {
-                    show(generalException);
-                    eReport.setError(generalException.getMessage());
-                    save(eReport);
-                }
-        );
-    }
-
-    /**
-     * @param reportParams ReportParams
-     * @param eReport      EReport
-     */
-    @Transactional
-    @Job(name = "startQuantitativeReport", retries = 2)
-    public void startQuantitativeReport(final ReportParams reportParams, final EReport eReport) {
-
-        eReport.setCountLines(proposalRepository.getCountQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
-
-        // Init loading
-        loadings.put(eReport.getId(), eReport.getConcludedPercentage());
-
-        final Stream<QuantitativeReport> quantitativeStream = proposalRepository.getQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
-
-        quantitativeReportRepository.convertToCSV(quantitativeStream, eReport.getCountLines(), reportParams,
-                nextLineByteArray -> next(eReport, nextLineByteArray),
-                doneByteArray -> done(eReport, doneByteArray),
-                lineException -> {
-                    show(lineException);
-                    next(eReport, eReport.getContent());
-                },
-                generalException -> {
-                    show(generalException);
-                    eReport.setError(generalException.getMessage());
-                    save(eReport);
-                }
-        );
-    }
-
-    /**
-     * @param exception Exception
-     */
-    private void show(final Exception exception) {
-        exception.printStackTrace();
-        log.error(exception.getMessage());
-    }
-
-    /**
-     * @param eReport EReport
-     */
-    private void next(final EReport eReport, final byte[] byteArray) {
-
-        eReport.setContent(byteArray);
-
-        eReport.setCurrentLine(eReport.getCurrentLine() + 1);
-
-        if (eReport.getConcludedPercentage() % eReport.getType().getMultiplierToSave() == 0)
-            if (loadings.get(eReport.getId()) != null && loadings.get(eReport.getId()) < eReport.getConcludedPercentage()) {
-                loadings.put(eReport.getId(), eReport.getConcludedPercentage());
-                BackgroundJob.enqueue(() -> startNext(eReport));
-            }
-    }
-
-    /**
-     * @param eReport EReport
-     */
-    @Job(name = "startNext", retries = 2)
-    public void startNext(final EReport eReport) {
-        if (loadings.get(eReport.getId()) != null && loadings.get(eReport.getId()) <= 75) {
-            log.info(loadings.get(eReport.getId()) + "% OF REPORT " + eReport.getId() + " HAS DONE! (THIS REPORT WAS REQUESTED IN " + DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(eReport.getRequestedDate()) + ")");
-            eReport.setConcludedPercentage(loadings.get(eReport.getId()));
-            eReport.calculatePercentage();
-            save(eReport);
+            basicReportRepository.convertToCSV(basicStream, reportParams, eReport,
+                    nextLineOutputReport -> BackgroundJob.enqueue(() -> startNext(nextLineOutputReport)),
+                    this::done,
+                    errorInLineOutputReport -> BackgroundJob.enqueue(() -> startNext(errorInLineOutputReport)),
+                    this::generalError
+            );
+        } catch (final Exception e) {
+            e.printStackTrace();
+            eReport.setError(cropMessage(e.getMessage(), 254));
+            generalError(eReport);
         }
     }
 
     /**
-     * @param eReport   EReport
-     * @param byteArray byte[]
+     * @param reportParams ReportParams
+     * @param eReport      EReport
      */
-    private void done(final EReport eReport, final byte[] byteArray) {
-//        loadings.remove(eReport.getId());
-        eReport.setContent(byteArray);
-        eReport.setCurrentLine(eReport.getCountLines());
-        eReport.setConcludedDate(LocalDateTime.now());
-        eReport.calculatePercentage();
-        BackgroundJob.enqueue(() -> startDone(eReport));
+    @Transactional
+    @Job(name = "startCompleteReport")
+    public void startCompleteReport(final ReportParams reportParams, final EReport eReport) {
+
+        try {
+            LOGGER.info("STARTING " + eReport.getId() + " COMPLETE REPORT!     REQUESTER:" + reportParams.getRequester() + "; INSTITUTION: " + reportParams.getInstitution() + "; SERVICE CONTRACT: " + reportParams.getServiceContract() + "; INITIAL DATE: " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(reportParams.getInitialDate()) + "; FINAL DATE: " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(reportParams.getFinalDate()) + "; NOT IN: " + reportParams.getNotIn() + "; RESPONSES TYPES: " + reportParams.getResponsesTypes() + "; STATUS: " + reportParams.getStatus());
+
+            eReport.setCountLines(proposalRepository.getCountCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
+
+            final Stream<CompleteReport> completeStream = proposalRepository.getCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
+
+            completeReportRepository.convertToCSV(completeStream, reportParams, eReport,
+                    nextLineOutputReport -> BackgroundJob.enqueue(() -> startNext(nextLineOutputReport)),
+                    this::done,
+                    errorInLineOutputReport -> BackgroundJob.enqueue(() -> startNext(errorInLineOutputReport)),
+                    this::generalError
+            );
+        } catch (final Exception e) {
+            e.printStackTrace();
+            eReport.setError(cropMessage(e.getMessage(), 254));
+            generalError(eReport);
+        }
     }
 
     /**
-     * @param eReport EReport
+     * @param reportParams ReportParams
+     * @param eReport      EReport
      */
-    @Job(name = "startDone", retries = 2)
-    public void startDone(final EReport eReport) {
-        log.info("DONE REPORT (100%)" + eReport.getId() + " (THIS REPORT WAS REQUESTED IN " + DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(eReport.getRequestedDate()) + ")");
-        loadings.remove(eReport.getId());
-        save(eReport);
+    @Transactional
+    @Job(name = "startQuantitativeReport")
+    public void startQuantitativeReport(final ReportParams reportParams, final EReport eReport) {
+        try {
+            LOGGER.info("STARTING " + eReport.getId() + " QUANTITATIVE REPORT!     REQUESTER:" + reportParams.getRequester() + "; INSTITUTION: " + reportParams.getInstitution() + "; SERVICE CONTRACT: " + reportParams.getServiceContract() + "; INITIAL DATE: " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(reportParams.getInitialDate()) + "; FINAL DATE: " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(reportParams.getFinalDate()) + "; NOT IN: " + reportParams.getNotIn() + "; RESPONSES TYPES: " + reportParams.getResponsesTypes() + "; STATUS: " + reportParams.getStatus());
+
+            eReport.setCountLines(proposalRepository.getCountQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
+
+            final Stream<QuantitativeReport> quantitativeStream = proposalRepository.getQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
+
+            quantitativeReportRepository.convertToCSV(quantitativeStream, reportParams, eReport,
+                    nextLineOutputReport -> BackgroundJob.enqueue(() -> startNext(nextLineOutputReport)),
+                    this::done,
+                    errorInLineOutputReport -> BackgroundJob.enqueue(() -> startNext(errorInLineOutputReport)),
+                    this::generalError
+            );
+        } catch (final Exception e) {
+            e.printStackTrace();
+            eReport.setError(cropMessage(e.getMessage(), 254));
+            generalError(eReport);
+        }
+    }
+
+    /**
+     * Save with async mode the entity in the database.
+     * Used to update percentage in database.
+     * @param output IOutputReport
+     */
+    @Job(name = "startNext")
+    public void startNext(final IOutputReport output) {
+        save(output);
+        LOGGER.info(output.getConcludedPercentage() + "% OF " + output.getId() + " " + output.getType() + " REPORT IS DONE! (THIS REPORT WAS REQUESTED IN " + DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(output.getRequestedDate()) + ")");
+    }
+
+    /**
+     * Save with NON async mode the entity in the database.
+     * Used to save 100% percentage of the file processed in database.
+     * @param output IOutputReport
+     */
+    public void done(final IOutputReport output) {
+        save(output);
+        LOGGER.info("DONE " + output.getType() + " REPORT " + output.getId() + " - 100% CONCLUDED. (THIS REPORT WAS REQUESTED IN " + DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(output.getRequestedDate()) + ")");
+    }
+
+    /**
+     * Save with NON async mode the entity in the database.
+     * Used to save general/critical error of the file processing in the database.
+     * @param output IOutputReport
+     */
+    public void generalError(final IOutputReport output) {
+        save(output);
+        LOGGER.info(" REPORT " + output.getId() + " PRESENT GENERAL ERROR: " + output.getError());
     }
 
     /**
@@ -249,6 +216,8 @@ public class ReportService {
     public byte[] downloadById(final Long id) throws NotFoundException {
 
         final EReport eReport = reportRepository.findById(id).orElseThrow(NotFoundException::new);
+
+        Assert.isTrue(eReport.getConcludedPercentage() == 100 && eReport.getConcludedDate() != null , "O relatório ainda não foi processado");
 
         return eReport.getContent();
 
@@ -263,23 +232,13 @@ public class ReportService {
     }
 
     /**
-     * @return HashMap<String, Set < String>>
-     */
-    public HashMap<String, Set<String>> getFieldsFromReports() {
-        final HashMap<String, Set<String>> fieldsFromReports = new HashMap<>();
-        fieldsFromReports.put(TypeReport.BASIC_VALUE, new BasicReport().extractFields());
-        fieldsFromReports.put(TypeReport.COMPLETE_VALUE, new CompleteReport().extractFields());
-        fieldsFromReports.put(TypeReport.QUANTITATIVE_VALUE, new QuantitativeReport().extractFields());
-        return fieldsFromReports;
-    }
-
-    /**
      *
      */
     @Transactional
     public void deleteExpired() {
-        log.info("DELETING EXPIRED REPORTS");
+        LOGGER.info("DELETING EXPIRED REPORTS");
         reportRepository.deleteInBatch(this.reportRepository.getBeforeAt(LocalDateTime.now().minusDays(daysToExpire)));
+        LOGGER.info("DELETED EXPIRED REPORTS");
     }
 
     /**
@@ -295,7 +254,7 @@ public class ReportService {
      */
     public void createReports() {
 
-        log.info("GENERATING DAILY REPORTS");
+        LOGGER.info("GENERATING DAILY REPORTS");
 
         final ReportParams reportParams = new ReportParams();
         reportParams.setInitialDate(LocalDate.now().minusDays(daysToExpire));
@@ -330,4 +289,14 @@ public class ReportService {
         return reportRepository.findAll();
     }
 
+    /**
+     * @return HashMap<String, Set < String>>
+     */
+    public HashMap<String, Set<String>> getFieldsFromReports() {
+        final HashMap<String, Set<String>> fieldsFromReports = new HashMap<>();
+        fieldsFromReports.put(TypeReport.BASIC_VALUE, new BasicReport().extractFields());
+        fieldsFromReports.put(TypeReport.COMPLETE_VALUE, new CompleteReport().extractFields());
+        fieldsFromReports.put(TypeReport.QUANTITATIVE_VALUE, new QuantitativeReport().extractFields());
+        return fieldsFromReports;
+    }
 }
