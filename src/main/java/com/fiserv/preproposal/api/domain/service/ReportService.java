@@ -322,8 +322,6 @@ public class ReportService {
      */
     public void generateReports() {
 
-        unlockGenerateReportsYesterday();
-
         final LocalDate today = LocalDate.now();
         final RLock todayLock = getLock("generateReports" + DateTimeFormatter.ofPattern(DATE_PATTERN).format(today));
 
@@ -331,23 +329,6 @@ public class ReportService {
 
         todayLock.lock();
         generateReports(today);
-    }
-
-    /**
-     *
-     */
-    public void unlockGenerateReportsYesterday() {
-
-        final LocalDate yesterday = LocalDate.now().minusDays(1);
-        final RLock yesterdayLock = getLock("generateReports" + DateTimeFormatter.ofPattern(DATE_PATTERN).format(yesterday));
-
-        if (yesterdayLock.isLocked())
-            try {
-                yesterdayLock.unlock();
-            } catch (final Exception e) {
-                yesterdayLock.forceUnlock();
-            }
-
     }
 
     /**
