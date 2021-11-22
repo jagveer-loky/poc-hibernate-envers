@@ -31,9 +31,9 @@ public class ReportResource {
      * @return Boolean
      */
     @DeleteMapping("/delete-expired")
-    public Boolean deleteExpired() {
+    public Boolean deleteExpiredReports() {
 
-        reportService.deleteExpired();
+        reportService.deleteBeforeYesterday();
 
         return true;
     }

@@ -198,6 +198,7 @@ public class ReportService {
     /**
      * Save with async mode the entity in the database.
      * Used to update percentage in database.
+     *
      * @param output IOutputReport
      */
     @Job(name = "startNext")
@@ -209,6 +210,7 @@ public class ReportService {
     /**
      * Save with NON async mode the entity in the database.
      * Used to save 100% percentage of the file processed in database.
+     *
      * @param output IOutputReport
      */
     public void done(final IOutputReport output) {
@@ -219,6 +221,7 @@ public class ReportService {
     /**
      * Save with NON async mode the entity in the database.
      * Used to save general/critical error of the file processing in the database.
+     *
      * @param output IOutputReport
      */
     public void generalError(final IOutputReport output) {
@@ -235,7 +238,7 @@ public class ReportService {
 
         final EReport eReport = reportRepository.findById(id).orElseThrow(NotFoundException::new);
 
-        Assert.isTrue(eReport.getConcludedPercentage() == 100 && eReport.getConcludedDate() != null , "O relatório ainda não foi processado");
+        Assert.isTrue(eReport.getConcludedPercentage() == 100 && eReport.getConcludedDate() != null, "O relatório ainda não foi processado");
 
         return eReport.getContent();
 
@@ -252,10 +255,24 @@ public class ReportService {
     /**
      *
      */
+    public void deleteExpiredReports() {
+        final LocalDateTime today = LocalDateTime.now();
+        final RLock todayLock = getLock("deleteExpiredReports" + DateTimeFormatter.ofPattern(DATE_PATTERN).format(today));
+
+        Assert.isTrue(!todayLock.isLocked(), "Job 'deleteExpiredReports' já executado");
+
+        todayLock.lock();
+        deleteBeforeYesterday();
+    }
+
+    /**
+     *
+     */
     @Transactional
-    public void deleteExpired() {
+    public void deleteBeforeYesterday() {
+        final LocalDateTime today = LocalDateTime.now();
         LOGGER.info("DELETING EXPIRED REPORTS");
-        reportRepository.deleteInBatch(this.reportRepository.getBeforeAt(LocalDateTime.now().minusDays(daysToExpire)));
+        reportRepository.deleteInBatch(this.reportRepository.getBeforeAt(today.minusDays(daysToExpire)));
         LOGGER.info("DELETED EXPIRED REPORTS");
     }
 
@@ -283,7 +300,7 @@ public class ReportService {
         final LocalDate today = LocalDate.now();
         final RLock todayLock = getLock("generateReports" + DateTimeFormatter.ofPattern(DATE_PATTERN).format(today));
 
-        Assert.isTrue(!todayLock.isLocked(), "Job já executado");
+        Assert.isTrue(!todayLock.isLocked(), "Job 'generateReports' já executado");
 
         todayLock.lock();
         generateReports(today);

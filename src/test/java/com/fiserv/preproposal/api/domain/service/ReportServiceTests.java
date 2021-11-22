@@ -130,7 +130,7 @@ class ReportServiceTests {
         }
 
         // Delete expired
-        reportService.deleteExpired();
+        reportService.deleteExpiredReports();
 
         reportList.forEach(report -> Assertions.assertThrows(NotFoundException.class, () -> reportService.findById(report.getId())));
     }
