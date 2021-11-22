@@ -1,6 +1,5 @@
 package com.fiserv.preproposal.api.domain.service;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fiserv.preproposal.api.application.exceptions.NotFoundException;
 import com.fiserv.preproposal.api.domain.dtos.BasicReport;
 import com.fiserv.preproposal.api.domain.dtos.CompleteReport;
@@ -10,11 +9,10 @@ import com.fiserv.preproposal.api.domain.entity.EReport;
 import com.fiserv.preproposal.api.domain.entity.TypeReport;
 import com.fiserv.preproposal.api.domain.repository.ProposalRepository;
 import com.fiserv.preproposal.api.domain.repository.ReportRepository;
+import com.fiserv.preproposal.api.domain.repository.report.IOutputReport;
 import com.fiserv.preproposal.api.domain.repository.report.impl.BasicReportRepository;
 import com.fiserv.preproposal.api.domain.repository.report.impl.CompleteReportRepository;
 import com.fiserv.preproposal.api.domain.repository.report.impl.QuantitativeReportRepository;
-import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ApplicationEnum;
-import com.fiserv.preproposal.api.infrastrucutre.aid.util.LogUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -24,14 +22,19 @@ import org.jobrunr.scheduling.BackgroundJob;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static com.fiserv.preproposal.api.domain.entity.EReport.*;
+import static com.fiserv.preproposal.api.infrastrucutre.aid.util.MessageSourceUtil.cropMessage;
 
 @Service
 @RequiredArgsConstructor
@@ -75,12 +78,6 @@ public class ReportService {
     private final QuantitativeReportRepository quantitativeReportRepository;
 
     /**
-     *
-     */
-    private final HashMap<Long, Integer> loadings = new HashMap<>();
-
-
-    /**
      * @param id long
      * @return EReport
      */
@@ -89,11 +86,11 @@ public class ReportService {
     }
 
     /**
-     * @param eReport EReport
+     * @param eReport IOutputReport
      * @return EReport
      */
-    public EReport save(final EReport eReport) {
-        return this.reportRepository.save(eReport);
+    public EReport save(final IOutputReport eReport) {
+        return this.reportRepository.save((EReport) eReport);
     }
 
     /**
@@ -110,27 +107,18 @@ public class ReportService {
 
             eReport.setCountLines(proposalRepository.getCountBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
 
-            // Init loading
-            loadings.put(eReport.getId(), eReport.getConcludedPercentage());
-
             final Stream<BasicReport> basicStream = proposalRepository.getBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
-            basicReportRepository.convertToCSV(basicStream, eReport.getCountLines(), reportParams,
-                    nextLineByteArray -> next(eReport, nextLineByteArray),
-                    doneByteArray -> done(eReport, doneByteArray),
-                    lineException -> {
-                        show(lineException);
-                        next(eReport, eReport.getContent());
-                    },
-                    generalException -> {
-                        show(generalException);
-                        eReport.setError(generalException.getMessage());
-                        save(eReport);
-                    }
+            basicReportRepository.convertToCSV(basicStream, reportParams, eReport,
+                    nextLineOutputReport -> BackgroundJob.enqueue(() -> startNext(nextLineOutputReport)),
+                    this::done,
+                    errorInLineOutputReport -> BackgroundJob.enqueue(() -> startNext(errorInLineOutputReport)),
+                    this::generalError
             );
         } catch (final Exception e) {
-            eReport.setError(e.getMessage().length() > 254 ? e.getMessage().substring(0, 253) : e.getMessage());
-            save(eReport);
+            e.printStackTrace();
+            eReport.setError(cropMessage(e.getMessage(), 254));
+            generalError(eReport);
         }
     }
 
@@ -147,27 +135,18 @@ public class ReportService {
 
             eReport.setCountLines(proposalRepository.getCountCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
 
-            // Init counter
-            loadings.put(eReport.getId(), eReport.getConcludedPercentage());
-
             final Stream<CompleteReport> completeStream = proposalRepository.getCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
-            completeReportRepository.convertToCSV(completeStream, eReport.getCountLines(), reportParams,
-                    nextLineByteArray -> next(eReport, nextLineByteArray),
-                    doneByteArray -> done(eReport, doneByteArray),
-                    lineException -> {
-                        show(lineException);
-                        next(eReport, eReport.getContent());
-                    },
-                    generalException -> {
-                        show(generalException);
-                        eReport.setError(generalException.getMessage());
-                        save(eReport);
-                    }
+            completeReportRepository.convertToCSV(completeStream, reportParams, eReport,
+                    nextLineOutputReport -> BackgroundJob.enqueue(() -> startNext(nextLineOutputReport)),
+                    this::done,
+                    errorInLineOutputReport -> BackgroundJob.enqueue(() -> startNext(errorInLineOutputReport)),
+                    this::generalError
             );
         } catch (final Exception e) {
-            eReport.setError(e.getMessage().length() > 254 ? e.getMessage().substring(0, 253) : e.getMessage());
-            save(eReport);
+            e.printStackTrace();
+            eReport.setError(cropMessage(e.getMessage(), 254));
+            generalError(eReport);
         }
     }
 
@@ -183,89 +162,50 @@ public class ReportService {
 
             eReport.setCountLines(proposalRepository.getCountQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
 
-            // Init loading
-            loadings.put(eReport.getId(), eReport.getConcludedPercentage());
-
             final Stream<QuantitativeReport> quantitativeStream = proposalRepository.getQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
-            quantitativeReportRepository.convertToCSV(quantitativeStream, eReport.getCountLines(), reportParams,
-                    nextLineByteArray -> next(eReport, nextLineByteArray),
-                    doneByteArray -> done(eReport, doneByteArray),
-                    lineException -> {
-                        show(lineException);
-                        next(eReport, eReport.getContent());
-                    },
-                    generalException -> {
-                        show(generalException);
-                        eReport.setError(generalException.getMessage());
-                        save(eReport);
-                    }
+            quantitativeReportRepository.convertToCSV(quantitativeStream, reportParams, eReport,
+                    nextLineOutputReport -> BackgroundJob.enqueue(() -> startNext(nextLineOutputReport)),
+                    this::done,
+                    errorInLineOutputReport -> BackgroundJob.enqueue(() -> startNext(errorInLineOutputReport)),
+                    this::generalError
             );
         } catch (final Exception e) {
-            eReport.setError(e.getMessage().length() > 254 ? e.getMessage().substring(0, 253) : e.getMessage());
-            save(eReport);
+            e.printStackTrace();
+            eReport.setError(cropMessage(e.getMessage(), 254));
+            generalError(eReport);
         }
     }
 
     /**
-     * @param exception Exception
-     */
-    private void show(final Exception exception) {
-        exception.printStackTrace();
-        LOGGER.error(exception.getMessage());
-    }
-
-    /**
-     * @param eReport EReport
-     */
-    private void next(final EReport eReport, final byte[] byteArray) {
-
-        eReport.setContent(byteArray);
-
-        eReport.setCurrentLine(eReport.getCurrentLine() + 1);
-
-        if (eReport.getConcludedPercentage() % eReport.getType().getMultiplierToSave() == 0)
-            if (loadings.get(eReport.getId()) != null && loadings.get(eReport.getId()) < eReport.getConcludedPercentage()) {
-                loadings.put(eReport.getId(), eReport.getConcludedPercentage());
-                System.out.println("startNext");
-                BackgroundJob.enqueue(() -> startNext(eReport));
-            }
-    }
-
-    /**
-     * @param eReport EReport
+     * Save with async mode the entity in the database.
+     * Used to update percentage in database.
+     * @param output IOutputReport
      */
     @Job(name = "startNext")
-    public void startNext(final EReport eReport) {
-        if (loadings.get(eReport.getId()) != null && loadings.get(eReport.getId()) <= 75) {
-            LOGGER.info(loadings.get(eReport.getId()) + "% OF " + eReport.getId() + " " + eReport.getType() + " REPORT IS DONE! (THIS REPORT WAS REQUESTED IN " + DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(eReport.getRequestedDate()) + ")");
-            eReport.setConcludedPercentage(loadings.get(eReport.getId()));
-            eReport.calculatePercentage();
-            save(eReport);
-        }
+    public void startNext(final IOutputReport output) {
+        save(output);
+        LOGGER.info(output.getConcludedPercentage() + "% OF " + output.getId() + " " + output.getType() + " REPORT IS DONE! (THIS REPORT WAS REQUESTED IN " + DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(output.getRequestedDate()) + ")");
     }
 
     /**
-     * @param eReport   EReport
-     * @param byteArray byte[]
+     * Save with NON async mode the entity in the database.
+     * Used to save 100% percentage of the file processed in database.
+     * @param output IOutputReport
      */
-    private void done(final EReport eReport, final byte[] byteArray) {
-//        loadings.remove(eReport.getId());
-        eReport.setContent(byteArray);
-        eReport.setCurrentLine(eReport.getCountLines());
-        eReport.setConcludedDate(LocalDateTime.now());
-        eReport.calculatePercentage();
-        BackgroundJob.enqueue(() -> startDone(eReport));
+    public void done(final IOutputReport output) {
+        save(output);
+        LOGGER.info("DONE " + output.getType() + " REPORT " + output.getId() + " - 100% CONCLUDED. (THIS REPORT WAS REQUESTED IN " + DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(output.getRequestedDate()) + ")");
     }
 
     /**
-     * @param eReport EReport
+     * Save with NON async mode the entity in the database.
+     * Used to save general/critical error of the file processing in the database.
+     * @param output IOutputReport
      */
-    @Job(name = "startDone")
-    public void startDone(final EReport eReport) {
-        LOGGER.info("DONE " + eReport.getType() + " REPORT " + eReport.getId() + " - 100% CONCLUDED. (THIS REPORT WAS REQUESTED IN " + DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(eReport.getRequestedDate()) + ")");
-        loadings.remove(eReport.getId());
-        save(eReport);
+    public void generalError(final IOutputReport output) {
+        save(output);
+        LOGGER.info(" REPORT " + output.getId() + " PRESENT GENERAL ERROR: " + output.getError());
     }
 
     /**
@@ -276,6 +216,8 @@ public class ReportService {
     public byte[] downloadById(final Long id) throws NotFoundException {
 
         final EReport eReport = reportRepository.findById(id).orElseThrow(NotFoundException::new);
+
+        Assert.isTrue(eReport.getConcludedPercentage() == 100 && eReport.getConcludedDate() != null , "O relatório ainda não foi processado");
 
         return eReport.getContent();
 
@@ -294,9 +236,9 @@ public class ReportService {
      */
     @Transactional
     public void deleteExpired() {
-        LOGGER.info( "DELETING EXPIRED REPORTS");
+        LOGGER.info("DELETING EXPIRED REPORTS");
         reportRepository.deleteInBatch(this.reportRepository.getBeforeAt(LocalDateTime.now().minusDays(daysToExpire)));
-        LOGGER.info( "DELETED EXPIRED REPORTS");
+        LOGGER.info("DELETED EXPIRED REPORTS");
     }
 
     /**
@@ -312,7 +254,7 @@ public class ReportService {
      */
     public void createReports() {
 
-        LOGGER.info( "GENERATING DAILY REPORTS");
+        LOGGER.info("GENERATING DAILY REPORTS");
 
         final ReportParams reportParams = new ReportParams();
         reportParams.setInitialDate(LocalDate.now().minusDays(daysToExpire));

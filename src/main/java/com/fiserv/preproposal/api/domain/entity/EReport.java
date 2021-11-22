@@ -1,10 +1,8 @@
 package com.fiserv.preproposal.api.domain.entity;
 
 import com.fiserv.preproposal.api.domain.dtos.ReportParams;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fiserv.preproposal.api.domain.repository.report.IOutputReport;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,26 +10,28 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "TB_REPORT")
-public class EReport implements Serializable {
+public class EReport implements Serializable, IOutputReport {
 
     public static final String SYSTEM_USER = "SYSTEM";
     public static final String SERVICE_CONTRACT = "149";
     public static final String INSTITUTION = "00000007";
 
     @Id
+    @Setter
+    @Getter
+    @Column(name = "ID", nullable = false)
     @GeneratedValue(generator = "TB_REPORT_SEQ")
     @SequenceGenerator(name = "TB_REPORT_SEQ", sequenceName = "TB_REPORT_SEQ", allocationSize = 1)
-    @Column(name = "ID", nullable = false)
     private Long id;
 
     /**
      *
      */
+    @Setter
+    @Getter
     @NotNull
     @Column(name = "REQUESTER", nullable = false)
     private String requester;
@@ -39,6 +39,8 @@ public class EReport implements Serializable {
     /**
      *
      */
+    @Setter
+    @Getter
     @NotNull
     @Column(name = "REQUESTED_DATE", nullable = false)
     private LocalDateTime requestedDate;
@@ -46,6 +48,7 @@ public class EReport implements Serializable {
     /**
      *
      */
+    @Setter
     @NotNull
     @Column(name = "CONCLUDED_PERCENTAGE", nullable = false)
     private int concludedPercentage;
@@ -53,12 +56,15 @@ public class EReport implements Serializable {
     /**
      *
      */
+    @Setter
+    @Getter
     @Column(name = "CONCLUDED_DATE")
     private LocalDateTime concludedDate;
 
     /**
      *
      */
+    @Setter
     @Column(name = "COUNT_LINES")
     private int countLines;
 
@@ -71,6 +77,8 @@ public class EReport implements Serializable {
     /**
      *
      */
+    @Setter
+    @Getter
     @Column(name = "TYPE")
     @Enumerated(value = EnumType.STRING)
     private TypeReport type;
@@ -78,6 +86,8 @@ public class EReport implements Serializable {
     /**
      *
      */
+    @Setter
+    @Getter
     @Column(name = "ERROR")
     private String error;
 
@@ -85,6 +95,8 @@ public class EReport implements Serializable {
      *
      */
     @Lob
+    @Setter
+    @Getter
     @Column(name = "CONTENT", columnDefinition = "BLOB")
     private byte[] content;
 
@@ -132,6 +144,9 @@ public class EReport implements Serializable {
             concludedDate = LocalDateTime.now();
         } else if (concludedDate != null) {
             concludedPercentage = 100;
+        } else if (currentLine != 0 && currentLine == countLines) {
+            concludedPercentage = 100;
+            concludedDate = LocalDateTime.now();
         } else
             concludedPercentage = countLines == 0 ? concludedPercentage : (currentLine * 100) / countLines;
     }
@@ -139,8 +154,8 @@ public class EReport implements Serializable {
     /**
      * @return int
      */
-    public int getConcludedPercentage() {
-        calculatePercentage();
+    public Integer getConcludedPercentage() {
+//        calculatePercentage();
         return concludedPercentage;
     }
 
@@ -164,5 +179,29 @@ public class EReport implements Serializable {
         eReport.setRequester(reportParams.getRequester());
 
         return eReport;
+    }
+
+    /**
+     * @return Integer
+     */
+    @Override
+    public Integer getCountLines() {
+        return this.countLines;
+    }
+
+    /**
+     * @param currentLine Integer
+     */
+    @Override
+    public void setCurrentLine(final Integer currentLine) {
+        this.currentLine = currentLine;
+    }
+
+    /**
+     * @return Integer
+     */
+    @Override
+    public Integer getCurrentLine() {
+        return this.currentLine;
     }
 }
