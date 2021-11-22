@@ -17,9 +17,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jobrunr.jobs.annotations.Job;
 import org.jobrunr.scheduling.BackgroundJob;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,12 +40,28 @@ import static com.fiserv.preproposal.api.domain.entity.EReport.*;
 @RequiredArgsConstructor
 public class ReportService {
 
+
+    /**
+     *
+     */
+    private final static String DATE_PATTERN = "dd/MM/yyyy";
+
+    /**
+     *
+     */
+    private final static String TIME_PATTERN = "HH:mm";
+
     /**
      *
      */
     @Getter
     @Value("${reports.days-to-expire:1}")
     private Long daysToExpire;
+
+    /**
+     *
+     */
+    private final RedissonClient client;
 
     /**
      *
@@ -291,15 +310,56 @@ public class ReportService {
     }
 
     /**
+     * @param lockName String
+     * @return RLock
+     */
+    private RLock getLock(final String lockName) {
+        return client.getLock(lockName);
+    }
+
+    /**
      *
      */
-    public void createReports() {
+    public void generateReports() {
+
+        unlockGenerateReportsYesterday();
+
+        final LocalDate today = LocalDate.now();
+        final RLock todayLock = getLock("generateReports" + DateTimeFormatter.ofPattern(DATE_PATTERN).format(today));
+
+        Assert.isTrue(!todayLock.isLocked(), "Job já executado");
+
+        todayLock.lock();
+        generateReports(today);
+    }
+
+    /**
+     *
+     */
+    public void unlockGenerateReportsYesterday() {
+
+        final LocalDate yesterday = LocalDate.now().minusDays(1);
+        final RLock yesterdayLock = getLock("generateReports" + DateTimeFormatter.ofPattern(DATE_PATTERN).format(yesterday));
+
+        if (yesterdayLock.isLocked())
+            try {
+                yesterdayLock.unlock();
+            } catch (final Exception e) {
+                yesterdayLock.forceUnlock();
+            }
+
+    }
+
+    /**
+     *
+     */
+    public void generateReports(final LocalDate now) {
 
         log.info("GENERATING DAILY REPORTS");
 
         final ReportParams reportParams = new ReportParams();
-        reportParams.setInitialDate(LocalDate.now().minusDays(daysToExpire));
-        reportParams.setFinalDate(LocalDate.now());
+        reportParams.setInitialDate(now.minusDays(daysToExpire));
+        reportParams.setFinalDate(now);
         reportParams.setRequester(SYSTEM_USER);
         reportParams.setServiceContract(SERVICE_CONTRACT);
         reportParams.setInstitution(INSTITUTION);

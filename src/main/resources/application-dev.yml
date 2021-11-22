@@ -9,7 +9,6 @@ spring:
     username: PRE_PROPOSAL_SIT
     password: PPS#01923
     driver-class-name: oracle.jdbc.OracleDriver
-
   jpa:
     properties:
       hibernate:
@@ -17,6 +16,9 @@ spring:
         order_inserts: true
         show_sql: true
         use_sql_comments: true
+  redis:
+    host: localhost
+    password: dev123
 
 fdsecurity:
   url: https://cat-webfarm.1dc.com/fd-security/permission-check

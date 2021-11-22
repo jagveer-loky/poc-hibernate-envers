@@ -147,7 +147,7 @@ class ReportServiceTests {
         Assertions.assertEquals(0, reportService.findAll().size());
 
         // Create reports
-        reportService.createReports();
+        reportService.generateReports();
 
         Assertions.assertEquals(3, reportService.findAll().size());
     }
