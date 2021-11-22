@@ -19,6 +19,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jobrunr.jobs.annotations.Job;
 import org.jobrunr.scheduling.BackgroundJob;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +42,17 @@ import static com.fiserv.preproposal.api.infrastrucutre.aid.util.MessageSourceUt
 @RequiredArgsConstructor
 public class ReportService {
 
+
+    /**
+     *
+     */
+    private final static String DATE_PATTERN = "dd/MM/yyyy";
+
+    /**
+     *
+     */
+    private final static String TIME_PATTERN = "HH:mm";
+
     /**
      *
      */
@@ -51,6 +64,11 @@ public class ReportService {
     @Getter
     @Value("${reports.days-to-expire:1}")
     private Long daysToExpire;
+
+    /**
+     *
+     */
+    private final RedissonClient client;
 
     /**
      *
@@ -180,6 +198,7 @@ public class ReportService {
     /**
      * Save with async mode the entity in the database.
      * Used to update percentage in database.
+     *
      * @param output IOutputReport
      */
     @Job(name = "startNext")
@@ -191,6 +210,7 @@ public class ReportService {
     /**
      * Save with NON async mode the entity in the database.
      * Used to save 100% percentage of the file processed in database.
+     *
      * @param output IOutputReport
      */
     public void done(final IOutputReport output) {
@@ -201,6 +221,7 @@ public class ReportService {
     /**
      * Save with NON async mode the entity in the database.
      * Used to save general/critical error of the file processing in the database.
+     *
      * @param output IOutputReport
      */
     public void generalError(final IOutputReport output) {
@@ -217,7 +238,7 @@ public class ReportService {
 
         final EReport eReport = reportRepository.findById(id).orElseThrow(NotFoundException::new);
 
-        Assert.isTrue(eReport.getConcludedPercentage() == 100 && eReport.getConcludedDate() != null , "O relatório ainda não foi processado");
+        Assert.isTrue(eReport.getConcludedPercentage() == 100 && eReport.getConcludedDate() != null, "O relatório ainda não foi processado");
 
         return eReport.getContent();
 
@@ -234,10 +255,24 @@ public class ReportService {
     /**
      *
      */
+    public void deleteExpiredReports() {
+        final LocalDateTime today = LocalDateTime.now();
+        final RLock todayLock = getLock("deleteExpiredReports" + DateTimeFormatter.ofPattern(DATE_PATTERN).format(today));
+
+        Assert.isTrue(!todayLock.isLocked(), "Job 'deleteExpiredReports' já executado");
+
+        todayLock.lock();
+        deleteBeforeYesterday();
+    }
+
+    /**
+     *
+     */
     @Transactional
-    public void deleteExpired() {
+    public void deleteBeforeYesterday() {
+        final LocalDateTime today = LocalDateTime.now();
         LOGGER.info("DELETING EXPIRED REPORTS");
-        reportRepository.deleteInBatch(this.reportRepository.getBeforeAt(LocalDateTime.now().minusDays(daysToExpire)));
+        reportRepository.deleteInBatch(this.reportRepository.getBeforeAt(today.minusDays(daysToExpire)));
         LOGGER.info("DELETED EXPIRED REPORTS");
     }
 
@@ -250,15 +285,37 @@ public class ReportService {
     }
 
     /**
+     * @param lockName String
+     * @return RLock
+     */
+    private RLock getLock(final String lockName) {
+        return client.getLock(lockName);
+    }
+
+    /**
      *
      */
-    public void createReports() {
+    public void generateReports() {
+
+        final LocalDate today = LocalDate.now();
+        final RLock todayLock = getLock("generateReports" + DateTimeFormatter.ofPattern(DATE_PATTERN).format(today));
+
+        Assert.isTrue(!todayLock.isLocked(), "Job 'generateReports' já executado");
+
+        todayLock.lock();
+        generateReports(today);
+    }
+
+    /**
+     *
+     */
+    public void generateReports(final LocalDate now) {
 
         LOGGER.info("GENERATING DAILY REPORTS");
 
         final ReportParams reportParams = new ReportParams();
-        reportParams.setInitialDate(LocalDate.now().minusDays(daysToExpire));
-        reportParams.setFinalDate(LocalDate.now());
+        reportParams.setInitialDate(now.minusDays(daysToExpire));
+        reportParams.setFinalDate(now);
         reportParams.setRequester(SYSTEM_USER);
         reportParams.setServiceContract(SERVICE_CONTRACT);
         reportParams.setInstitution(INSTITUTION);

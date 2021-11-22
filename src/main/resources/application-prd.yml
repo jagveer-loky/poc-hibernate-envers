@@ -23,6 +23,9 @@ spring:
     sql-dialect: org.hibernate.dialect.Oracle10gDialect
   jpa:
     database-platform: org.hibernate.dialect.Oracle10gDialect
+  redis:
+    host: 10.96.42.29
+    password: prdRedis#01-BWA
 
 cors:
   enabled: true
