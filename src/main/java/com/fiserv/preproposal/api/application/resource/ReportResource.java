@@ -4,14 +4,13 @@ import com.fiserv.preproposal.api.application.exceptions.NotFoundException;
 import com.fiserv.preproposal.api.domain.dtos.ReportParams;
 import com.fiserv.preproposal.api.domain.entity.EReport;
 import com.fiserv.preproposal.api.domain.entity.TypeReport;
-import com.fiserv.preproposal.api.domain.service.ReportService;
+import com.fiserv.preproposal.api.domain.service.report.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.jobrunr.scheduling.BackgroundJob;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;

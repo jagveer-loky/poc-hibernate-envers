@@ -1,19 +1,20 @@
-package com.fiserv.preproposal.api.domain.service;
+package com.fiserv.preproposal.api.domain.service.report;
 
 import com.fiserv.preproposal.api.application.exceptions.NotFoundException;
-import com.fiserv.preproposal.api.domain.dtos.BasicReport;
-import com.fiserv.preproposal.api.domain.dtos.CompleteReport;
-import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
-import com.fiserv.preproposal.api.domain.dtos.ReportParams;
+import com.fiserv.preproposal.api.domain.dtos.*;
 import com.fiserv.preproposal.api.domain.entity.EReport;
 import com.fiserv.preproposal.api.domain.entity.TypeReport;
 import com.fiserv.preproposal.api.domain.repository.ProposalRepository;
 import com.fiserv.preproposal.api.domain.repository.ReportRepository;
-import com.fiserv.preproposal.api.domain.repository.report.IOutputReport;
-import com.fiserv.preproposal.api.domain.repository.report.impl.BasicReportRepository;
-import com.fiserv.preproposal.api.domain.repository.report.impl.CompleteReportRepository;
-import com.fiserv.preproposal.api.domain.repository.report.impl.QuantitativeReportRepository;
+import com.fiserv.preproposal.api.domain.service.report.IInputReport;
+import com.fiserv.preproposal.api.domain.service.report.IOutputReport;
+import com.fiserv.preproposal.api.infrastrucutre.aid.util.ListUtil;
+import com.fiserv.preproposal.api.infrastrucutre.normalizer.Normalizer;
+import com.univocity.parsers.common.processor.BeanWriterProcessor;
+import com.univocity.parsers.csv.CsvWriter;
+import com.univocity.parsers.csv.CsvWriterSettings;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -33,6 +35,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.fiserv.preproposal.api.domain.entity.EReport.*;
@@ -83,17 +87,7 @@ public class ReportService {
     /**
      *
      */
-    private final BasicReportRepository basicReportRepository;
-
-    /**
-     *
-     */
-    private final CompleteReportRepository completeReportRepository;
-
-    /**
-     *
-     */
-    private final QuantitativeReportRepository quantitativeReportRepository;
+    private final ReportProcessorService reportProcessorService;
 
     /**
      * @param id long
@@ -127,7 +121,7 @@ public class ReportService {
 
             final Stream<BasicReport> basicStream = proposalRepository.getBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
-            basicReportRepository.convertToCSV(basicStream, reportParams, eReport,
+            reportProcessorService.convertToCSV(basicStream, reportParams, eReport,
                     nextLineOutputReport -> BackgroundJob.enqueue(() -> startNext(nextLineOutputReport)),
                     this::done,
                     errorInLineOutputReport -> BackgroundJob.enqueue(() -> startNext(errorInLineOutputReport)),
@@ -155,7 +149,7 @@ public class ReportService {
 
             final Stream<CompleteReport> completeStream = proposalRepository.getCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
-            completeReportRepository.convertToCSV(completeStream, reportParams, eReport,
+            reportProcessorService.convertToCSV(completeStream, reportParams, eReport,
                     nextLineOutputReport -> BackgroundJob.enqueue(() -> startNext(nextLineOutputReport)),
                     this::done,
                     errorInLineOutputReport -> BackgroundJob.enqueue(() -> startNext(errorInLineOutputReport)),
@@ -182,7 +176,7 @@ public class ReportService {
 
             final Stream<QuantitativeReport> quantitativeStream = proposalRepository.getQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
 
-            quantitativeReportRepository.convertToCSV(quantitativeStream, reportParams, eReport,
+            reportProcessorService.convertToCSV(quantitativeStream, reportParams, eReport,
                     nextLineOutputReport -> BackgroundJob.enqueue(() -> startNext(nextLineOutputReport)),
                     this::done,
                     errorInLineOutputReport -> BackgroundJob.enqueue(() -> startNext(errorInLineOutputReport)),
@@ -203,8 +197,10 @@ public class ReportService {
      */
     @Job(name = "startNext")
     public void startNext(final IOutputReport output) {
-        save(output);
-        LOGGER.info(output.getConcludedPercentage() + "% OF " + output.getId() + " " + output.getType() + " REPORT IS DONE! (THIS REPORT WAS REQUESTED IN " + DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(output.getRequestedDate()) + ")");
+        if (ReportProcessorService.getLoadings().get(output.getId()) <= output.getConcludedPercentage()) {
+            save(output);
+            LOGGER.info(output.getConcludedPercentage() + "% OF " + output.getId() + " " + output.getType() + " REPORT IS DONE! (THIS REPORT WAS REQUESTED IN " + DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(output.getRequestedDate()) + ")");
+        }
     }
 
     /**

@@ -1,7 +1,7 @@
 package com.fiserv.preproposal.api.domain.entity;
 
 import com.fiserv.preproposal.api.domain.dtos.ReportParams;
-import com.fiserv.preproposal.api.domain.repository.report.IOutputReport;
+import com.fiserv.preproposal.api.domain.service.report.IOutputReport;
 import lombok.*;
 
 import javax.persistence.*;

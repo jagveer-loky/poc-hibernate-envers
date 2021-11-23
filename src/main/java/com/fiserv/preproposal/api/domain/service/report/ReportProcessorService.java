@@ -1,27 +1,47 @@
-package com.fiserv.preproposal.api.domain.repository.report;
+package com.fiserv.preproposal.api.domain.service.report;
 
+import com.fiserv.preproposal.api.domain.dtos.AbstractReport;
 import com.fiserv.preproposal.api.domain.entity.EReport;
 import com.fiserv.preproposal.api.infrastrucutre.aid.util.ListUtil;
 import com.fiserv.preproposal.api.infrastrucutre.normalizer.Normalizer;
+import com.univocity.parsers.common.processor.BeanWriterProcessor;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
+import lombok.Getter;
 import lombok.NonNull;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.fiserv.preproposal.api.infrastrucutre.aid.util.MessageSourceUtil.cropMessage;
 
-public abstract class AbstractReportRepository<T> implements IWriteReportRepository<T> {
+@Service
+public class ReportProcessorService {
 
     /**
-     *
+     * Aux var to store the status of the individual processing report
      */
-    private final Normalizer<T> normalizer = new Normalizer<>();
+    @Getter
+    protected static final HashMap<Long, Integer> loadings = new HashMap<>();
+
+    /**
+     * @param fields String[]
+     * @return String[]
+     */
+    public String[] extractFieldsToIgnore(final IOutputReport output, final String[] fields) throws InstantiationException, IllegalAccessException {
+        Assert.notNull(fields, "fields cannot be null");
+        return ListUtil.toArray(((AbstractReport) output.getType().getType().newInstance()).extractFields().stream().filter(field -> Arrays.stream(fields).noneMatch(innerField -> innerField.equals(field))).collect(Collectors.toSet()));
+    }
 
     /**
      * @param stream                 Stream<T> To running when writing file. At each new iteration, a new register is written in file.
@@ -33,7 +53,7 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
      * @param generalErrorConsumer   Consumer<Exception>
      */
     @Transactional
-    public void convertToCSV(@NonNull final Stream<T> stream, final IInputReport input, final IOutputReport output, final Consumer<IOutputReport> nextLineOutputReport, final Consumer<IOutputReport> doneReportOutputReport, final Consumer<IOutputReport> lineErrorConsumer, final Consumer<IOutputReport> generalErrorConsumer) {
+    public void convertToCSV(@NonNull final Stream<?> stream, final IInputReport input, final IOutputReport output, final Consumer<IOutputReport> nextLineOutputReport, final Consumer<IOutputReport> doneReportOutputReport, final Consumer<IOutputReport> lineErrorConsumer, final Consumer<IOutputReport> generalErrorConsumer) {
 
         try {
 
@@ -50,19 +70,20 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
             writerSettings.setColumnReorderingEnabled(true);
             writerSettings.setHeaderWritingEnabled(true);
             writerSettings.setHeaders(ListUtil.toArray(input.getFields()));
-            writerSettings.excludeFields(extractFieldsToIgnore(ListUtil.toArray(input.getFields())));
+            writerSettings.excludeFields(extractFieldsToIgnore(output, ListUtil.toArray(input.getFields())));
 
-            writerSettings.setRowWriterProcessor(configProcessor());
+            writerSettings.setRowWriterProcessor(new BeanWriterProcessor<>(output.getType().getType()));
 
-            final ByteArrayOutputStream byteArrayOutputStream =  new ByteArrayOutputStream();
+            final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             final CsvWriter csvWriter = new CsvWriter(byteArrayOutputStream, writerSettings);
 
             stream.forEach(object -> {
 
                 try {
+
                     // *** Next line flux
                     // Writing in file
-                    csvWriter.processRecord(normalizer.normalize(object));
+                    csvWriter.processRecord(new Normalizer<>().normalize(object));
 
                     // Save the old percentage
                     final int oldPercentage = output.getConcludedPercentage();
@@ -74,36 +95,32 @@ public abstract class AbstractReportRepository<T> implements IWriteReportReposit
                     output.calculatePercentage();
 
                     // If the current percentage is different from the previous percentage, and the current percentage is the exact divisor of the divisor., then
-                    if (output.getConcludedPercentage() != oldPercentage && output.getConcludedPercentage() % output.getType().getDivisorToSave() == 0 && output.getConcludedPercentage() < 80) {
-                        //// Read byte array from file
-//                        output.setContent(Files.readAllBytes(file.toPath()));
-                        // Emmit the event
-                        nextLineOutputReport.accept(output);
-                    }
+                    if (output.getConcludedPercentage() != oldPercentage && output.getConcludedPercentage() % output.getType().getDivisorToSave() == 0) {
 
+                        // Populate the loading
+                        loadings.put(output.getId(), output.getConcludedPercentage());
+
+                        // If concluded percentage is 100%,
+                        if (output.getConcludedPercentage().equals(100)) {
+                            // Read byte array from file
+                            output.setContent(byteArrayOutputStream.toByteArray());
+                            // Emmit done event
+                            doneReportOutputReport.accept(output);
+                        } else
+                            // Emmit next line event
+                            nextLineOutputReport.accept(output);
+
+                    }
                 } catch (final Exception e) {
                     // *** Error in line flux
                     e.printStackTrace();
                     lineErrorConsumer.accept(output);
                 }
-
             });
+
             // *** Done flux
             // Close writer
             csvWriter.close();
-
-            // Set the current line with the last line
-            output.setCurrentLine(output.getCountLines());
-
-            // Calculate the new percentage, 100%
-            output.calculatePercentage();
-
-            // Read byte array from file
-            output.setContent(byteArrayOutputStream.toByteArray());
-
-            // Emmit the event
-            doneReportOutputReport.accept(output);
-
         } catch (final Exception e) {
             // *** General error flux
             e.printStackTrace();

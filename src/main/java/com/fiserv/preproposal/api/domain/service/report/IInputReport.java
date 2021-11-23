@@ -1,6 +1,4 @@
-package com.fiserv.preproposal.api.domain.repository.report;
-
-import com.fiserv.preproposal.api.domain.entity.TypeReport;
+package com.fiserv.preproposal.api.domain.service.report;
 
 import java.util.Collection;
 

@@ -1,6 +1,6 @@
 package com.fiserv.preproposal.api.application.schedulling;
 
-import com.fiserv.preproposal.api.domain.service.ReportService;
+import com.fiserv.preproposal.api.domain.service.report.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.quartz.*;
 import org.springframework.context.annotation.Bean;

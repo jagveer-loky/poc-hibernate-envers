@@ -1,9 +1,8 @@
-package com.fiserv.preproposal.api.domain.repository.report;
+package com.fiserv.preproposal.api.domain.service.report;
 
 import com.fiserv.preproposal.api.domain.entity.TypeReport;
 
 import java.time.temporal.TemporalAccessor;
-import java.util.Collection;
 
 public interface IOutputReport {
 

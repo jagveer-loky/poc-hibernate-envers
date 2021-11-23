@@ -2,7 +2,7 @@ package com.fiserv.preproposal.api.domain.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fiserv.preproposal.api.domain.entity.TypeReport;
-import com.fiserv.preproposal.api.domain.repository.report.IInputReport;
+import com.fiserv.preproposal.api.domain.service.report.IInputReport;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
