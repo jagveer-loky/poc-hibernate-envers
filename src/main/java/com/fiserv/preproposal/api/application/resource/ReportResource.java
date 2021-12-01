@@ -5,10 +5,12 @@ import com.fiserv.preproposal.api.domain.dtos.ReportParams;
 import com.fiserv.preproposal.api.domain.entity.EReport;
 import com.fiserv.preproposal.api.domain.entity.TypeReport;
 import com.fiserv.preproposal.api.domain.service.report.ReportService;
+import com.fiserv.preproposal.api.domain.service.report.ThreadService;
 import lombok.RequiredArgsConstructor;
 import org.jobrunr.scheduling.BackgroundJob;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -25,6 +27,8 @@ public class ReportResource {
      *
      */
     private final ReportService reportService;
+
+    private final ThreadService threadService;
 
     /**
      * @return Boolean
@@ -52,16 +56,14 @@ public class ReportResource {
      * @param reportParams ReportParams
      * @return Long
      */
+    @Transactional(readOnly = true)
     @PostMapping(TypeReport.BASIC_VALUE)
     public Long createBasicReport(@RequestBody final ReportParams reportParams) {
 
         reportParams.setType(TypeReport.BASIC);
 
-        final EReport eReport = reportService.save(EReport.createFrom(reportParams));
+        return reportService.createBasicReport(reportParams);
 
-        BackgroundJob.enqueue(() -> reportService.startBasicReport(reportParams, eReport));
-
-        return eReport.getId();
     }
 
     /**
@@ -73,11 +75,8 @@ public class ReportResource {
 
         reportParams.setType(TypeReport.COMPLETE);
 
-        final EReport eReport = reportService.save(EReport.createFrom(reportParams));
+        return reportService.createCompleteReport(reportParams);
 
-        BackgroundJob.enqueue(() -> reportService.startCompleteReport(reportParams, eReport));
-
-        return eReport.getId();
     }
 
     /**

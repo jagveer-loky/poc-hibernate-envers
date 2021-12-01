@@ -47,13 +47,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             http.cors().and().authorizeRequests(r -> r.requestMatchers(CorsUtils::isPreFlightRequest).permitAll());
 
         http.authorizeRequests(r ->
-                r.antMatchers("/v3/api-docs/**", "/v3/api-docs.yaml**", "/swagger-ui/**", "/swagger-ui.html**", "/actuator/**").permitAll()
-                        .antMatchers("/v*/token/**").anonymous()
-                        .antMatchers("/isAlive**").permitAll()
-                        .antMatchers("/v*/**").permitAll()
-                        .anyRequest().permitAll().and().addFilterBefore(new AuthorizationFilter(fdSecurity, resolver), UsernamePasswordAuthenticationFilter.class))
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//        r.antMatchers("/**").permitAll());
+//                r.antMatchers("/v3/api-docs/**", "/v3/api-docs.yaml**", "/swagger-ui/**", "/swagger-ui.html**", "/actuator/**").permitAll()
+//                        .antMatchers("/v*/token/**").anonymous()
+//                        .antMatchers("/isAlive**").permitAll()
+//                        .antMatchers("/v*/**").permitAll()
+//                        .anyRequest().permitAll().and().addFilterBefore(new AuthorizationFilter(fdSecurity, resolver), UsernamePasswordAuthenticationFilter.class))
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        r.antMatchers("/**").permitAll());
     }
 
     @Override

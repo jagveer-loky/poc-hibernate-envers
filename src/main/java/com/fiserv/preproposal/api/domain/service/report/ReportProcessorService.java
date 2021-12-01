@@ -19,6 +19,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,7 +34,7 @@ public class ReportProcessorService {
      * Aux var to store the status of the individual processing report
      */
     @Getter
-    protected static final HashMap<Long, Integer> loadings = new HashMap<>();
+    private static final HashMap<Long, Integer> loadings = new HashMap<>();
 
     /**
      * @param fields String[]

@@ -1,8 +1,9 @@
 package com.fiserv.preproposal.api.domain.repository;
 
+import com.fiserv.preproposal.api.domain.dtos.BasicReport;
 import com.fiserv.preproposal.api.domain.dtos.CompleteReport;
 import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
-import com.fiserv.preproposal.api.domain.dtos.BasicReport;
+import com.fiserv.preproposal.api.domain.dtos.SimpleReport;
 import com.fiserv.preproposal.api.domain.entity.EProposalData;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,129 +18,29 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 @Repository
-public interface ProposalRepository extends JpaRepository<EProposalData, Long> {
+public interface SimpleReportRepository extends JpaRepository<SimpleReport, Long> {
 
     /**
      * @param institution     String
      * @param serviceContract String
-     * @param initialDate     LocalDate
-     * @param finalDate       LocalDate
-     * @param notIn           Boolean
-     * @param responsesTypes  Collection<String>
-     * @param status          Collection<String>
-     * @return int
-     */
-    @Query(name = "getCountBasicReport", nativeQuery = true)
-    int getCountBasicReport(@Param("institution") final String institution,
-                            @Param("serviceContract") final String serviceContract,
-                            @Param("initialDate") final LocalDate initialDate,
-                            @Param("finalDate") final LocalDate finalDate,
-                            @Param("notIn") final boolean notIn,
-                            @Param("responsesTypes") final Collection<String> responsesTypes,
-                            @Param("status") final Collection<String> status);
-
-    /**
-     * @param institution     String
-     * @param serviceContract String
-     * @param initialDate     LocalDate
-     * @param finalDate       LocalDate
-     * @param notIn           Boolean
-     * @param responsesTypes  Collection<String>
-     * @param status          Collection<String>
      * @return Stream<BasicReport>
      */
-    @Query(name = "getBasicReport", nativeQuery = true)
-    Stream<BasicReport> getBasicReport(@Param("institution") final String institution,
-                                       @Param("serviceContract") final String serviceContract,
-                                       @Param("initialDate") final LocalDate initialDate,
-                                       @Param("finalDate") final LocalDate finalDate,
-                                       @Param("notIn") final boolean notIn,
-                                       @Param("responsesTypes") final Collection<String> responsesTypes,
-                                       @Param("status") final Collection<String> status);
+//    @Query(
+//            name = "simpleNamedNativeQuery",
+//            countProjection = "tpd.id",
+////                    "       FROM TB_PROPOSAL_DATA" +
+////                    "  LEFT join TB_FILE_CONTROL TFC ON TFC.ID = TB_PROPOSAL_DATA.id_file_control" +
+////                    "  WHERE tfc.INSTITUTION = :institution AND tfc.SERVICE_CONTRACT = :serviceContract ",
+//            countQuery =
+//                    "       FROM TB_PROPOSAL_DATA tpd" +
+//                    "  LEFT join TB_FILE_CONTROL tfc ON tfc.ID = tpd.id_file_control" +
+//                    "  WHERE tfc.INSTITUTION = :institution AND tfc.SERVICE_CONTRACT = :serviceContract ",
+//            nativeQuery = true
+//    )
+//    Page<SimpleReport> getCompleteReport(@Param("institution") final String institution, @Param("serviceContract") final String serviceContract, Pageable page);
+    @Query(value = "select tpd.id from TB_PROPOSAL_DATA tpd",
+            countQuery = "select count(id) from TB_PROPOSAL_DATA tpd",
+            nativeQuery = true)
+    Page<SimpleReport> getCompleteReport(/*@Param("institution") final String institution, @Param("serviceContract") final String serviceContract, */Pageable page);
 
-    /**
-     * @param institution     String
-     * @param serviceContract String
-     * @param initialDate     LocalDate
-     * @param finalDate       LocalDate
-     * @param notIn           Boolean
-     * @param responsesTypes  Collection<String>
-     * @param status          Collection<String>
-     * @return Stream<QuantitativeReport>
-     */
-    @Query(name = "getQuantitativeReport", nativeQuery = true)
-    Stream<QuantitativeReport> getQuantitativeReport(@Param("institution") final String institution,
-                                                     @Param("serviceContract") final String serviceContract,
-                                                     @Param("initialDate") final LocalDate initialDate,
-                                                     @Param("finalDate") final LocalDate finalDate,
-                                                     @Param("notIn") final boolean notIn,
-                                                     @Param("responsesTypes") final Collection<String> responsesTypes,
-                                                     @Param("status") final Collection<String> status);
-
-    /**
-     * @param institution     String
-     * @param serviceContract String
-     * @param initialDate     LocalDate
-     * @param finalDate       LocalDate
-     * @param notIn           Boolean
-     * @param responsesTypes  Collection<String>
-     * @param status          Collection<String>
-     * @return int
-     */
-    @Query(name = "getCountQuantitativeReport", nativeQuery = true)
-    int getCountQuantitativeReport(@Param("institution") final String institution,
-                                   @Param("serviceContract") final String serviceContract,
-                                   @Param("initialDate") final LocalDate initialDate,
-                                   @Param("finalDate") final LocalDate finalDate,
-                                   @Param("notIn") final boolean notIn,
-                                   @Param("responsesTypes") final Collection<String> responsesTypes,
-                                   @Param("status") final Collection<String> status);
-
-    /**
-     * @param institution     String
-     * @param serviceContract String
-     * @param initialDate     LocalDate
-     * @param finalDate       LocalDate
-     * @param notIn           Boolean
-     * @param responsesTypes  Collection<String>
-     * @param status          Collection<String>
-     * @return Stream<CompleteReport>
-     */
-    @Query(name = "getCompleteReport", /*countName = "getCompleteReport.count",*/  nativeQuery = true)
-    Page<CompleteReport> getCompleteReport(@Param("institution") final String institution,
-                                           @Param("serviceContract") final String serviceContract,
-                                           /*@Param("initialDate") final LocalDate initialDate,
-                                           @Param("finalDate") final LocalDate finalDate,
-                                           @Param("notIn") final boolean notIn,
-                                           @Param("responsesTypes") final Collection<String> responsesTypes,
-                                           @Param("status") final Collection<String> status,*/
-                                           Pageable page);
-
-//    /**
-//     * @param institution     String
-//     * @param serviceContract String
-//     * @param initialDate     LocalDate
-//     * @param finalDate       LocalDate
-//     * @param notIn           Boolean
-//     * @param responsesTypes  Collection<String>
-//     * @param status          Collection<String>
-//     * @return int
-//     */
-//    @Query(name = "getCompleteReport.count", nativeQuery = true)
-//    int getCountCompleteReport(@Param("institution") final String institution,
-//                               @Param("serviceContract") final String serviceContract,
-//                               @Param("initialDate") final LocalDate initialDate,
-//                               @Param("finalDate") final LocalDate finalDate,
-//                               @Param("notIn") final boolean notIn,
-//                               @Param("responsesTypes") final Collection<String> responsesTypes,
-//                               @Param("status") final Collection<String> status);
-
-
-    @Query(value = "SELECT link" +
-            " FROM EProposalData link " +
-            " WHERE" +
-            "       link.responseType = 'LNK_PAYMENT'" +
-            "   AND ( SELECT COUNT(historyLink.id) FROM EProposalHistory historyLink WHERE historyLink.proposalData.id = link.id AND historyLink.status LIKE '%_ERROR') > 0" +
-            "   AND ( SELECT COUNT(historyOrigin.id) FROM EProposalHistory historyOrigin WHERE historyOrigin.proposalData.id = link.idOrigin AND historyOrigin.status LIKE '%_ERROR') = 0")
-    Set<EProposalData> getLinksPaymentsToReload();
 }

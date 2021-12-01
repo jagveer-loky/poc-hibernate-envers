@@ -102,7 +102,7 @@ import javax.persistence.*;
                                         @ColumnResult(name = "FISERVSTATUS", type = String.class),
                                         @ColumnResult(name = "CAIXASTATUS", type = String.class),
                                         @ColumnResult(name = "CAIXAMESSAGE", type = String.class),
-                                        @ColumnResult(name = "ERRORS", type = String.class),
+//                                        @ColumnResult(name = "ERRORS", type = String.class),
                                         @ColumnResult(name = "INCLUDEIN", type = String.class),
                                         @ColumnResult(name = "FINISHEDIN", type = String.class),
                                         @ColumnResult(name = "SUBMISSIONONLINEDATE", type = String.class),
@@ -560,209 +560,206 @@ import javax.persistence.*;
                         "               GROUP BY tfc.file_name,tfc.INSTITUTION,tfc.SERVICE_CONTRACT,tfc.READ_DATE,tfc.IS_VALID, TFC.id " +
                         "        )"
         ),
-        @NamedNativeQuery(name = "getCompleteReport", query = "SELECT  \n" +
-                "       tpd.PROPOSAL_NUMBER AS \"PREPROPOSALID\",\n" +
-                "       tpd.id AS \"PROPOSALNUMBER\",\n" +
-                "       tpd.merchant_id AS \"MERCHANT\",\n" +
-                "       tpd.AGENT_CHANNEL AS \"USERID\", \n" +
-                "       tpd.AGENT_CPF_CNPJ AS \"AGENTCPFCNPJ\",\n" +
-                "       tfc.institution AS \"INSTITUTION\",\n" +
-                "       tfc.service_contract AS \"SERVICECONTRACT\",\n" +
-                "       tpd.optin AS \"OPTIN\"," +
-                "       tpd.seller_registration AS \"SELLERREGISTRATION\"," +
-                "       tpd.SUB_CHANNEL AS \"SUBCHANNEL\", \n" +
-                "       tcs.service_id || '-' || TCS.TECHNOLOGY AS \"TECHNOLOGY\",\n" +
-                "       tcs.TERMINALS_NUMBER AS \"TERMINALSNUMBER\", \n" +
-                "       tcs.VALUE AS \"UNITARYVALUE\", \n" +
-                "       tpps.CODE || '-' || tpps.PT_DESCRIPTION AS \"FISERVSTATUS\",\n" +
-                "       tpcs.code || '-' || tpcs.PT_DESCRIPTION AS \"CAIXASTATUS\",\n" +
-                "       tpcs.message_code || '-' || tpcs.message_description AS \"CAIXAMESSAGE\",         \n" +
-                "       (" +
-                "           SELECT LISTAGG" +
-                "               (" +
-                "                   (" +
-                "                       CASE" +
-                "                           WHEN TB_PRE_PROPOSAL_HISTORY_ERROR.FIELD IS NULL THEN " +
-                "                               TB_PRE_PROPOSAL_HISTORY.STATUS || ': ' ||  TB_PRE_PROPOSAL_HISTORY_ERROR.MESSAGE" +
-                "                           ELSE" +
-                "                               TB_PRE_PROPOSAL_HISTORY.STATUS || '(' || TB_PRE_PROPOSAL_HISTORY_ERROR.FIELD || '): ' ||  TB_PRE_PROPOSAL_HISTORY_ERROR.MESSAGE " +
-                "                       END" +
-                "                   ), '; '" +
-                "               ) WITHIN GROUP (ORDER BY TB_PRE_PROPOSAL_HISTORY.STATUS) \"ERRORS\"" +
-                "           FROM TB_PRE_PROPOSAL_HISTORY" +
-                "               LEFT OUTER JOIN TB_PRE_PROPOSAL_HISTORY_ERROR TB_PRE_PROPOSAL_HISTORY_ERROR on TB_PRE_PROPOSAL_HISTORY_ERROR.ID_PROPOSAL_HISTORY = TB_PRE_PROPOSAL_HISTORY.id" +
-                "           WHERE TB_PRE_PROPOSAL_HISTORY.ID_PROPOSAL_DATA = tpd.id AND TB_PRE_PROPOSAL_HISTORY.STATUS LIKE '%_ERROR'" +
-                "       ) AS \"ERRORS\"," +
-                "       TO_CHAR(tpd.INSERTION_DATE, 'dd/MM/yyyy hh:mm')  AS \"INCLUDEIN\",\n" +
-                "       TO_CHAR(tpd.CONCLUSION_DATE, 'dd/MM/yyyy hh:mm')  AS \"FINISHEDIN\",\n" +
-                "       TO_CHAR(tpd.ONLINE_DATE, 'dd/MM/yyyy hh:mm') AS \"SUBMISSIONONLINEDATE\",\n" +
-                "       CASE tpd.proposal_type WHEN 'F' THEN 'Fisica'\n" +
-                "       ELSE 'Juridica' END AS \"PERSONTYPE\",\n" +
-                "       CASE tpd.proposal_type WHEN 'F' THEN tppp.CPF\n" +
-                "       ELSE tpplp.CNPJ END AS \"CPFCNPJ\",\n" +
-                "       CASE tpd.proposal_type WHEN 'F' THEN tppp.FANTASY_NAME\n" +
-                "       ELSE tpplp.FANTASY_NAME END AS \"FANTASYNAME\",\n" +
-                "       CASE tpd.proposal_type WHEN 'F' THEN tppp.NAME || ' ' || tppp.SURNAME\n" +
-                "       ELSE tpplp.SOCIAL_REASON END AS \"SOCIALREASON\",\n" +
-                "       CASE tpd.proposal_type WHEN 'F' THEN tppp.PLATE_NAME\n" +
-                "       ELSE tpplp.PLATE_NAME END AS \"PLATELETNAME\",\n" +
-                "       CASE tpd.proposal_type WHEN 'F' THEN tppp.MONTHLY_INCOME\n" +
-                "       ELSE tpplp.MONTH_AVAREGE END AS \"MONTHLYBILLING\",\n" +
-                "       CASE tpd.proposal_type WHEN 'F' THEN tppp.BIRTH_DATE\n" +
-                "       ELSE tpplp.DATE_CONSTITUTION END AS \"BIRTHDATE\",\n" +
-                "       tppp.GENDER AS \"GENDER\",\n" +
-                "       tppp.TREATMENT_PRONOUN AS \"TREATMENTPRONOUN\",\n" +
-                "       tppp.LOCAL_BIRTH AS \"BIRTHPLACE\",\n" +
-                "       tppp.NATIONALITY AS \"NACIONALITY\",\n" +
-                "       tppp.name || ' ' || tppp.surname AS \"FULLNAME\",\n" +
-                "       tpplp.CITY_INCRIPTION AS \"MUNICIPALREGISTRATION\",\n" +
-                "       tpplp.STATE_INSCRIPTION AS \"STATEREGISTRATION\",\n" +
-                "       'Sociedade Empresária' AS \"CONSTITUTIONFORM\",\n" +
-                "       tpplp.OPEN_DATE AS \"OPENDATE\",\n" +
-                "       tpd.ANNUAL_BILLING_VOL, \n" +
-                "       tpd.ANNUAL_VOL_CASH, \n" +
-                "       tpd.ANNUAL_VOL_SALES_CARD, \n" +
-                "       tpd.ANNUAL_VOL_SALES_CARD_GROUP, \n" +
-                "       tpd.AVERAGE_TICKET, \n" +
-                "       CASE tpd.BACEN_PERMISSION WHEN 'true' THEN 'SIM'\n" +
-                "       ELSE 'NÃO' END AS \"BACENPERMISSION\",\n" +
-                "       tpd.CAMPAING_ID AS \"CAMPAINGID\", \n" +
-                "       tpd.CNAE, \n" +
-                "       tpd.ECOMMERCE, \n" +
-                "       CASE tpd.FOREING_CARD WHEN 'true' THEN 'SIM'\n" +
-                "       ELSE 'NÃO' END AS \"FOREIGNCARD\",\n" +
-                "       CASE tpd.MANUAL_PREPAYMENT_ENABLED WHEN 'true' THEN 'SIM'\n" +
-                "       ELSE 'NÃO' END AS \"MANUAL_PREPAYMENT_ENABLED\",        \n" +
-                "       tpd.BOARDING_BRANCHING, \n" +
-                "       tpd.PERC_CARD_NOT_PRESENT , \n" +
-                "       tpd.PERC_CARD_PRESENT ,\n" +
-                "       tpd.PERC_INTERNET , \n" +
-                "       CASE tpd.PREPAYMENT_INDICATOR WHEN 'true' THEN 'SIM'\n" +
-                "       ELSE 'NÃO' END AS \"PREPAYMENT_INDICATOR\",  \n" +
-                "       CASE tpd.RECURRING_TRANSACTION WHEN 'true' THEN 'SIM'\n" +
-                "       ELSE 'NÃO' END AS \"RECURRINGTRANSACTION\", \n" +
-                "       tpd.SERVICE_DAY_0, \n" +
-                "       tpd.SERVICE_DAY_15_30,\n" +
-                "       tpd.SERVICE_DAY_1_7, \n" +
-                "       tpd.SERVICE_DAY_8_14, \n" +
-                "       tpd.SERVICE_DAY_OVER_30, \n" +
-                "       tpd.BW_DATE AS \"PENDINGBWDATE\", \n" +
-                "       tpd.BW_CONCLUSION_DATE AS \"INSTALLATIONDATE\",\n" +
-                "       CASE TPPA.ADDRESS_TYPE WHEN 'BUSINESS' THEN 'Comercial'\n" +
-                "       WHEN 'TRADING' THEN 'Entrega'\n" +
-                "       ELSE 'Contato' END AS \"ADDRESSTYPE\",\n" +
-                "       TPPA.ZIP_CODE AS \"CEP\",\n" +
-                "       TPPA.STREET AS \"STREET\",\n" +
-                "       TPPA.ADDRESS_NUMBER AS \"NUMBER\",\n" +
-                "       TPPA.NEIGHBORHOOD AS \"DISTRICT\",\n" +
-                "       TPPA.COMPLEMENT AS \"COMPLEMENT\",\n" +
-                "       TPPA.CITY AS \"CITY\",\n" +
-                "       TPPA.STATE AS \"STATE\",\n" +
-                "       TPCP.TYPE AS \"PARTNERTYPE\" ,\n" +
-                "       TPCP.CNPJ_CPF AS \"CPFCNPJPARTNER\" ,\n" +
-                "       TPCP.BIRTH_DATE AS \"PARTNERBIRTHDATE\" ,\n" +
-                "       TPCP.CONSTITUTION_TYPE AS \"CONSTITUTIONTYPE\" ,\n" +
-                "       TPCP.DDD || TPCP.PHONE As \"CONTRACT\",\n" +
-                "       TPCP.FIRST_NAME || ' ' || TPCP.LAST_NAME AS \"PARTNERNAME\",\n" +
-                "       TPCP.TREATMENT_PRONOUN AS \"PRONOUNTREATMENTPARTNER\",\n" +
-                "       TPCP.NATIONALITY AS \"PARTNERNACIONALITY\",\n" +
-                "       TPCP.FUNCTION AS \"PARTNERFUNCTION\", \n" +
-                "       TPCP.perc_part_soc AS \"PERCPARTNER\",\n" +
-                "       tc.BIRTH_DATE AS \"CONTACTBIRTHDATE\", \n" +
-                "       tc.CPF AS \"CONTACTCPF\", \n" +
-                "       tc.EMAIL AS \"CONTACTEMAIL\", \n" +
-                "       tc.FIRST_NAME || ' ' || tc.LAST_NAME AS \"CONTACTNAME\", \n" +
-                "       tc.FIXED_DDD || tc.FIXED_NUMBER AS \"CONTACTPHONE\", \n" +
-                "       tc.MOBILE_DDD || tc.MOBILE_NUMBER AS \"CONTACTCELLPHONE\",\n" +
-                "       taf.DESCRIPTION, \n" +
-                "       taf.DISCOUNT_FEE, \n" +
-                "       taf.FEE, \n" +
-                "       taf.FEE_ID_NUMBER,\n" +
-                "       tba.BANK_NUMBER AS \"BANKCODE\",\n" +
-                "       tba.AGENCY_NUMBER || tba.AGENCY_DIGIT AS \"AGENCY\",\n" +
-                "       tba.ACCOUNT_DIGIT AS \"ACCOUNTDIGIT\", \n" +
-                "       tba.ACCOUNT_NUMBER AS \"ACCOUNTNUMBER\", \n" +
-                "       tba.ACCOUNT_OWNER_NAME AS \"ACCOUNTOWNER\", \n" +
-                "       CASE tba.ACCOUNT_TYPE WHEN '0' THEN 'Conta corrente'\n" +
-                "       ELSE 'Poupança' END AS \"ACCOUNTTYPE\",\n" +
-                "       CASE tpwa.WEEK_DAY \n" +
-                "        WHEN 'MONDAY' THEN 'Segunda das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO\n" +
-                "        WHEN 'Tuesday' THEN ' Terça-feira das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO\n" +
-                "        WHEN 'Wednesday' THEN ' Quarta-feira das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO\n" +
-                "        WHEN 'Thursday' THEN ' Quinta-feira das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO\n" +
-                "        WHEN 'Friday' THEN ' Sexta-feira das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO\n" +
-                "        WHEN 'Saturday' THEN 'Sábado das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO\n" +
+        @NamedNativeQuery(name = "getCompleteReport", query = "SELECT  " +
+                "       TB_PROPOSAL_DATA.PROPOSAL_NUMBER AS \"PREPROPOSALID\"," +
+                "       TB_PROPOSAL_DATA.id AS \"PROPOSALNUMBER\"," +
+                "       TB_PROPOSAL_DATA.merchant_id AS \"MERCHANT\"," +
+                "       TB_PROPOSAL_DATA.AGENT_CHANNEL AS \"USERID\", " +
+                "       TB_PROPOSAL_DATA.AGENT_CPF_CNPJ AS \"AGENTCPFCNPJ\"," +
+                "       tfc.institution AS \"INSTITUTION\"," +
+                "       tfc.service_contract AS \"SERVICECONTRACT\"," +
+                "       TB_PROPOSAL_DATA.optin AS \"OPTIN\"," +
+                "       TB_PROPOSAL_DATA.seller_registration AS \"SELLERREGISTRATION\"," +
+                "       TB_PROPOSAL_DATA.SUB_CHANNEL AS \"SUBCHANNEL\", " +
+                "       tcs.service_id || '-' || TCS.TECHNOLOGY AS \"TECHNOLOGY\"," +
+                "       tcs.TERMINALS_NUMBER AS \"TERMINALSNUMBER\", " +
+                "       tcs.VALUE AS \"UNITARYVALUE\", " +
+                "       tpps.CODE || '-' || tpps.PT_DESCRIPTION AS \"FISERVSTATUS\"," +
+                "       tpcs.code || '-' || tpcs.PT_DESCRIPTION AS \"CAIXASTATUS\"," +
+                "       tpcs.message_code || '-' || tpcs.message_description AS \"CAIXAMESSAGE\",         " +
+//                "       (" +
+//                "           SELECT LISTAGG" +
+//                "               (" +
+//                "                   (" +
+//                "                       CASE" +
+//                "                           WHEN TB_PRE_PROPOSAL_HISTORY_ERROR.FIELD IS NULL THEN " +
+//                "                               TB_PRE_PROPOSAL_HISTORY.STATUS || ': ' ||  TB_PRE_PROPOSAL_HISTORY_ERROR.MESSAGE" +
+//                "                           ELSE" +
+//                "                               TB_PRE_PROPOSAL_HISTORY.STATUS || '(' || TB_PRE_PROPOSAL_HISTORY_ERROR.FIELD || '): ' ||  TB_PRE_PROPOSAL_HISTORY_ERROR.MESSAGE " +
+//                "                       END" +
+//                "                   ), '; '" +
+//                "               ) WITHIN GROUP (ORDER BY TB_PRE_PROPOSAL_HISTORY.STATUS) \"ERRORS\"" +
+//                "           FROM TB_PRE_PROPOSAL_HISTORY" +
+//                "               LEFT OUTER JOIN TB_PRE_PROPOSAL_HISTORY_ERROR TB_PRE_PROPOSAL_HISTORY_ERROR on TB_PRE_PROPOSAL_HISTORY_ERROR.ID_PROPOSAL_HISTORY = TB_PRE_PROPOSAL_HISTORY.id" +
+//                "           WHERE TB_PRE_PROPOSAL_HISTORY.ID_PROPOSAL_DATA = TB_PROPOSAL_DATA.id AND TB_PRE_PROPOSAL_HISTORY.STATUS LIKE '%_ERROR'" +
+//                "       ) AS \"ERRORS\"," +
+                "       TO_CHAR(TB_PROPOSAL_DATA.INSERTION_DATE, 'dd/MM/yyyy hh:mm')  AS \"INCLUDEIN\"," +
+                "       TO_CHAR(TB_PROPOSAL_DATA.CONCLUSION_DATE, 'dd/MM/yyyy hh:mm')  AS \"FINISHEDIN\"," +
+                "       TO_CHAR(TB_PROPOSAL_DATA.ONLINE_DATE, 'dd/MM/yyyy hh:mm') AS \"SUBMISSIONONLINEDATE\"," +
+                "       CASE TB_PROPOSAL_DATA.proposal_type WHEN 'F' THEN 'Fisica'" +
+                "       ELSE 'Juridica' END AS \"PERSONTYPE\"," +
+                "       CASE TB_PROPOSAL_DATA.proposal_type WHEN 'F' THEN tppp.CPF" +
+                "       ELSE tpplp.CNPJ END AS \"CPFCNPJ\"," +
+                "       CASE TB_PROPOSAL_DATA.proposal_type WHEN 'F' THEN tppp.FANTASY_NAME" +
+                "       ELSE tpplp.FANTASY_NAME END AS \"FANTASYNAME\"," +
+                "       CASE TB_PROPOSAL_DATA.proposal_type WHEN 'F' THEN tppp.NAME || ' ' || tppp.SURNAME" +
+                "       ELSE tpplp.SOCIAL_REASON END AS \"SOCIALREASON\"," +
+                "       CASE TB_PROPOSAL_DATA.proposal_type WHEN 'F' THEN tppp.PLATE_NAME" +
+                "       ELSE tpplp.PLATE_NAME END AS \"PLATELETNAME\"," +
+                "       CASE TB_PROPOSAL_DATA.proposal_type WHEN 'F' THEN tppp.MONTHLY_INCOME" +
+                "       ELSE tpplp.MONTH_AVAREGE END AS \"MONTHLYBILLING\"," +
+                "       CASE TB_PROPOSAL_DATA.proposal_type WHEN 'F' THEN tppp.BIRTH_DATE" +
+                "       ELSE tpplp.DATE_CONSTITUTION END AS \"BIRTHDATE\"," +
+                "       tppp.GENDER AS \"GENDER\"," +
+                "       tppp.TREATMENT_PRONOUN AS \"TREATMENTPRONOUN\"," +
+                "       tppp.LOCAL_BIRTH AS \"BIRTHPLACE\"," +
+                "       tppp.NATIONALITY AS \"NACIONALITY\"," +
+                "       tppp.name || ' ' || tppp.surname AS \"FULLNAME\"," +
+                "       tpplp.CITY_INCRIPTION AS \"MUNICIPALREGISTRATION\"," +
+                "       tpplp.STATE_INSCRIPTION AS \"STATEREGISTRATION\"," +
+                "       'Sociedade Empresária' AS \"CONSTITUTIONFORM\"," +
+                "       tpplp.OPEN_DATE AS \"OPENDATE\"," +
+                "       TB_PROPOSAL_DATA.ANNUAL_BILLING_VOL, " +
+                "       TB_PROPOSAL_DATA.ANNUAL_VOL_CASH, " +
+                "       TB_PROPOSAL_DATA.ANNUAL_VOL_SALES_CARD, " +
+                "       TB_PROPOSAL_DATA.ANNUAL_VOL_SALES_CARD_GROUP, " +
+                "       TB_PROPOSAL_DATA.AVERAGE_TICKET, " +
+                "       CASE TB_PROPOSAL_DATA.BACEN_PERMISSION WHEN 'true' THEN 'SIM'" +
+                "       ELSE 'NÃO' END AS \"BACENPERMISSION\"," +
+                "       TB_PROPOSAL_DATA.CAMPAING_ID AS \"CAMPAINGID\", " +
+                "       TB_PROPOSAL_DATA.CNAE, " +
+                "       TB_PROPOSAL_DATA.ECOMMERCE, " +
+                "       CASE TB_PROPOSAL_DATA.FOREING_CARD WHEN 'true' THEN 'SIM'" +
+                "       ELSE 'NÃO' END AS \"FOREIGNCARD\"," +
+                "       CASE TB_PROPOSAL_DATA.MANUAL_PREPAYMENT_ENABLED WHEN 'true' THEN 'SIM'" +
+                "       ELSE 'NÃO' END AS \"MANUAL_PREPAYMENT_ENABLED\",        " +
+                "       TB_PROPOSAL_DATA.BOARDING_BRANCHING, " +
+                "       TB_PROPOSAL_DATA.PERC_CARD_NOT_PRESENT , " +
+                "       TB_PROPOSAL_DATA.PERC_CARD_PRESENT ," +
+                "       TB_PROPOSAL_DATA.PERC_INTERNET , " +
+                "       CASE TB_PROPOSAL_DATA.PREPAYMENT_INDICATOR WHEN 'true' THEN 'SIM'" +
+                "       ELSE 'NÃO' END AS \"PREPAYMENT_INDICATOR\",  " +
+                "       CASE TB_PROPOSAL_DATA.RECURRING_TRANSACTION WHEN 'true' THEN 'SIM'" +
+                "       ELSE 'NÃO' END AS \"RECURRINGTRANSACTION\", " +
+                "       TB_PROPOSAL_DATA.SERVICE_DAY_0, " +
+                "       TB_PROPOSAL_DATA.SERVICE_DAY_15_30," +
+                "       TB_PROPOSAL_DATA.SERVICE_DAY_1_7, " +
+                "       TB_PROPOSAL_DATA.SERVICE_DAY_8_14, " +
+                "       TB_PROPOSAL_DATA.SERVICE_DAY_OVER_30, " +
+                "       TB_PROPOSAL_DATA.BW_DATE AS \"PENDINGBWDATE\", " +
+                "       TB_PROPOSAL_DATA.BW_CONCLUSION_DATE AS \"INSTALLATIONDATE\"," +
+                "       CASE TPPA.ADDRESS_TYPE WHEN 'BUSINESS' THEN 'Comercial'" +
+                "       WHEN 'TRADING' THEN 'Entrega'" +
+                "       ELSE 'Contato' END AS \"ADDRESSTYPE\"," +
+                "       TPPA.ZIP_CODE AS \"CEP\"," +
+                "       TPPA.STREET AS \"STREET\"," +
+                "       TPPA.ADDRESS_NUMBER AS \"NUMBER\"," +
+                "       TPPA.NEIGHBORHOOD AS \"DISTRICT\"," +
+                "       TPPA.COMPLEMENT AS \"COMPLEMENT\"," +
+                "       TPPA.CITY AS \"CITY\"," +
+                "       TPPA.STATE AS \"STATE\"," +
+                "       TPCP.TYPE AS \"PARTNERTYPE\" ," +
+                "       TPCP.CNPJ_CPF AS \"CPFCNPJPARTNER\" ," +
+                "       TPCP.BIRTH_DATE AS \"PARTNERBIRTHDATE\" ," +
+                "       TPCP.CONSTITUTION_TYPE AS \"CONSTITUTIONTYPE\" ," +
+                "       TPCP.DDD || TPCP.PHONE As \"CONTRACT\"," +
+                "       TPCP.FIRST_NAME || ' ' || TPCP.LAST_NAME AS \"PARTNERNAME\"," +
+                "       TPCP.TREATMENT_PRONOUN AS \"PRONOUNTREATMENTPARTNER\"," +
+                "       TPCP.NATIONALITY AS \"PARTNERNACIONALITY\"," +
+                "       TPCP.FUNCTION AS \"PARTNERFUNCTION\", " +
+                "       TPCP.perc_part_soc AS \"PERCPARTNER\"," +
+                "       tc.BIRTH_DATE AS \"CONTACTBIRTHDATE\", " +
+                "       tc.CPF AS \"CONTACTCPF\", " +
+                "       tc.EMAIL AS \"CONTACTEMAIL\", " +
+                "       tc.FIRST_NAME || ' ' || tc.LAST_NAME AS \"CONTACTNAME\", " +
+                "       tc.FIXED_DDD || tc.FIXED_NUMBER AS \"CONTACTPHONE\", " +
+                "       tc.MOBILE_DDD || tc.MOBILE_NUMBER AS \"CONTACTCELLPHONE\"," +
+                "       taf.DESCRIPTION, " +
+                "       taf.DISCOUNT_FEE, " +
+                "       taf.FEE, " +
+                "       taf.FEE_ID_NUMBER," +
+                "       tba.BANK_NUMBER AS \"BANKCODE\"," +
+                "       tba.AGENCY_NUMBER || tba.AGENCY_DIGIT AS \"AGENCY\"," +
+                "       tba.ACCOUNT_DIGIT AS \"ACCOUNTDIGIT\", " +
+                "       tba.ACCOUNT_NUMBER AS \"ACCOUNTNUMBER\", " +
+                "       tba.ACCOUNT_OWNER_NAME AS \"ACCOUNTOWNER\", " +
+                "       CASE tba.ACCOUNT_TYPE WHEN '0' THEN 'Conta corrente'" +
+                "       ELSE 'Poupança' END AS \"ACCOUNTTYPE\"," +
+                "       CASE tpwa.WEEK_DAY " +
+                "        WHEN 'MONDAY' THEN 'Segunda das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO" +
+                "        WHEN 'Tuesday' THEN ' Terça-feira das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO" +
+                "        WHEN 'Wednesday' THEN ' Quarta-feira das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO" +
+                "        WHEN 'Thursday' THEN ' Quinta-feira das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO" +
+                "        WHEN 'Friday' THEN ' Sexta-feira das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO" +
+                "        WHEN 'Saturday' THEN 'Sábado das ' || tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO" +
                 "       ELSE 'Domingo'|| tpwa.DAY_FROM || ' as ' ||  tpwa.DAY_TO END AS \"WORKDAYS\"," +
                 "       'Comercial' AS \"TYPEOFESTABLISHMENT\"," +
                 "       'Sim' AS \"ACCEPTTERM\"," +
-                "       tpd.RESPONSE_TYPE AS \"RESPONSETYPE\"" +
-                "       from tb_proposal_data tpd\n" +
-                "  LEFT join TB_PROPOSAL_PHYSICAL_PERSON tppp on tpd.proposal_type = 'F' and tpd.id = tppp.ID_FILE_PROPOSAL_DTA\n" +
-                "  LEFT join TB_PRE_PROPOSAL_LEGAL_PERSON tpplp on tpd.proposal_type = 'J' and tpd.id = tpplp.id_file_proposal_dta\n" +
-                "  LEFT join TB_FILE_CONTROL TFC ON TFC.ID = tpd.id_file_control\n" +
-                "  LEFT join tb_capture_solution TCS ON tcs.id_proposal_data = TPD.ID\n" +
-                "  LEFT join tb_pre_proposal_status tpps on tpps.id = tpd.status_id\n" +
-                "  LEFT join tb_proposal_cx_status tpcs on tpcs.status_id = tpps.id\n" +
-                "  LEFT JOIN TB_PROPOSAL_COMPANY_PARTNERS TPCP ON TPCP.ID_PROPOSAL_PJ_DTA = tpplp.id\n" +
-                "  LEFT JOIN TB_PRE_PROPOSAL_ADDRESS TPPA ON TPPA.ID_FILE_PROPOSAL_DTA = tpd.ID\n" +
-                "  LEFT JOIN TB_CONTACT tc on tc.ID_PROPOSAL_DATA = tpd.ID\n" +
-                "  LEFT JOIN TB_ACCOUNT_FREE taf on taf.ID_FILE_PROPOSAL_DTA = tpd.ID\n" +
-                "  LEFT JOIN TB_BANK_ACCOUNT tba on tba.ID_FILE_PROPOSAL_DTA = tpd.ID\n" +
-                "  left join TB_PRE_WORKING_DAY tpwa on tpwa.ID_PROPOSAL_DATA = tpd.ID" +
-                "  WHERE tfc.INSTITUTION = :institution \n" +
-                "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
-                "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
-                "       AND (" +
-                "               (" +
-                "                   (:notIn = 0) " +
-                "                       AND (" +
-                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
-                "                       )" +
-                "               )" +
-                "           OR" +
-                "               (" +
-                "                   (:notIn = 1) " +
-                "                       AND (" +
-                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
-                "                       )" +
-                "               )" +
-                "       )" +
-                "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))"
-                , resultSetMapping = "completeReportMapping"),
-        @NamedNativeQuery(name = "getCountCompleteReport", query = "SELECT COUNT(*) " +
-                "       from tb_proposal_data tpd " +
-                "  LEFT join TB_PROPOSAL_PHYSICAL_PERSON tppp on tpd.proposal_type = 'F' and tpd.id = tppp.ID_FILE_PROPOSAL_DTA\n" +
-                "  LEFT join TB_PRE_PROPOSAL_LEGAL_PERSON tpplp on tpd.proposal_type = 'J' and tpd.id = tpplp.id_file_proposal_dta\n" +
-                "  LEFT join TB_FILE_CONTROL TFC ON TFC.ID = tpd.id_file_control\n" +
-                "  LEFT join tb_capture_solution TCS ON tcs.id_proposal_data = TPD.ID\n" +
-                "  LEFT join tb_pre_proposal_status tpps on tpps.id = tpd.status_id\n" +
-                "  LEFT join tb_proposal_cx_status tpcs on tpcs.status_id = tpps.id\n" +
-                "  LEFT JOIN TB_PROPOSAL_COMPANY_PARTNERS TPCP ON TPCP.ID_PROPOSAL_PJ_DTA = tpplp.id\n" +
-                "  LEFT JOIN TB_PRE_PROPOSAL_ADDRESS TPPA ON TPPA.ID_FILE_PROPOSAL_DTA = tpd.ID\n" +
-                "  LEFT JOIN TB_CONTACT tc on tc.ID_PROPOSAL_DATA = tpd.ID\n" +
-                "  LEFT JOIN TB_ACCOUNT_FREE taf on taf.ID_FILE_PROPOSAL_DTA = tpd.ID\n" +
-                "  LEFT JOIN TB_BANK_ACCOUNT tba on tba.ID_FILE_PROPOSAL_DTA = tpd.ID\n" +
-                "  left join TB_PRE_WORKING_DAY tpwa on tpwa.ID_PROPOSAL_DATA = tpd.ID" +
-                "  WHERE tfc.INSTITUTION = :institution \n" +
-                "       AND tfc.SERVICE_CONTRACT = :serviceContract \n" +
-                "       AND tpd.INSERTION_DATE BETWEEN :initialDate AND :finalDate \n" +
-                "       AND (" +
-                "               (" +
-                "                   (:notIn = 0) " +
-                "                       AND (" +
-                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type IN (:responsesTypes)" +
-                "                       )" +
-                "               )" +
-                "           OR" +
-                "               (" +
-                "                   (:notIn = 1) " +
-                "                       AND (" +
-                "                           COALESCE(:responsesTypes, NULL) IS NULL OR tpd.response_type NOT IN (:responsesTypes)" +
-                "                       )" +
-                "               )" +
-                "       )" +
-                "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))")
+                "       TB_PROPOSAL_DATA.RESPONSE_TYPE AS \"RESPONSETYPE\"" +
+                "       FROM TB_PROPOSAL_DATA" +
+                "  LEFT join TB_PROPOSAL_PHYSICAL_PERSON tppp on TB_PROPOSAL_DATA.proposal_type = 'F' and TB_PROPOSAL_DATA.id = tppp.ID_FILE_PROPOSAL_DTA" +
+                "  LEFT join TB_PRE_PROPOSAL_LEGAL_PERSON tpplp on TB_PROPOSAL_DATA.proposal_type = 'J' and TB_PROPOSAL_DATA.id = tpplp.id_file_proposal_dta" +
+                "  LEFT join TB_FILE_CONTROL TFC ON TFC.ID = TB_PROPOSAL_DATA.id_file_control" +
+                "  LEFT join tb_capture_solution TCS ON tcs.id_proposal_data = TB_PROPOSAL_DATA.ID" +
+                "  LEFT join tb_pre_proposal_status tpps on tpps.id = TB_PROPOSAL_DATA.status_id" +
+                "  LEFT join tb_proposal_cx_status tpcs on tpcs.status_id = tpps.id" +
+                "  LEFT JOIN TB_PROPOSAL_COMPANY_PARTNERS TPCP ON TPCP.ID_PROPOSAL_PJ_DTA = tpplp.id" +
+                "  LEFT JOIN TB_PRE_PROPOSAL_ADDRESS TPPA ON TPPA.ID_FILE_PROPOSAL_DTA = TB_PROPOSAL_DATA.ID" +
+                "  LEFT JOIN TB_CONTACT tc on tc.ID_PROPOSAL_DATA = TB_PROPOSAL_DATA.ID" +
+                "  LEFT JOIN TB_ACCOUNT_FREE taf on taf.ID_FILE_PROPOSAL_DTA = TB_PROPOSAL_DATA.ID" +
+                "  LEFT JOIN TB_BANK_ACCOUNT tba on tba.ID_FILE_PROPOSAL_DTA = TB_PROPOSAL_DATA.ID" +
+                "  left join TB_PRE_WORKING_DAY tpwa on tpwa.ID_PROPOSAL_DATA = TB_PROPOSAL_DATA.ID" +
+                "  WHERE tfc.INSTITUTION = :institution " +
+                "       AND tfc.SERVICE_CONTRACT = :serviceContract "
+//             +   "       AND TB_PROPOSAL_DATA.INSERTION_DATE BETWEEN :initialDate AND :finalDate " +
+//                "       AND (" +
+//                "               (" +
+//                "                   (:notIn = 0) " +
+//                "                       AND (" +
+//                "                           COALESCE(:responsesTypes, NULL) IS NULL OR TB_PROPOSAL_DATA.response_type IN (:responsesTypes)" +
+//                "                       )" +
+//                "               )" +
+//                "           OR" +
+//                "               (" +
+//                "                   (:notIn = 1) " +
+//                "                       AND (" +
+//                "                           COALESCE(:responsesTypes, NULL) IS NULL OR TB_PROPOSAL_DATA.response_type NOT IN (:responsesTypes)" +
+//                "                       )" +
+//                "               )" +
+//                "       )" +
+//                "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))"
+                , resultSetMapping = "completeReportMapping"),/*
+        @NamedNativeQuery(name = "getCompleteReport.count", query = "SELECT COUNT(TB_PROPOSAL_DATA.id) " +
+                "       from TB_PROPOSAL_DATA " +
+                "  LEFT join TB_PROPOSAL_PHYSICAL_PERSON tppp on TB_PROPOSAL_DATA.proposal_type = 'F' and TB_PROPOSAL_DATA.id = tppp.ID_FILE_PROPOSAL_DTA" +
+                "  LEFT join TB_PRE_PROPOSAL_LEGAL_PERSON tpplp on TB_PROPOSAL_DATA.proposal_type = 'J' and TB_PROPOSAL_DATA.id = tpplp.id_file_proposal_dta" +
+                "  LEFT join TB_FILE_CONTROL TFC ON TFC.ID = TB_PROPOSAL_DATA.id_file_control" +
+                "  LEFT join tb_capture_solution TCS ON tcs.id_proposal_data = TB_PROPOSAL_DATA.ID" +
+                "  LEFT join tb_pre_proposal_status tpps on tpps.id = TB_PROPOSAL_DATA.status_id" +
+                "  LEFT join tb_proposal_cx_status tpcs on tpcs.status_id = tpps.id" +
+                "  LEFT JOIN TB_PROPOSAL_COMPANY_PARTNERS TPCP ON TPCP.ID_PROPOSAL_PJ_DTA = tpplp.id" +
+                "  LEFT JOIN TB_PRE_PROPOSAL_ADDRESS TPPA ON TPPA.ID_FILE_PROPOSAL_DTA = TB_PROPOSAL_DATA.ID" +
+                "  LEFT JOIN TB_CONTACT tc on tc.ID_PROPOSAL_DATA = TB_PROPOSAL_DATA.ID" +
+                "  LEFT JOIN TB_ACCOUNT_FREE taf on taf.ID_FILE_PROPOSAL_DTA = TB_PROPOSAL_DATA.ID" +
+                "  LEFT JOIN TB_BANK_ACCOUNT tba on tba.ID_FILE_PROPOSAL_DTA = TB_PROPOSAL_DATA.ID" +
+                "  left join TB_PRE_WORKING_DAY tpwa on tpwa.ID_PROPOSAL_DATA = TB_PROPOSAL_DATA.ID" +
+                "  WHERE tfc.INSTITUTION = :institution AND tfc.SERVICE_CONTRACT = :serviceContract ")*/
 })
+//@NamedNativeQuery(name = "getCompleteReport.count", query = "SELECT COUNT(TB_PROPOSAL_DATA.id) " +
+//        "       from TB_PROPOSAL_DATA " +
+//        "  LEFT join TB_PROPOSAL_PHYSICAL_PERSON tppp on TB_PROPOSAL_DATA.proposal_type = 'F' and TB_PROPOSAL_DATA.id = tppp.ID_FILE_PROPOSAL_DTA" +
+//        "  LEFT join TB_PRE_PROPOSAL_LEGAL_PERSON tpplp on TB_PROPOSAL_DATA.proposal_type = 'J' and TB_PROPOSAL_DATA.id = tpplp.id_file_proposal_dta" +
+//        "  LEFT join TB_FILE_CONTROL TFC ON TFC.ID = TB_PROPOSAL_DATA.id_file_control" +
+//        "  LEFT join tb_capture_solution TCS ON tcs.id_proposal_data = TB_PROPOSAL_DATA.ID" +
+//        "  LEFT join tb_pre_proposal_status tpps on tpps.id = TB_PROPOSAL_DATA.status_id" +
+//        "  LEFT join tb_proposal_cx_status tpcs on tpcs.status_id = tpps.id" +
+//        "  LEFT JOIN TB_PROPOSAL_COMPANY_PARTNERS TPCP ON TPCP.ID_PROPOSAL_PJ_DTA = tpplp.id" +
+//        "  LEFT JOIN TB_PRE_PROPOSAL_ADDRESS TPPA ON TPPA.ID_FILE_PROPOSAL_DTA = TB_PROPOSAL_DATA.ID" +
+//        "  LEFT JOIN TB_CONTACT tc on tc.ID_PROPOSAL_DATA = TB_PROPOSAL_DATA.ID" +
+//        "  LEFT JOIN TB_ACCOUNT_FREE taf on taf.ID_FILE_PROPOSAL_DTA = TB_PROPOSAL_DATA.ID" +
+//        "  LEFT JOIN TB_BANK_ACCOUNT tba on tba.ID_FILE_PROPOSAL_DTA = TB_PROPOSAL_DATA.ID" +
+//        "  left join TB_PRE_WORKING_DAY tpwa on tpwa.ID_PROPOSAL_DATA = TB_PROPOSAL_DATA.ID" +
+//        "  WHERE tfc.INSTITUTION = :institution AND tfc.SERVICE_CONTRACT = :serviceContract ")
 public class EProposalData {
 
     @Id
