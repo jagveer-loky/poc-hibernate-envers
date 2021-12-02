@@ -577,22 +577,22 @@ import javax.persistence.*;
                 "       tpps.CODE || '-' || tpps.PT_DESCRIPTION AS \"FISERVSTATUS\"," +
                 "       tpcs.code || '-' || tpcs.PT_DESCRIPTION AS \"CAIXASTATUS\"," +
                 "       tpcs.message_code || '-' || tpcs.message_description AS \"CAIXAMESSAGE\",         " +
-//                "       (" +
-//                "           SELECT LISTAGG" +
-//                "               (" +
-//                "                   (" +
-//                "                       CASE" +
-//                "                           WHEN TB_PRE_PROPOSAL_HISTORY_ERROR.FIELD IS NULL THEN " +
-//                "                               TB_PRE_PROPOSAL_HISTORY.STATUS || ': ' ||  TB_PRE_PROPOSAL_HISTORY_ERROR.MESSAGE" +
-//                "                           ELSE" +
-//                "                               TB_PRE_PROPOSAL_HISTORY.STATUS || '(' || TB_PRE_PROPOSAL_HISTORY_ERROR.FIELD || '): ' ||  TB_PRE_PROPOSAL_HISTORY_ERROR.MESSAGE " +
-//                "                       END" +
-//                "                   ), '; '" +
-//                "               ) WITHIN GROUP (ORDER BY TB_PRE_PROPOSAL_HISTORY.STATUS) \"ERRORS\"" +
-//                "           FROM TB_PRE_PROPOSAL_HISTORY" +
-//                "               LEFT OUTER JOIN TB_PRE_PROPOSAL_HISTORY_ERROR TB_PRE_PROPOSAL_HISTORY_ERROR on TB_PRE_PROPOSAL_HISTORY_ERROR.ID_PROPOSAL_HISTORY = TB_PRE_PROPOSAL_HISTORY.id" +
-//                "           WHERE TB_PRE_PROPOSAL_HISTORY.ID_PROPOSAL_DATA = TB_PROPOSAL_DATA.id AND TB_PRE_PROPOSAL_HISTORY.STATUS LIKE '%_ERROR'" +
-//                "       ) AS \"ERRORS\"," +
+                "       (" +
+                "           SELECT LISTAGG" +
+                "               (" +
+                "                   (" +
+                "                       CASE" +
+                "                           WHEN TB_PRE_PROPOSAL_HISTORY_ERROR.FIELD IS NULL THEN " +
+                "                               TB_PRE_PROPOSAL_HISTORY.STATUS || ': ' ||  TB_PRE_PROPOSAL_HISTORY_ERROR.MESSAGE" +
+                "                           ELSE" +
+                "                               TB_PRE_PROPOSAL_HISTORY.STATUS || '(' || TB_PRE_PROPOSAL_HISTORY_ERROR.FIELD || '): ' ||  TB_PRE_PROPOSAL_HISTORY_ERROR.MESSAGE " +
+                "                       END" +
+                "                   ), '; '" +
+                "               ) WITHIN GROUP (ORDER BY TB_PRE_PROPOSAL_HISTORY.STATUS) \"ERRORS\"" +
+                "           FROM TB_PRE_PROPOSAL_HISTORY" +
+                "               LEFT OUTER JOIN TB_PRE_PROPOSAL_HISTORY_ERROR TB_PRE_PROPOSAL_HISTORY_ERROR on TB_PRE_PROPOSAL_HISTORY_ERROR.ID_PROPOSAL_HISTORY = TB_PRE_PROPOSAL_HISTORY.id" +
+                "           WHERE TB_PRE_PROPOSAL_HISTORY.ID_PROPOSAL_DATA = TB_PROPOSAL_DATA.id AND TB_PRE_PROPOSAL_HISTORY.STATUS LIKE '%_ERROR'" +
+                "       ) AS \"ERRORS\"," +
                 "       TO_CHAR(TB_PROPOSAL_DATA.INSERTION_DATE, 'dd/MM/yyyy hh:mm')  AS \"INCLUDEIN\"," +
                 "       TO_CHAR(TB_PROPOSAL_DATA.CONCLUSION_DATE, 'dd/MM/yyyy hh:mm')  AS \"FINISHEDIN\"," +
                 "       TO_CHAR(TB_PROPOSAL_DATA.ONLINE_DATE, 'dd/MM/yyyy hh:mm') AS \"SUBMISSIONONLINEDATE\"," +
@@ -710,27 +710,27 @@ import javax.persistence.*;
                 "  LEFT JOIN TB_BANK_ACCOUNT tba on tba.ID_FILE_PROPOSAL_DTA = TB_PROPOSAL_DATA.ID" +
                 "  left join TB_PRE_WORKING_DAY tpwa on tpwa.ID_PROPOSAL_DATA = TB_PROPOSAL_DATA.ID" +
                 "  WHERE tfc.INSTITUTION = :institution " +
-                "       AND tfc.SERVICE_CONTRACT = :serviceContract "
-//             +   "       AND TB_PROPOSAL_DATA.INSERTION_DATE BETWEEN :initialDate AND :finalDate " +
-//                "       AND (" +
-//                "               (" +
-//                "                   (:notIn = 0) " +
-//                "                       AND (" +
-//                "                           COALESCE(:responsesTypes, NULL) IS NULL OR TB_PROPOSAL_DATA.response_type IN (:responsesTypes)" +
-//                "                       )" +
-//                "               )" +
-//                "           OR" +
-//                "               (" +
-//                "                   (:notIn = 1) " +
-//                "                       AND (" +
-//                "                           COALESCE(:responsesTypes, NULL) IS NULL OR TB_PROPOSAL_DATA.response_type NOT IN (:responsesTypes)" +
-//                "                       )" +
-//                "               )" +
-//                "       )" +
-//                "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))"
-                , resultSetMapping = "completeReportMapping"),/*
-        @NamedNativeQuery(name = "getCompleteReport.count", query = "SELECT COUNT(TB_PROPOSAL_DATA.id) " +
-                "       from TB_PROPOSAL_DATA " +
+                "       AND tfc.SERVICE_CONTRACT = :serviceContract " +
+                "       AND TB_PROPOSAL_DATA.INSERTION_DATE BETWEEN :initialDate AND :finalDate " +
+                "       AND (" +
+                "               (" +
+                "                   (:notIn = 0) " +
+                "                       AND (" +
+                "                           COALESCE(:responsesTypes, NULL) IS NULL OR TB_PROPOSAL_DATA.response_type IN (:responsesTypes)" +
+                "                       )" +
+                "               )" +
+                "           OR" +
+                "               (" +
+                "                   (:notIn = 1) " +
+                "                       AND (" +
+                "                           COALESCE(:responsesTypes, NULL) IS NULL OR TB_PROPOSAL_DATA.response_type NOT IN (:responsesTypes)" +
+                "                       )" +
+                "               )" +
+                "       )" +
+                "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))"
+                , resultSetMapping = "completeReportMapping"),
+        @NamedNativeQuery(name = "getCountCompleteReport", query = "SELECT COUNT(TB_PROPOSAL_DATA.id) " +
+                "       FROM TB_PROPOSAL_DATA" +
                 "  LEFT join TB_PROPOSAL_PHYSICAL_PERSON tppp on TB_PROPOSAL_DATA.proposal_type = 'F' and TB_PROPOSAL_DATA.id = tppp.ID_FILE_PROPOSAL_DTA" +
                 "  LEFT join TB_PRE_PROPOSAL_LEGAL_PERSON tpplp on TB_PROPOSAL_DATA.proposal_type = 'J' and TB_PROPOSAL_DATA.id = tpplp.id_file_proposal_dta" +
                 "  LEFT join TB_FILE_CONTROL TFC ON TFC.ID = TB_PROPOSAL_DATA.id_file_control" +
@@ -743,23 +743,26 @@ import javax.persistence.*;
                 "  LEFT JOIN TB_ACCOUNT_FREE taf on taf.ID_FILE_PROPOSAL_DTA = TB_PROPOSAL_DATA.ID" +
                 "  LEFT JOIN TB_BANK_ACCOUNT tba on tba.ID_FILE_PROPOSAL_DTA = TB_PROPOSAL_DATA.ID" +
                 "  left join TB_PRE_WORKING_DAY tpwa on tpwa.ID_PROPOSAL_DATA = TB_PROPOSAL_DATA.ID" +
-                "  WHERE tfc.INSTITUTION = :institution AND tfc.SERVICE_CONTRACT = :serviceContract ")*/
+                "  WHERE tfc.INSTITUTION = :institution " +
+                "       AND tfc.SERVICE_CONTRACT = :serviceContract " +
+                "       AND TB_PROPOSAL_DATA.INSERTION_DATE BETWEEN :initialDate AND :finalDate " +
+                "       AND (" +
+                "               (" +
+                "                   (:notIn = 0) " +
+                "                       AND (" +
+                "                           COALESCE(:responsesTypes, NULL) IS NULL OR TB_PROPOSAL_DATA.response_type IN (:responsesTypes)" +
+                "                       )" +
+                "               )" +
+                "           OR" +
+                "               (" +
+                "                   (:notIn = 1) " +
+                "                       AND (" +
+                "                           COALESCE(:responsesTypes, NULL) IS NULL OR TB_PROPOSAL_DATA.response_type NOT IN (:responsesTypes)" +
+                "                       )" +
+                "               )" +
+                "       )" +
+                "       AND (COALESCE(:status, NULL) IS NULL OR tpps.CODE in (:status))")
 })
-//@NamedNativeQuery(name = "getCompleteReport.count", query = "SELECT COUNT(TB_PROPOSAL_DATA.id) " +
-//        "       from TB_PROPOSAL_DATA " +
-//        "  LEFT join TB_PROPOSAL_PHYSICAL_PERSON tppp on TB_PROPOSAL_DATA.proposal_type = 'F' and TB_PROPOSAL_DATA.id = tppp.ID_FILE_PROPOSAL_DTA" +
-//        "  LEFT join TB_PRE_PROPOSAL_LEGAL_PERSON tpplp on TB_PROPOSAL_DATA.proposal_type = 'J' and TB_PROPOSAL_DATA.id = tpplp.id_file_proposal_dta" +
-//        "  LEFT join TB_FILE_CONTROL TFC ON TFC.ID = TB_PROPOSAL_DATA.id_file_control" +
-//        "  LEFT join tb_capture_solution TCS ON tcs.id_proposal_data = TB_PROPOSAL_DATA.ID" +
-//        "  LEFT join tb_pre_proposal_status tpps on tpps.id = TB_PROPOSAL_DATA.status_id" +
-//        "  LEFT join tb_proposal_cx_status tpcs on tpcs.status_id = tpps.id" +
-//        "  LEFT JOIN TB_PROPOSAL_COMPANY_PARTNERS TPCP ON TPCP.ID_PROPOSAL_PJ_DTA = tpplp.id" +
-//        "  LEFT JOIN TB_PRE_PROPOSAL_ADDRESS TPPA ON TPPA.ID_FILE_PROPOSAL_DTA = TB_PROPOSAL_DATA.ID" +
-//        "  LEFT JOIN TB_CONTACT tc on tc.ID_PROPOSAL_DATA = TB_PROPOSAL_DATA.ID" +
-//        "  LEFT JOIN TB_ACCOUNT_FREE taf on taf.ID_FILE_PROPOSAL_DTA = TB_PROPOSAL_DATA.ID" +
-//        "  LEFT JOIN TB_BANK_ACCOUNT tba on tba.ID_FILE_PROPOSAL_DTA = TB_PROPOSAL_DATA.ID" +
-//        "  left join TB_PRE_WORKING_DAY tpwa on tpwa.ID_PROPOSAL_DATA = TB_PROPOSAL_DATA.ID" +
-//        "  WHERE tfc.INSTITUTION = :institution AND tfc.SERVICE_CONTRACT = :serviceContract ")
 public class EProposalData {
 
     @Id

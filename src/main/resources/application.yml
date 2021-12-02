@@ -30,10 +30,5 @@ management:
     logfile:
       enabled: true
 
-org:
-  jobrunr:
-    background-job-server:
-      enabled: true
-
 reports:
   days-to-expire: 1

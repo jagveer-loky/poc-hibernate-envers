@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -17,6 +18,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 @Repository
+@Transactional(readOnly = true)
 public interface ProposalRepository extends JpaRepository<EProposalData, Long> {
 
     /**
@@ -104,35 +106,34 @@ public interface ProposalRepository extends JpaRepository<EProposalData, Long> {
      * @param responsesTypes  Collection<String>
      * @param status          Collection<String>
      * @return Stream<CompleteReport>
-     */
-    @Query(name = "getCompleteReport", /*countName = "getCompleteReport.count",*/  nativeQuery = true)
-    Page<CompleteReport> getCompleteReport(@Param("institution") final String institution,
-                                           @Param("serviceContract") final String serviceContract,
-                                           /*@Param("initialDate") final LocalDate initialDate,
-                                           @Param("finalDate") final LocalDate finalDate,
-                                           @Param("notIn") final boolean notIn,
-                                           @Param("responsesTypes") final Collection<String> responsesTypes,
-                                           @Param("status") final Collection<String> status,*/
-                                           Pageable page);
+     */@Transactional(readOnly = true)
+    @Query(name = "getCompleteReport", nativeQuery = true)
+    Stream<CompleteReport> getCompleteReport(@Param("institution") final String institution,
+                                             @Param("serviceContract") final String serviceContract,
+                                             @Param("initialDate") final LocalDate initialDate,
+                                             @Param("finalDate") final LocalDate finalDate,
+                                             @Param("notIn") final boolean notIn,
+                                             @Param("responsesTypes") final Collection<String> responsesTypes,
+                                             @Param("status") final Collection<String> status);
 
-//    /**
-//     * @param institution     String
-//     * @param serviceContract String
-//     * @param initialDate     LocalDate
-//     * @param finalDate       LocalDate
-//     * @param notIn           Boolean
-//     * @param responsesTypes  Collection<String>
-//     * @param status          Collection<String>
-//     * @return int
-//     */
-//    @Query(name = "getCompleteReport.count", nativeQuery = true)
-//    int getCountCompleteReport(@Param("institution") final String institution,
-//                               @Param("serviceContract") final String serviceContract,
-//                               @Param("initialDate") final LocalDate initialDate,
-//                               @Param("finalDate") final LocalDate finalDate,
-//                               @Param("notIn") final boolean notIn,
-//                               @Param("responsesTypes") final Collection<String> responsesTypes,
-//                               @Param("status") final Collection<String> status);
+    /**
+     * @param institution     String
+     * @param serviceContract String
+     * @param initialDate     LocalDate
+     * @param finalDate       LocalDate
+     * @param notIn           Boolean
+     * @param responsesTypes  Collection<String>
+     * @param status          Collection<String>
+     * @return int
+     */
+    @Query(name = "getCountCompleteReport", nativeQuery = true)
+    int getCountCompleteReport(@Param("institution") final String institution,
+                               @Param("serviceContract") final String serviceContract,
+                               @Param("initialDate") final LocalDate initialDate,
+                               @Param("finalDate") final LocalDate finalDate,
+                               @Param("notIn") final boolean notIn,
+                               @Param("responsesTypes") final Collection<String> responsesTypes,
+                               @Param("status") final Collection<String> status);
 
 
     @Query(value = "SELECT link" +

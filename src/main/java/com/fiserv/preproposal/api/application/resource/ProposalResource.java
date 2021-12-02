@@ -2,7 +2,6 @@ package com.fiserv.preproposal.api.application.resource;
 
 import com.fiserv.preproposal.api.domain.service.ProposalService;
 import lombok.RequiredArgsConstructor;
-import org.jobrunr.scheduling.BackgroundJob;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -18,12 +17,14 @@ public class ProposalResource {
     private final ProposalService proposalService;
 
     /**
+     * TODO rodar assincrono
+     *
      * @param ids Set<Long>
      * @return Boolean
      */
     @PostMapping("reload")
     public Boolean reloadLinkPayments(@RequestBody final Set<Long> ids) {
-        BackgroundJob.enqueue(() -> proposalService.reloadLinkPayments(ids));
+        proposalService.reloadLinkPayments(ids);
         return true;
     }
 
@@ -36,11 +37,13 @@ public class ProposalResource {
     }
 
     /**
-     * @return Set<Long>
+     * TODO rodar assincrono
+     *
+     * @return Boolean
      */
     @GetMapping("reload")
     public Boolean getAndReloadLinksPayments() {
-        BackgroundJob.enqueue(proposalService::getAndReloadLinksPayments);
+        proposalService.getAndReloadLinksPayments();
         return true;
     }
 

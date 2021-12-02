@@ -38,7 +38,6 @@
         <hibernate.version>5.6.1.Final</hibernate.version>
 
         <univocity-parsers.version>2.9.1</univocity-parsers.version>
-        <jobrunr-spring-boot-starter.version>3.2.1</jobrunr-spring-boot-starter.version>
 
     </properties>
 
@@ -187,12 +186,6 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-security</artifactId>
             <version>${springdoc-openapi.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jobrunr</groupId>
-            <artifactId>jobrunr-spring-boot-starter</artifactId>
-            <version>${jobrunr-spring-boot-starter.version}</version>
         </dependency>
 
         <!-- quartz -->

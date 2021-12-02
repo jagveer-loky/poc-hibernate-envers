@@ -9,6 +9,8 @@ import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
 import lombok.Getter;
 import lombok.NonNull;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,11 @@ import static com.fiserv.preproposal.api.infrastrucutre.aid.util.MessageSourceUt
 public class ReportProcessorService {
 
     /**
+     *
+     */
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    /**
      * Aux var to store the status of the individual processing report
      */
     @Getter
@@ -51,83 +58,74 @@ public class ReportProcessorService {
      * @param output                 IReport implementation from ERport
      * @param nextLineOutputReport   Consumer<IReport>
      * @param doneReportOutputReport Consumer<IReport> in the end of the process, update EReport register on database with the file saved in the system file.
-     * @param lineErrorConsumer      Consumer<Exception>
-     * @param generalErrorConsumer   Consumer<Exception>
      */
     @Transactional
-    public void convertToCSV(@NonNull final Stream<?> stream, final IInputReport input, final IOutputReport output, final Consumer<IOutputReport> nextLineOutputReport, final Consumer<IOutputReport> doneReportOutputReport, final Consumer<IOutputReport> lineErrorConsumer, final Consumer<IOutputReport> generalErrorConsumer) {
+    public void convertToCSV(@NonNull final Stream<?> stream, final IInputReport input, final IOutputReport output, final Consumer<IOutputReport> nextLineOutputReport, final Consumer<IOutputReport> doneReportOutputReport) throws InstantiationException, IllegalAccessException {
 
-        try {
-
-            if (output.getCountLines() == 0) {
-                if (input.getRequester().equals(EReport.SYSTEM_USER))
-                    throw new RuntimeException("Nenhum registro encontrado para a data " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(LocalDate.now().minusDays(1)));
-                throw new RuntimeException("Nenhum registro encontrado para essa solicitação, revise os filtros e tente novamente!");
-            }
-
-            final CsvWriterSettings writerSettings = new CsvWriterSettings();
-            writerSettings.getFormat().setLineSeparator("\r\n");
-            writerSettings.getFormat().setDelimiter(';');
-            writerSettings.setQuoteAllFields(true);
-            writerSettings.setColumnReorderingEnabled(true);
-            writerSettings.setHeaderWritingEnabled(true);
-            writerSettings.setHeaders(ListUtil.toArray(input.getFields()));
-            writerSettings.excludeFields(extractFieldsToIgnore(output, ListUtil.toArray(input.getFields())));
-
-            writerSettings.setRowWriterProcessor(new BeanWriterProcessor<>(output.getType().getType()));
-
-            final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            final CsvWriter csvWriter = new CsvWriter(byteArrayOutputStream, writerSettings);
-
-            stream.forEach(object -> {
-
-                try {
-
-                    // *** Next line flux
-                    // Writing in file
-                    csvWriter.processRecord(new Normalizer<>().normalize(object));
-
-                    // Save the old percentage
-                    final int oldPercentage = output.getConcludedPercentage();
-
-                    // Set the current line
-                    output.setCurrentLine((int) (csvWriter.getRecordCount()));
-
-                    // Calculate the new percentage
-                    output.calculatePercentage();
-
-                    // If the current percentage is different from the previous percentage, and the current percentage is the exact divisor of the divisor., then
-                    if (output.getConcludedPercentage() != oldPercentage && output.getConcludedPercentage() % output.getType().getDivisorToSave() == 0) {
-
-                        // Populate the loading
-                        loadings.put(output.getId(), output.getConcludedPercentage());
-
-                        // If concluded percentage is 100%,
-                        if (output.getConcludedPercentage().equals(100)) {
-                            // Read byte array from file
-                            output.setContent(byteArrayOutputStream.toByteArray());
-                            // Emmit done event
-                            doneReportOutputReport.accept(output);
-                        } else
-                            // Emmit next line event
-                            nextLineOutputReport.accept(output);
-
-                    }
-                } catch (final Exception e) {
-                    // *** Error in line flux
-                    e.printStackTrace();
-                    lineErrorConsumer.accept(output);
-                }
-            });
-
-            // *** Done flux
-            // Close writer
-            csvWriter.close();
-        } catch (final Exception e) {
-            // *** General error flux
-            e.printStackTrace();
-            output.setError(cropMessage(e.getMessage(), 254));
-            generalErrorConsumer.accept(output);
+        if (output.getCountLines() == 0) {
+            if (input.getRequester().equals(EReport.SYSTEM_USER))
+                throw new RuntimeException("Nenhum registro encontrado para a data " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(LocalDate.now().minusDays(1)));
+            throw new RuntimeException("Nenhum registro encontrado para essa solicitação, revise os filtros e tente novamente!");
         }
+
+        final CsvWriterSettings writerSettings = new CsvWriterSettings();
+        writerSettings.getFormat().setLineSeparator("\r\n");
+        writerSettings.getFormat().setDelimiter(';');
+        writerSettings.setQuoteAllFields(true);
+        writerSettings.setColumnReorderingEnabled(true);
+        writerSettings.setHeaderWritingEnabled(true);
+        writerSettings.setHeaders(ListUtil.toArray(input.getFields()));
+        writerSettings.excludeFields(extractFieldsToIgnore(output, ListUtil.toArray(input.getFields())));
+
+        writerSettings.setRowWriterProcessor(new BeanWriterProcessor<>(output.getType().getType()));
+
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        final CsvWriter csvWriter = new CsvWriter(byteArrayOutputStream, writerSettings);
+
+        stream.forEach(object -> {
+
+            try {
+
+                // *** Next line flux
+                // Writing in file
+                csvWriter.processRecord(new Normalizer<>().normalize(object));
+
+                // Save the old percentage
+                final int oldPercentage = output.getConcludedPercentage();
+
+                // Set the current line
+                output.setCurrentLine((int) (csvWriter.getRecordCount()));
+
+                // Calculate the new percentage
+                output.calculatePercentage();
+
+                // If the current percentage is different from the previous percentage, and the current percentage is the exact divisor of the divisor., then
+                if (output.getConcludedPercentage() != oldPercentage && output.getConcludedPercentage() % output.getType().getDivisorToSave() == 0) {
+
+                    // Populate the loading
+                    loadings.put(output.getId(), output.getConcludedPercentage());
+
+                    // Emmit next line event
+                    nextLineOutputReport.accept(output);
+
+                }
+            } catch (final Exception e) {
+                // *** Error in line flux
+                // Logging
+                e.printStackTrace();
+                LOGGER.info("ERROR IN " + output.getType() + " REPORT " + output.getId() + " - LINE: " + output.getCurrentLine());
+                // Emmit next line event
+                nextLineOutputReport.accept(output);
+            }
+        });
+
+        // *** Done flux
+        // After then running the stream.
+        // Read byte array from file
+        output.setContent(byteArrayOutputStream.toByteArray());
+        // Emmit done event
+        doneReportOutputReport.accept(output);
+        // Close writer
+        csvWriter.close();
     }
 }

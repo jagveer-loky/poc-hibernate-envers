@@ -6,19 +6,25 @@ import com.fiserv.preproposal.api.domain.entity.EReport;
 import com.fiserv.preproposal.api.domain.entity.TypeReport;
 import com.fiserv.preproposal.api.domain.service.report.ReportService;
 import com.fiserv.preproposal.api.domain.service.report.ThreadService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.jobrunr.scheduling.BackgroundJob;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @RestController
+@Transactional/*(readOnly = true)*/
 @RequiredArgsConstructor
 @RequestMapping("/reports")
 public class ReportResource {
@@ -26,9 +32,23 @@ public class ReportResource {
     /**
      *
      */
+    private final static String DATE_PATTERN = "dd/MM/yyyy";
+
+    /**
+     *
+     */
     private final ReportService reportService;
 
-    private final ThreadService threadService;
+    /**
+     *
+     */
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    /**
+     *
+     */
+    @Getter
+    private final ExecutorService executorService = Executors.newFixedThreadPool(50);
 
     /**
      * @return Boolean
@@ -56,26 +76,40 @@ public class ReportResource {
      * @param reportParams ReportParams
      * @return Long
      */
-    @Transactional(readOnly = true)
     @PostMapping(TypeReport.BASIC_VALUE)
     public Long createBasicReport(@RequestBody final ReportParams reportParams) {
 
         reportParams.setType(TypeReport.BASIC);
 
-        return reportService.createBasicReport(reportParams);
+        final EReport eReport = reportService.save(EReport.createFrom(reportParams));
+
+        eReport.setCountLines(reportService.getCountBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
+
+        executorService.execute(() -> reportService.createBasicReport(reportParams, reportService.save(eReport)));
+
+        return eReport.getId();
 
     }
+
+
 
     /**
      * @param reportParams ReportParams
      * @return Long
      */
+    @Transactional/*(readOnly = true)*/
     @PostMapping(TypeReport.COMPLETE_VALUE)
     public Long createCompleteReport(@RequestBody final ReportParams reportParams) {
 
         reportParams.setType(TypeReport.COMPLETE);
 
-        return reportService.createCompleteReport(reportParams);
+        final EReport eReport = reportService.save(EReport.createFrom(reportParams));
+
+        eReport.setCountLines(reportService.getCountCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
+
+        executorService.execute(() -> reportService.createCompleteReport(reportParams, reportService.save(eReport)));
+
+        return eReport.getId();
 
     }
 
@@ -90,7 +124,9 @@ public class ReportResource {
 
         final EReport eReport = reportService.save(EReport.createFrom(reportParams));
 
-        BackgroundJob.enqueue(() -> reportService.startQuantitativeReport(reportParams, eReport));
+        eReport.setCountLines(reportService.getCountQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
+
+        executorService.execute(() -> reportService.createQuantitativeReport(reportParams, reportService.save(eReport)));
 
         return eReport.getId();
     }

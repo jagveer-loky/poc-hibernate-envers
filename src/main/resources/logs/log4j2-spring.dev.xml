@@ -40,7 +40,6 @@
             <AppenderRef ref="RollingFile" />
         </Root>
 
-        <Logger name="org.jobrunr" level="INFO"/>
         <Logger name="com.fiserv" level="INFO"/>
 
     </Loggers>

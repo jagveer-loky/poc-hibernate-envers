@@ -10,6 +10,7 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 @Configuration
 //@PropertySource(name="application", value="classpath:application-uat.properties")
@@ -43,6 +44,11 @@ public class RedisConfiguration {
     }
 
     @Bean
+    public StringRedisTemplate stringRedisTemplate() {
+        return new StringRedisTemplate(jedisConnectionFactory());
+    }
+
+    @Bean
     public HashOperations hashConfig() {
         final RedisTemplate<String, String> template = redisTemplate();
         return template.opsForHash();
@@ -51,7 +57,7 @@ public class RedisConfiguration {
     @Bean
     public RedissonClient createRedisson() {
         final Config config = new Config();
-        config.useSingleServer().setAddress(type+"://"+host+":"+port).setPassword(password);
+        config.useSingleServer().setAddress(type + "://" + host + ":" + port).setPassword(password);
         return Redisson.create(config);
     }
 

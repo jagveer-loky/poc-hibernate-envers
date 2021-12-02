@@ -5,15 +5,10 @@ server:
 
 spring:
   datasource:
-    url: jdbc:oracle:thin:@recdbp1.1dc.com:1521:RECPROD
-    username: PRE_PROPOSAL
-    password: proposal#23672
-#    driver-class-name: oracle.jdbc.OracleDriver
-#  datasource:
-#    url: jdbc:oracle:thin:@recdbc1.1dc.com:1521:RECCAT?cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
-#    username: PRE_PROPOSAL_UAT
-#    password: proposal#91232
-#    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@recdbc1.1dc.com:1521:RECCAT?cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
+    username: PRE_PROPOSAL_UAT
+    password: proposal#91232
+    driver-class-name: oracle.jdbc.OracleDriver
   jpa:
     properties:
       hibernate:
@@ -38,11 +33,6 @@ cors:
 springdoc:
   swagger-ui:
     url: /v3/api-docs/
-
-org:
-  jobrunr:
-    dashboard:
-      enabled: true
 
 logging:
   config: classpath:logs/log4j2-spring.dev.xml

@@ -6,7 +6,6 @@ import com.fiserv.preproposal.api.domain.repository.ProposalHistoryRepository;
 import com.fiserv.preproposal.api.domain.repository.ProposalRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jobrunr.jobs.annotations.Job;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -33,7 +32,6 @@ public class ProposalService {
      * @param ids Set<Long>
      */
     @Transactional
-    @Job(name = "reloadLinkPayments")
     public void reloadLinkPayments(final Set<Long> ids) {
         ids.forEach(id -> proposalRepository.findById(id).ifPresent(eProposalData -> {
 
