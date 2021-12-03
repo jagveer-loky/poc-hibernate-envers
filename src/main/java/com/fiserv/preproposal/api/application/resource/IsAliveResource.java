@@ -1,16 +1,12 @@
 package com.fiserv.preproposal.api.application.resource;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.time.ZoneId;
-
 import com.fiserv.preproposal.api.application.pagination.DResponse;
-import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ResponsesAndExceptionEnum;
-import com.fiserv.preproposal.api.infrastrucutre.aid.util.DateUtil;
-import com.fiserv.preproposal.api.infrastrucutre.aid.util.MessageSourceUtil;
 import com.fiserv.preproposal.api.domain.dtos.GitRespDTO;
 import com.fiserv.preproposal.api.domain.dtos.MessageSourceDTO;
 import com.fiserv.preproposal.api.domain.repository.git.IGitRepository;
+import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ResponsesAndExceptionEnum;
+import com.fiserv.preproposal.api.infrastrucutre.aid.util.DateUtil;
+import com.fiserv.preproposal.api.infrastrucutre.aid.util.MessageSourceUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,6 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.net.InetAddress;
+import java.time.ZoneId;
 
 @RestController
 @RequestMapping("/isAlive")

@@ -1,12 +1,11 @@
 package com.fiserv.preproposal.api.application.pagination;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 @AllArgsConstructor
 @Getter

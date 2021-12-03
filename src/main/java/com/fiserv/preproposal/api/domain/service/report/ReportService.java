@@ -1,7 +1,10 @@
 package com.fiserv.preproposal.api.domain.service.report;
 
 import com.fiserv.preproposal.api.application.exceptions.NotFoundException;
-import com.fiserv.preproposal.api.domain.dtos.*;
+import com.fiserv.preproposal.api.domain.dtos.BasicReport;
+import com.fiserv.preproposal.api.domain.dtos.CompleteReport;
+import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
+import com.fiserv.preproposal.api.domain.dtos.ReportParams;
 import com.fiserv.preproposal.api.domain.entity.EReport;
 import com.fiserv.preproposal.api.domain.entity.TypeReport;
 import com.fiserv.preproposal.api.domain.repository.ProposalRepository;
@@ -24,6 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static com.fiserv.preproposal.api.application.runnable.ThreadsComponent.execute;
 import static com.fiserv.preproposal.api.domain.entity.EReport.*;
 import static com.fiserv.preproposal.api.infrastrucutre.aid.util.MessageSourceUtil.cropMessage;
 
@@ -160,17 +164,13 @@ public class ReportService {
     }
 
     /**
-     * Save with async mode the entity in the database.
-     * Used to update percentage in database.
+     * Used ONLY to update percentage in redis database.
      *
      * @param output IOutputReport
      */
     public void next(final IOutputReport output) {
-        if (ReportProcessorService.getLoadings().get(output.getId()) <= output.getConcludedPercentage()) {
-//            save(output);
-            stringRedisTemplate.opsForValue().set(output.getId().toString(), output.getCurrentLine().toString());
-            LOGGER.info(output.getConcludedPercentage() + "% OF " + output.getId() + " " + output.getType() + " REPORT IS DONE! (THIS REPORT WAS REQUESTED IN " + DateTimeFormatter.ofPattern(DATE_PATTERN + " " + TIME_PATTERN).format(output.getRequestedDate()) + ")");
-        }
+        stringRedisTemplate.opsForValue().set(output.getId().toString(), output.getCurrentLine().toString());
+        LOGGER.info(output.getConcludedPercentage() + "% OF " + output.getId() + " " + output.getType() + " REPORT IS DONE! (THIS REPORT WAS REQUESTED IN " + DateTimeFormatter.ofPattern(DATE_PATTERN + " " + TIME_PATTERN).format(output.getRequestedDate()) + ")");
     }
 
     /**
@@ -185,14 +185,12 @@ public class ReportService {
     }
 
     /**
-     * TODO
      * Save with NON async mode the entity in the database.
      * Used to save general/critical error of the file processing in the database.
      *
      * @param output IOutputReport
      */
     public void error(final IOutputReport output) {
-        stringRedisTemplate.opsForValue().set(output.getId().toString(), output.getCurrentLine().toString());
         save(output);
         LOGGER.info(" REPORT " + output.getId() + " PRESENT A GENERAL ERROR: " + output.getError());
     }
@@ -283,7 +281,7 @@ public class ReportService {
     }
 
     /**
-     *
+     * TODO testar
      */
     public void generateReports(final LocalDate now) {
 
@@ -300,17 +298,20 @@ public class ReportService {
         reportParams.setType(TypeReport.BASIC);
         reportParams.setFields(new BasicReport().extractFields());
         final EReport basicReport = save(EReport.createFrom(reportParams));
-// TODO       BackgroundJob.enqueue(() -> createBasicReport(reportParams, basicReport));
+        basicReport.setCountLines(getCountBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
+        execute(() -> createBasicReport(reportParams, save(basicReport)));
 
         reportParams.setType(TypeReport.COMPLETE);
         reportParams.setFields(new CompleteReport().extractFields());
         final EReport completeReport = save(EReport.createFrom(reportParams));
-        // TODO   BackgroundJob.enqueue(() -> createCompleteReport(reportParams, completeReport));
+        completeReport.setCountLines(getCountCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
+        execute(() -> createCompleteReport(reportParams, save(completeReport)));
 
         reportParams.setType(TypeReport.QUANTITATIVE);
         reportParams.setFields(new QuantitativeReport().extractFields());
         final EReport quantitativeReport = save(EReport.createFrom(reportParams));
-        // TODO   BackgroundJob.enqueue(() -> startQuantitativeReport(reportParams, quantitativeReport));
+        quantitativeReport.setCountLines(getCountQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
+        execute(() -> createQuantitativeReport(reportParams, save(quantitativeReport)));
 
     }
 

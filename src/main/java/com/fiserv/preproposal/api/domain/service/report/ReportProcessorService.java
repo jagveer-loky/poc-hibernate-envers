@@ -7,41 +7,35 @@ import com.fiserv.preproposal.api.infrastrucutre.normalizer.Normalizer;
 import com.univocity.parsers.common.processor.BeanWriterProcessor;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
-import lombok.Getter;
 import lombok.NonNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.fiserv.preproposal.api.infrastrucutre.aid.util.MessageSourceUtil.cropMessage;
-
 @Service
 public class ReportProcessorService {
+
+    @Value("${reports.temp-output}")
+    private String tempOutput;
 
     /**
      *
      */
     private static final Logger LOGGER = LogManager.getLogger();
-
-    /**
-     * Aux var to store the status of the individual processing report
-     */
-    @Getter
-    private static final HashMap<Long, Integer> loadings = new HashMap<>();
 
     /**
      * @param fields String[]
@@ -60,7 +54,7 @@ public class ReportProcessorService {
      * @param doneReportOutputReport Consumer<IReport> in the end of the process, update EReport register on database with the file saved in the system file.
      */
     @Transactional
-    public void convertToCSV(@NonNull final Stream<?> stream, final IInputReport input, final IOutputReport output, final Consumer<IOutputReport> nextLineOutputReport, final Consumer<IOutputReport> doneReportOutputReport) throws InstantiationException, IllegalAccessException {
+    public void convertToCSV(@NonNull final Stream<?> stream, final IInputReport input, final IOutputReport output, final Consumer<IOutputReport> nextLineOutputReport, final Consumer<IOutputReport> doneReportOutputReport) throws InstantiationException, IllegalAccessException, IOException {
 
         if (output.getCountLines() == 0) {
             if (input.getRequester().equals(EReport.SYSTEM_USER))
@@ -79,8 +73,8 @@ public class ReportProcessorService {
 
         writerSettings.setRowWriterProcessor(new BeanWriterProcessor<>(output.getType().getType()));
 
-        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        final CsvWriter csvWriter = new CsvWriter(byteArrayOutputStream, writerSettings);
+        final File file = new File(tempOutput + "/" + UUID.randomUUID() + ".csv");
+        final CsvWriter csvWriter = new CsvWriter(file, writerSettings);
 
         stream.forEach(object -> {
 
@@ -100,19 +94,16 @@ public class ReportProcessorService {
                 output.calculatePercentage();
 
                 // If the current percentage is different from the previous percentage, and the current percentage is the exact divisor of the divisor., then
-                if (output.getConcludedPercentage() != oldPercentage && output.getConcludedPercentage() % output.getType().getDivisorToSave() == 0) {
-
-                    // Populate the loading
-                    loadings.put(output.getId(), output.getConcludedPercentage());
+                if (output.getConcludedPercentage() != oldPercentage && output.getConcludedPercentage() % output.getType().getDivisorToSave() == 0)
 
                     // Emmit next line event
                     nextLineOutputReport.accept(output);
 
-                }
             } catch (final Exception e) {
                 // *** Error in line flux
-                // Logging
+                // Show de stack trace
                 e.printStackTrace();
+                // Logging
                 LOGGER.info("ERROR IN " + output.getType() + " REPORT " + output.getId() + " - LINE: " + output.getCurrentLine());
                 // Emmit next line event
                 nextLineOutputReport.accept(output);
@@ -122,10 +113,12 @@ public class ReportProcessorService {
         // *** Done flux
         // After then running the stream.
         // Read byte array from file
-        output.setContent(byteArrayOutputStream.toByteArray());
+        output.setContent(Files.readAllBytes(file.toPath()));
         // Emmit done event
         doneReportOutputReport.accept(output);
         // Close writer
         csvWriter.close();
+        // Delete de tmp file
+        Files.deleteIfExists(file.toPath());
     }
 }

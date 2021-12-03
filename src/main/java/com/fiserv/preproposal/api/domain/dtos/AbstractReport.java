@@ -1,7 +1,7 @@
 package com.fiserv.preproposal.api.domain.dtos;
 
-import com.fiserv.preproposal.api.infrastrucutre.aid.reflection.Reflection;
 import com.fiserv.preproposal.api.application.annotation.Index;
+import com.fiserv.preproposal.api.infrastrucutre.aid.reflection.Reflection;
 import com.univocity.parsers.annotations.Parsed;
 
 import java.util.*;

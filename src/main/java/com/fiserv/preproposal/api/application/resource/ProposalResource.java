@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
+import static com.fiserv.preproposal.api.application.runnable.ThreadsComponent.execute;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("links-payments")
@@ -17,14 +19,12 @@ public class ProposalResource {
     private final ProposalService proposalService;
 
     /**
-     * TODO rodar assincrono
-     *
      * @param ids Set<Long>
      * @return Boolean
      */
     @PostMapping("reload")
     public Boolean reloadLinkPayments(@RequestBody final Set<Long> ids) {
-        proposalService.reloadLinkPayments(ids);
+        execute(() -> proposalService.reloadLinkPayments(ids));
         return true;
     }
 
@@ -37,13 +37,11 @@ public class ProposalResource {
     }
 
     /**
-     * TODO rodar assincrono
-     *
      * @return Boolean
      */
     @GetMapping("reload")
     public Boolean getAndReloadLinksPayments() {
-        proposalService.getAndReloadLinksPayments();
+        execute(proposalService::getAndReloadLinksPayments);
         return true;
     }
 

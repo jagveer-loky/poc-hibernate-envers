@@ -31,4 +31,6 @@ management:
       enabled: true
 
 reports:
+  threads:
+    pool: 10
   days-to-expire: 1

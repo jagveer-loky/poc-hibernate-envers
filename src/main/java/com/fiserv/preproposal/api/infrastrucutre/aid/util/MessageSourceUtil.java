@@ -1,13 +1,12 @@
 package com.fiserv.preproposal.api.infrastrucutre.aid.util;
 
-import java.util.Locale;
-
+import com.fiserv.preproposal.api.domain.dtos.MessageSourceDTO;
 import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ResponsesAndExceptionEnum;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
-
-import com.fiserv.preproposal.api.domain.dtos.MessageSourceDTO;
 import org.springframework.util.Assert;
+
+import java.util.Locale;
 
 @Component
 public class MessageSourceUtil {

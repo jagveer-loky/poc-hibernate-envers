@@ -1,8 +1,16 @@
 package com.fiserv.preproposal.api.application.config.security.filter;
 
-import java.io.IOException;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+import com.fiserv.preproposal.api.application.config.security.FDSecurity;
+import com.fiserv.preproposal.api.application.config.security.FDSecurityEnum;
+import com.fiserv.preproposal.api.application.exceptions.FDSecurityException;
+import com.fiserv.preproposal.api.application.pagination.DSecurity;
+import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ApplicationEnum;
+import com.fiserv.preproposal.api.infrastrucutre.aid.enums.EventActivityEnum;
+import com.fiserv.preproposal.api.infrastrucutre.aid.util.LogUtil;
+import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -10,19 +18,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.fiserv.preproposal.api.application.pagination.DSecurity;
-import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ApplicationEnum;
-import com.fiserv.preproposal.api.infrastrucutre.aid.enums.EventActivityEnum;
-import com.fiserv.preproposal.api.infrastrucutre.aid.util.LogUtil;
-import com.fiserv.preproposal.api.application.config.security.FDSecurity;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.springframework.web.filter.GenericFilterBean;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-
-import com.fiserv.preproposal.api.application.exceptions.FDSecurityException;
-import com.fiserv.preproposal.api.application.config.security.FDSecurityEnum;
-import lombok.AllArgsConstructor;
+import java.io.IOException;
+import java.util.logging.Logger;
 
 @AllArgsConstructor
 public class AuthorizationFilter extends GenericFilterBean {

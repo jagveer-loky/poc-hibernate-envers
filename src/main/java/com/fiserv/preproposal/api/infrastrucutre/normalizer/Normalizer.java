@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
 
 public final class Normalizer<T> {
 

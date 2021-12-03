@@ -41,3 +41,6 @@ management:
   endpoint:
     logfile:
       external-file: ./target/logs/${spring.application.name}.log
+
+reports:
+  temp-output: ./target/tmp/${spring.application.name}

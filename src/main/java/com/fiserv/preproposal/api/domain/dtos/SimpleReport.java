@@ -3,9 +3,7 @@ package com.fiserv.preproposal.api.domain.dtos;
 import com.fiserv.preproposal.api.application.annotation.Index;
 import com.univocity.parsers.annotations.Parsed;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;

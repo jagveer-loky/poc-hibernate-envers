@@ -1,10 +1,9 @@
 package com.fiserv.preproposal.api.application.config.security;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.fiserv.preproposal.api.application.exceptions.FDSecurityException;
 import com.fiserv.preproposal.api.application.exceptions.UnauthorizedException;
 import com.fiserv.preproposal.api.application.pagination.DSecurity;
+import com.fiserv.preproposal.api.domain.dtos.MessageSourceDTO;
 import com.fiserv.preproposal.api.infrastrucutre.aid.enums.ResponsesAndExceptionEnum;
 import com.fiserv.preproposal.api.infrastrucutre.aid.util.MessageSourceUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 
-import com.fiserv.preproposal.api.domain.dtos.MessageSourceDTO;
+import javax.servlet.http.HttpServletRequest;
 
 @Component
 public class FDSecurity {

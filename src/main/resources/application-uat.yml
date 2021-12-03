@@ -48,3 +48,6 @@ management:
   endpoint:
     logfile:
       external-file: /appserver/logs/${spring.application.name}/${spring.application.name}.log
+
+reports:
+  temp-output: /appserver/tmp/${spring.application.name}
