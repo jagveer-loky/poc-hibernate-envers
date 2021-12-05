@@ -8,6 +8,7 @@ import com.fiserv.preproposal.api.domain.service.report.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,7 +56,7 @@ public class ReportResource {
      * @param reportParams ReportParams
      * @return Long
      */
-    @Transactional
+    @Transactional(timeout = 9999999)
     @PostMapping(TypeReport.BASIC_VALUE)
     public Long createBasicReport(@RequestBody final ReportParams reportParams) {
 
@@ -71,13 +72,11 @@ public class ReportResource {
 
     }
 
-
-
     /**
      * @param reportParams ReportParams
      * @return Long
      */
-    @Transactional
+    @Transactional(timeout = 9999999)
     @PostMapping(TypeReport.COMPLETE_VALUE)
     public Long createCompleteReport(@RequestBody final ReportParams reportParams) {
 
@@ -97,7 +96,7 @@ public class ReportResource {
      * @param reportParams ReportParams
      * @return Long
      */
-    @Transactional
+    @Transactional(timeout = 9999999)
     @PostMapping(TypeReport.QUANTITATIVE_VALUE)
     public Long createQuantitativeReport(@RequestBody final ReportParams reportParams) {
 

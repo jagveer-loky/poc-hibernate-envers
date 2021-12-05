@@ -32,7 +32,7 @@ import static com.fiserv.preproposal.api.domain.entity.EReport.*;
 import static com.fiserv.preproposal.api.infrastrucutre.aid.util.MessageSourceUtil.cropMessage;
 
 @Service
-@Transactional
+@Transactional(timeout = 9999999)
 @RequiredArgsConstructor
 public class ReportService {
 
@@ -104,7 +104,7 @@ public class ReportService {
      * @param reportParams ReportParams
      * @param eReport      EReport
      */
-    @Transactional
+    @Transactional(timeout = 9999999)
     public void createBasicReport(final ReportParams reportParams, final EReport eReport) {
 
         try {
@@ -125,7 +125,7 @@ public class ReportService {
      * @param reportParams ReportParams
      * @param eReport      EReport
      */
-    @Transactional
+    @Transactional(timeout = 9999999)
     public void createCompleteReport(final ReportParams reportParams, final EReport eReport) {
 
         try {
@@ -146,7 +146,7 @@ public class ReportService {
      * @param reportParams ReportParams
      * @param eReport      EReport
      */
-    @Transactional
+    @Transactional(timeout = 9999999)
     public void createQuantitativeReport(final ReportParams reportParams, final EReport eReport) {
 
         try {

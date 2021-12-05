@@ -15,14 +15,21 @@ public final class ThreadsComponent {
      *
      */
     @Getter
-    private final ExecutorService executorService;
+    @Value("${reports.threads.pool:10}")
+    private Integer pool;
 
     /**
      *
-     * @param pool
      */
-    private ThreadsComponent(@Value("${reports.threads.pool:10}") Integer pool) {
-        this.executorService = Executors.newFixedThreadPool(pool);
+    private ExecutorService executorService;
+
+    /**
+     * @return ExecutorService
+     */
+    public ExecutorService getExecutorService() {
+        if (executorService == null || executorService.isShutdown() || executorService.isTerminated())
+            executorService = Executors.newFixedThreadPool(pool);
+        return executorService;
     }
 
     /**
@@ -32,5 +39,6 @@ public final class ThreadsComponent {
      */
     public static void execute(final Runnable runnable) {
         StaticContextAccessor.getBean(ThreadsComponent.class).getExecutorService().execute(runnable);
+        StaticContextAccessor.getBean(ThreadsComponent.class).getExecutorService().shutdown();
     }
 }
