@@ -38,12 +38,21 @@ public class ReportProcessorService {
     private static final Logger LOGGER = LogManager.getLogger();
 
     /**
-     * @param fields String[]
+     * @param labels String[]
      * @return String[]
      */
-    public String[] extractFieldsToIgnore(final IOutputReport output, final String[] fields) throws InstantiationException, IllegalAccessException {
-        Assert.notNull(fields, "fields cannot be null");
-        return ListUtil.toArray(((AbstractReport) output.getType().getType().newInstance()).extractFields().stream().filter(field -> Arrays.stream(fields).noneMatch(innerField -> innerField.equals(field))).collect(Collectors.toSet()));
+    public static String[] extractLabelsToIgnore(final IOutputReport output, final String[] labels) throws InstantiationException, IllegalAccessException {
+        Assert.notNull(labels, "fields cannot be null");
+        return ListUtil.toArrayString(((AbstractReport) output.getType().getType().newInstance()).extractLabels().stream().filter(field -> Arrays.stream(labels).noneMatch(innerField -> innerField.equals(field))).collect(Collectors.toSet()));
+    }
+
+    /**
+     * @param indexes String[]
+     * @return String[]
+     */
+    public static Integer[] extractIndexesToIgnore(final IOutputReport output, final Integer[] indexes) throws InstantiationException, IllegalAccessException {
+        Assert.notNull(indexes, "fields cannot be null");
+        return ListUtil.toArrayInteger(((AbstractReport) output.getType().getType().newInstance()).extractIndexes().stream().filter(index -> Arrays.stream(indexes).noneMatch(innerField -> innerField.equals(index))).collect(Collectors.toList()));
     }
 
     /**
@@ -68,8 +77,8 @@ public class ReportProcessorService {
         writerSettings.setQuoteAllFields(true);
         writerSettings.setColumnReorderingEnabled(true);
         writerSettings.setHeaderWritingEnabled(true);
-        writerSettings.setHeaders(ListUtil.toArray(input.getFields()));
-        writerSettings.excludeFields(extractFieldsToIgnore(output, ListUtil.toArray(input.getFields())));
+        writerSettings.setHeaders(ListUtil.toArrayString(input.getFields()));
+        writerSettings.excludeFields(extractLabelsToIgnore(output, ListUtil.toArrayString(input.getFields())));
 
         writerSettings.setRowWriterProcessor(new BeanWriterProcessor<>(output.getType().getType()));
 

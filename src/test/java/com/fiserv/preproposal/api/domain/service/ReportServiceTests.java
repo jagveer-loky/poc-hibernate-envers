@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @SpringBootTest
 class ReportServiceTests {
@@ -31,53 +30,6 @@ class ReportServiceTests {
      */
     @Autowired
     ReportService reportService;
-
-    /**
-     *
-     */
-    @Test
-    void testExtractFieldsFromBasicReportClass() {
-        final Set<String> fields = new BasicReport().extractFields();
-        Assertions.assertEquals(23, fields.size());
-    }
-
-    /**
-     *
-     */
-    @Test
-    void testExtractFieldsFromCompleteReportClass() {
-        final Set<String> fields = new CompleteReport().extractFields();
-        Assertions.assertEquals(96, fields.size());
-    }
-
-    /**
-     *
-     */
-    @Test
-    void testExtractFieldsFromQuantitativeReportClass() {
-        final Set<String> fields = new QuantitativeReport().extractFields();
-        Assertions.assertEquals(12, fields.size());
-    }
-
-    /**
-     *
-     */
-    @Test
-    void testCalculatePercentage() {
-//        reportService.createBasicCSVReport("00000007", "149", LocalDate.now().minusDays(20), LocalDate.now(), null, null, null, null);
-        final EReport eReport = new EReport();
-        eReport.setCountLines(805);
-
-        for (int i = 1; i <= 805; i++) {
-            eReport.setCurrentLine(i);
-            eReport.calculatePercentage();
-            if (i == 1)
-                Assertions.assertEquals(eReport.getConcludedPercentage(), 0);
-            if (i == 805)
-                Assertions.assertEquals(eReport.getConcludedPercentage(), 100);
-        }
-        Assertions.assertEquals(eReport.getConcludedPercentage(), 100);
-    }
 
     /**
      *
@@ -111,13 +63,13 @@ class ReportServiceTests {
 
             if (i < 10) {
                 reportParams.setType(TypeReport.BASIC);
-                reportParams.setFields(new BasicReport().extractFields());
+                reportParams.setFields(new BasicReport().extractLabels());
             } else if (i < 20) {
                 reportParams.setType(TypeReport.COMPLETE);
-                reportParams.setFields(new CompleteReport().extractFields());
+                reportParams.setFields(new CompleteReport().extractLabels());
             } else {
                 reportParams.setType(TypeReport.QUANTITATIVE);
-                reportParams.setFields(new QuantitativeReport().extractFields());
+                reportParams.setFields(new QuantitativeReport().extractLabels());
             }
 
             final EReport eReport = EReport.createFrom(reportParams);

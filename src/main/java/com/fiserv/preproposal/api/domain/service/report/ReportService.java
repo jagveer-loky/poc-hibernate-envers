@@ -296,19 +296,19 @@ public class ReportService {
         reportParams.setResponsesTypes(Arrays.asList("FISERV_ONLINE", "LEAD", "LEAD_FISERV", "LNK_PAYMENT", "MANUAL_PROC"));
 
         reportParams.setType(TypeReport.BASIC);
-        reportParams.setFields(new BasicReport().extractFields());
+        reportParams.setFields(new BasicReport().extractLabels());
         final EReport basicReport = save(EReport.createFrom(reportParams));
         basicReport.setCountLines(getCountBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
         execute(() -> createBasicReport(reportParams, save(basicReport)));
 
         reportParams.setType(TypeReport.COMPLETE);
-        reportParams.setFields(new CompleteReport().extractFields());
+        reportParams.setFields(new CompleteReport().extractLabels());
         final EReport completeReport = save(EReport.createFrom(reportParams));
         completeReport.setCountLines(getCountCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
         execute(() -> createCompleteReport(reportParams, save(completeReport)));
 
         reportParams.setType(TypeReport.QUANTITATIVE);
-        reportParams.setFields(new QuantitativeReport().extractFields());
+        reportParams.setFields(new QuantitativeReport().extractLabels());
         final EReport quantitativeReport = save(EReport.createFrom(reportParams));
         quantitativeReport.setCountLines(getCountQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
         execute(() -> createQuantitativeReport(reportParams, save(quantitativeReport)));
@@ -328,9 +328,9 @@ public class ReportService {
      */
     public HashMap<String, Set<String>> getFieldsFromReports() {
         final HashMap<String, Set<String>> fieldsFromReports = new HashMap<>();
-        fieldsFromReports.put(TypeReport.BASIC_VALUE, new BasicReport().extractFields());
-        fieldsFromReports.put(TypeReport.COMPLETE_VALUE, new CompleteReport().extractFields());
-        fieldsFromReports.put(TypeReport.QUANTITATIVE_VALUE, new QuantitativeReport().extractFields());
+        fieldsFromReports.put(TypeReport.BASIC_VALUE, new BasicReport().extractLabels());
+        fieldsFromReports.put(TypeReport.COMPLETE_VALUE, new CompleteReport().extractLabels());
+        fieldsFromReports.put(TypeReport.QUANTITATIVE_VALUE, new QuantitativeReport().extractLabels());
         return fieldsFromReports;
     }
 

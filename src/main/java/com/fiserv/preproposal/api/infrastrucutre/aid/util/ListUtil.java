@@ -21,9 +21,15 @@ public class ListUtil {
 	 * @param list Collection<String>
 	 * @return String[]
 	 */
-	public static String[] toArray(final Collection<String> list) {
+	public static String[] toArrayString(final Collection<String> list) {
 		if (list == null)
 			return new String[]{};
 		return list.toArray(new String[0]);
+	}
+
+	public static Integer[] toArrayInteger(final Collection<Integer> list) {
+		if (list == null)
+			return new Integer[]{};
+		return list.toArray(new Integer[0]);
 	}
 }
