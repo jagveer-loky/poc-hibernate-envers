@@ -275,7 +275,7 @@ public class ReportService {
     }
 
     /**
-     * TODO testar
+     * @param now LocalDate
      */
     public void generateReports(final LocalDate now) {
 
