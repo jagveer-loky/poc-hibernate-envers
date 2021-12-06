@@ -12,7 +12,7 @@ public abstract class AbstractReport {
     /**
      * @return Set<String>
      */
-    public Set<String> extractLabels() {
+    public List<String> extractLabels() {
 
         final Set<Field> fields = new HashSet<>();
 
@@ -30,13 +30,13 @@ public abstract class AbstractReport {
             e.printStackTrace();
         }
 
-        return fields.stream().sorted(Comparator.comparing(Field::getIndex)).collect(Collectors.toCollection(LinkedHashSet::new)).stream().map(Field::getLabel).collect(Collectors.toCollection(HashSet::new));
+        return fields.stream().sorted(Comparator.comparing(Field::getIndex)).map(Field::getLabel).collect(Collectors.toList());
     }
 
     /**
      * @return Set<Integer>
      */
-    public Set<Integer> extractIndexes() {
+    public List<Integer> extractIndexes() {
 
         final Set<Field> fields = new HashSet<>();
 
@@ -54,13 +54,13 @@ public abstract class AbstractReport {
             e.printStackTrace();
         }
 
-        return fields.stream().sorted(Comparator.comparing(Field::getIndex)).collect(Collectors.toCollection(LinkedHashSet::new)).stream().map(Field::getIndex).collect(Collectors.toCollection(HashSet::new));
+        return fields.stream().sorted(Comparator.comparing(Field::getIndex)).map(Field::getIndex).collect(Collectors.toList());
     }
 
     /**
      * @return Set<Integer>
      */
-    public Set<Integer> extractIndexes(final Collection<String> filters) {
+    public List<Integer> extractIndexes(final Collection<String> filters) {
 
         final Set<Field> fields = new HashSet<>();
 
@@ -72,20 +72,20 @@ public abstract class AbstractReport {
                 final Index indexAnnotation = this.getClass().getDeclaredField(attribute).getAnnotation(Index.class);
 
                 final Field field = new Field(parsedAnnotation.field()[0], Objects.isNull(indexAnnotation) ? attributes.size() : indexAnnotation.value());
-                if (filters.stream().anyMatch(s -> s.equals(field.getLabel())))
+                if (filters.stream().anyMatch(s -> s.equalsIgnoreCase(field.getLabel())))
                     fields.add(field);
             }
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
 
-        return fields.stream().sorted(Comparator.comparing(Field::getIndex)).collect(Collectors.toCollection(LinkedHashSet::new)).stream().map(Field::getIndex).collect(Collectors.toCollection(HashSet::new));
+        return fields.stream().sorted(Comparator.comparing(Field::getIndex)).map(Field::getIndex).collect(Collectors.toList());
     }
 
     /**
      * @return Set<Field>
      */
-    public Set<Field> extractFields() {
+    public List<Field> extractFields() {
 
         final Set<Field> fields = new HashSet<>();
 
@@ -103,6 +103,38 @@ public abstract class AbstractReport {
             e.printStackTrace();
         }
 
-        return fields;
+        return fields.stream().sorted(Comparator.comparing(Field::getIndex)).collect(Collectors.toList());
+    }
+
+    /**
+     * @param filters Collection<String>
+     * @return Set<String>
+     */
+    public List<Object> extractValues(final Collection<String> filters) {
+
+        final List<Field> fields = new ArrayList<>();
+
+        try {
+            final Collection<Integer> indexes = extractIndexes(filters);
+
+            final Set<String> attributes = Reflection.getAttributesFromClass(this.getClass());
+
+            for (final Integer index : indexes) {
+                for (final String attribute : attributes) {
+                    final Index indexAnnotation = this.getClass().getDeclaredField(attribute).getAnnotation(Index.class);
+                    if (index == indexAnnotation.value()) {
+                        final Parsed parsedAnnotation = this.getClass().getDeclaredField(attribute).getAnnotation(Parsed.class);
+
+                        final Field field = new Field(parsedAnnotation.field()[0], indexAnnotation.value(), Reflection.getValueFromAttribute(this, attribute));
+                        fields.add(field);
+
+                    }
+                }
+            }
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+
+        return fields.stream().sorted(Comparator.comparing(Field::getIndex)).map(Field::getValue).collect(Collectors.toList());
     }
 }

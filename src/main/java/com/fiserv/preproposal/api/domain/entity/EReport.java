@@ -1,6 +1,6 @@
 package com.fiserv.preproposal.api.domain.entity;
 
-import com.fiserv.preproposal.api.domain.dtos.ReportParams;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fiserv.preproposal.api.domain.service.report.IOutputReport;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,13 +10,18 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Objects;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "TB_REPORT")
 public class EReport implements Serializable, IOutputReport {
+
+    private static final String DATE_TIME_PATTERN = "dd/MM/yyyy";
 
     public static final String SYSTEM_USER = "SYSTEM";
     public static final String SERVICE_CONTRACT = "149";
@@ -103,6 +108,60 @@ public class EReport implements Serializable, IOutputReport {
     @Column(name = "CONTENT", columnDefinition = "BLOB")
     private byte[] content;
 
+    /*
+     * ------------------------------------
+     * Filters
+     * ------------------------------------
+     */
+    @Setter
+    @Transient
+    private String institution;
+
+    @Setter
+    @Getter
+    @Transient
+    private String serviceContract;
+
+    @Setter
+    @Getter
+    @Transient
+    @JsonFormat(pattern = DATE_TIME_PATTERN)
+    private LocalDate initialDate;
+
+    @Setter
+    @Getter
+    @Transient
+    @JsonFormat(pattern = DATE_TIME_PATTERN)
+    private LocalDate finalDate;
+
+    @Setter
+    @Transient
+    private Boolean notIn;
+
+    @Setter
+    @Transient
+    private Collection<String> responsesTypes;
+
+    @Setter
+    @Transient
+    private Collection<String> status;
+
+    @Setter
+    @Getter
+    @Transient
+    private Collection<String> fields;
+
+    @Setter
+    @Getter
+    @Transient
+    private Collection<String> fieldsToIgnore;
+
+    /*
+     * ------------------------------------
+     *              End Filters
+     * ------------------------------------
+     */
+
     /**
      * @param id                  Long
      * @param requester           String
@@ -168,20 +227,20 @@ public class EReport implements Serializable, IOutputReport {
         return this.error != null && !this.error.trim().isEmpty();
     }
 
-    /**
-     * @param reportParams ReportParams
-     * @return EReport
-     */
-    public static EReport createFrom(final ReportParams reportParams) {
-
-        // Instancing the jpa Entity to persist
-        // This entity will save the percentage done of the job
-        final EReport eReport = new EReport();
-        eReport.setType(reportParams.getType());
-        eReport.setRequester(reportParams.getRequester());
-
-        return eReport;
-    }
+//    /**
+//     * @param reportParams ReportParams
+//     * @return EReport
+//     */
+//    public static EReport createFrom(final ReportParams reportParams) {
+//
+//        // Instancing the jpa Entity to persist
+//        // This entity will save the percentage done of the job
+//        final EReport eReport = new EReport();
+//        eReport.setType(reportParams.getType());
+//        eReport.setRequester(reportParams.getRequester());
+//
+//        return eReport;
+//    }
 
     /**
      * @return Integer
@@ -205,5 +264,52 @@ public class EReport implements Serializable, IOutputReport {
     @Override
     public Integer getCurrentLine() {
         return this.currentLine;
+    }
+
+    /**
+     * @return institution String
+     */
+    public String getInstitution() {
+        return format(institution);
+    }
+
+    /**
+     * @return Boolean
+     */
+    public Boolean getNotIn() {
+        return !Objects.isNull(notIn) && notIn;
+    }
+
+    /**
+     * @return responsesTypes Collection<String>
+     */
+    public Collection<String> getResponsesTypes() {
+        return (Objects.isNull(responsesTypes) || responsesTypes.isEmpty()) ? null : responsesTypes;
+    }
+
+    /**
+     * @return status Collection<String>
+     */
+    public Collection<String> getStatus() {
+        return (Objects.isNull(status) || status.isEmpty()) ? null : status;
+    }
+
+    /**
+     * @return Class
+     */
+    public Class getBeanType() {
+        if(type == null)
+            return null;
+        return type.getType();
+    }
+
+    /**
+     * @param value Object
+     * @return String
+     */
+    public String format(final Object value) {
+        if(value == null)
+            return null;
+        return String.format("%0" + 8 + "d", Long.valueOf((String) value));
     }
 }

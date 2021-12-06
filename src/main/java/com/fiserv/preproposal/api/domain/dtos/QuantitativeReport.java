@@ -16,7 +16,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class QuantitativeReport extends AbstractReport implements Serializable {
 
-    //@Index(1)
+    @Index(1)
     @Parsed(field = "Nome do Arquivo")
     @Schema(
             description = "Nome do arquivo",

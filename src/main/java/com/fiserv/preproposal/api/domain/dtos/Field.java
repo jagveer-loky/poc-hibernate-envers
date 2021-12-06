@@ -15,4 +15,14 @@ public class Field {
 
     private Integer index;
 
+    private Object value;
+
+    /**
+     * @param label String
+     * @param index Integer
+     */
+    public Field(final String label, final Integer index) {
+        this.label = label;
+        this.index = index;
+    }
 }

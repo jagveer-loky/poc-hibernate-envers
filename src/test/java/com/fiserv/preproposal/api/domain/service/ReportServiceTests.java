@@ -4,7 +4,6 @@ import com.fiserv.preproposal.api.application.exceptions.NotFoundException;
 import com.fiserv.preproposal.api.domain.dtos.BasicReport;
 import com.fiserv.preproposal.api.domain.dtos.CompleteReport;
 import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
-import com.fiserv.preproposal.api.domain.dtos.ReportParams;
 import com.fiserv.preproposal.api.domain.entity.EReport;
 import com.fiserv.preproposal.api.domain.entity.TypeReport;
 import com.fiserv.preproposal.api.domain.service.report.ReportService;
@@ -52,27 +51,26 @@ class ReportServiceTests {
 
         for (int i = 0; i < 30; i++) {
 
-            final ReportParams reportParams = new ReportParams();
+            final EReport eReport = new EReport();
 
-            reportParams.setInitialDate(LocalDate.now().minusYears(500));
-            reportParams.setFinalDate(LocalDate.now());
-            reportParams.setRequester("SYSTEM");
-            reportParams.setServiceContract("149");
-            reportParams.setInstitution("00000007");
-            reportParams.setResponsesTypes(Collections.singletonList("FISERV_ONLINE"));
+            eReport.setInitialDate(LocalDate.now().minusYears(500));
+            eReport.setFinalDate(LocalDate.now());
+            eReport.setRequester("SYSTEM");
+            eReport.setServiceContract("149");
+            eReport.setInstitution("00000007");
+            eReport.setResponsesTypes(Collections.singletonList("FISERV_ONLINE"));
 
             if (i < 10) {
-                reportParams.setType(TypeReport.BASIC);
-                reportParams.setFields(new BasicReport().extractLabels());
+                eReport.setType(TypeReport.BASIC);
+                eReport.setFields(new BasicReport().extractLabels());
             } else if (i < 20) {
-                reportParams.setType(TypeReport.COMPLETE);
-                reportParams.setFields(new CompleteReport().extractLabels());
+                eReport.setType(TypeReport.COMPLETE);
+                eReport.setFields(new CompleteReport().extractLabels());
             } else {
-                reportParams.setType(TypeReport.QUANTITATIVE);
-                reportParams.setFields(new QuantitativeReport().extractLabels());
+                eReport.setType(TypeReport.QUANTITATIVE);
+                eReport.setFields(new QuantitativeReport().extractLabels());
             }
 
-            final EReport eReport = EReport.createFrom(reportParams);
             eReport.setContent(content);
             eReport.setCountLines((int) countLines);
             eReport.setCurrentLine(eReport.getCountLines());

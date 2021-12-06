@@ -3,10 +3,6 @@ package com.fiserv.preproposal.api.domain.service.report;
 import com.fiserv.preproposal.api.domain.dtos.AbstractReport;
 import com.fiserv.preproposal.api.domain.entity.EReport;
 import com.fiserv.preproposal.api.infrastrucutre.aid.util.ListUtil;
-import com.fiserv.preproposal.api.infrastrucutre.normalizer.Normalizer;
-import com.univocity.parsers.common.processor.BeanWriterProcessor;
-import com.univocity.parsers.csv.CsvWriter;
-import com.univocity.parsers.csv.CsvWriterSettings;
 import lombok.NonNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,16 +11,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.fiserv.preproposal.api.infrastrucutre.normalizer.Normalizer.normalize;
+import static org.apache.commons.lang3.StringUtils.join;
 
 @Service
 public class ReportProcessorService {
@@ -57,76 +60,73 @@ public class ReportProcessorService {
 
     /**
      * @param stream                 Stream<T> To running when writing file. At each new iteration, a new register is written in file.
-     * @param input                  IReport implementation from ReportParams
-     * @param output                 IReport implementation from ERport
+     * @param eRport                  IReport implementation from ReportParams
      * @param nextLineOutputReport   Consumer<IReport>
      * @param doneReportOutputReport Consumer<IReport> in the end of the process, update EReport register on database with the file saved in the system file.
      */
     @Transactional
-    public void convertToCSV(@NonNull final Stream<?> stream, final IInputReport input, final IOutputReport output, final Consumer<IOutputReport> nextLineOutputReport, final Consumer<IOutputReport> doneReportOutputReport) throws InstantiationException, IllegalAccessException, IOException {
+    public void convertToCSV(@NonNull final Stream<AbstractReport> stream, final EReport eRport, final Consumer<IOutputReport> nextLineOutputReport, final Consumer<IOutputReport> doneReportOutputReport) throws IOException, InstantiationException, IllegalAccessException {
 
-        if (output.getCountLines() == 0) {
-            if (input.getRequester().equals(EReport.SYSTEM_USER))
+        if (eRport.getCountLines() == 0) {
+            if (eRport.getRequester().equals(EReport.SYSTEM_USER))
                 throw new RuntimeException("Nenhum registro encontrado para a data " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(LocalDate.now().minusDays(1)));
             throw new RuntimeException("Nenhum registro encontrado para essa solicitação, revise os filtros e tente novamente!");
         }
 
-        final CsvWriterSettings writerSettings = new CsvWriterSettings();
-        writerSettings.getFormat().setLineSeparator("\r\n");
-        writerSettings.getFormat().setDelimiter(';');
-        writerSettings.setQuoteAllFields(true);
-        writerSettings.setColumnReorderingEnabled(true);
-        writerSettings.setHeaderWritingEnabled(true);
-        writerSettings.setHeaders(ListUtil.toArrayString(input.getFields()));
-        writerSettings.excludeFields(extractLabelsToIgnore(output, ListUtil.toArrayString(input.getFields())));
-
-        writerSettings.setRowWriterProcessor(new BeanWriterProcessor<>(output.getType().getType()));
-
         final File file = new File(tempOutput + "/" + UUID.randomUUID() + ".csv");
-        final CsvWriter csvWriter = new CsvWriter(file, writerSettings);
+        final FileWriter fileWriter = new FileWriter(file, true);
+        final BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
 
+        // Writing header in file
+        bufferWriter.write(normalize(join(((AbstractReport) eRport.getBeanType().newInstance()).extractLabels(), ";")) + "\n");
+
+        // Count lines
+        final AtomicInteger i = new AtomicInteger();
         stream.forEach(object -> {
-
+            i.getAndIncrement();
             try {
-
                 // *** Next line flux
-                // Writing in file
-                csvWriter.processRecord(new Normalizer<>().normalize(object));
+                // Extract values
+                final List<Object> values = object.extractValues(eRport.getFields());
+                // Writing line in file
+                bufferWriter.write(normalize(join(values, ";")) + "\n");
 
                 // Save the old percentage
-                final int oldPercentage = output.getConcludedPercentage();
+                final int oldPercentage = eRport.getConcludedPercentage();
 
                 // Set the current line
-                output.setCurrentLine((int) (csvWriter.getRecordCount()));
+                eRport.setCurrentLine(i.get());
 
                 // Calculate the new percentage
-                output.calculatePercentage();
+                eRport.calculatePercentage();
 
                 // If the current percentage is different from the previous percentage, and the current percentage is the exact divisor of the divisor., then
-                if (output.getConcludedPercentage() != oldPercentage && output.getConcludedPercentage() % output.getType().getDivisorToSave() == 0)
+                if (eRport.getConcludedPercentage() != oldPercentage && eRport.getConcludedPercentage() % eRport.getType().getDivisorToSave() == 0)
 
                     // Emmit next line event
-                    nextLineOutputReport.accept(output);
+                    nextLineOutputReport.accept(eRport);
 
             } catch (final Exception e) {
                 // *** Error in line flux
                 // Show de stack trace
                 e.printStackTrace();
                 // Logging
-                LOGGER.info("ERROR IN " + output.getType() + " REPORT " + output.getId() + " - LINE: " + output.getCurrentLine());
+                LOGGER.info("ERROR IN " + eRport.getType() + " REPORT " + eRport.getId() + " - LINE: " + eRport.getCurrentLine());
                 // Emmit next line event
-                nextLineOutputReport.accept(output);
+                nextLineOutputReport.accept(eRport);
             }
         });
 
         // *** Done flux
         // After then running the stream.
         // Read byte array from file
-        output.setContent(Files.readAllBytes(file.toPath()));
+        eRport.setContent(Files.readAllBytes(file.toPath()));
         // Emmit done event
-        doneReportOutputReport.accept(output);
+        doneReportOutputReport.accept(eRport);
         // Close writer
-        csvWriter.close();
+        bufferWriter.close();
+        fileWriter.close();
+//        csvWriter.close();
         // Delete de tmp file
         Files.deleteIfExists(file.toPath());
     }

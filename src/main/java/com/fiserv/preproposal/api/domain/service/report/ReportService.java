@@ -1,10 +1,7 @@
 package com.fiserv.preproposal.api.domain.service.report;
 
 import com.fiserv.preproposal.api.application.exceptions.NotFoundException;
-import com.fiserv.preproposal.api.domain.dtos.BasicReport;
-import com.fiserv.preproposal.api.domain.dtos.CompleteReport;
-import com.fiserv.preproposal.api.domain.dtos.QuantitativeReport;
-import com.fiserv.preproposal.api.domain.dtos.ReportParams;
+import com.fiserv.preproposal.api.domain.dtos.*;
 import com.fiserv.preproposal.api.domain.entity.EReport;
 import com.fiserv.preproposal.api.domain.entity.TypeReport;
 import com.fiserv.preproposal.api.domain.repository.ProposalRepository;
@@ -101,19 +98,18 @@ public class ReportService {
     }
 
     /**
-     * @param reportParams ReportParams
-     * @param eReport      EReport
+     * @param eReport EReport
      */
     @Transactional(timeout = 9999999)
-    public void createBasicReport(final ReportParams reportParams, final EReport eReport) {
+    public void createBasicReport(final EReport eReport) {
 
         try {
 
-            LOGGER.info("STARTING " + eReport.getId() + " BASIC REPORT!     REQUESTER:" + reportParams.getRequester() + "; INSTITUTION: " + reportParams.getInstitution() + "; SERVICE CONTRACT: " + reportParams.getServiceContract() + "; INITIAL DATE: " + DateTimeFormatter.ofPattern(DATE_PATTERN).format(reportParams.getInitialDate()) + "; FINAL DATE: " + DateTimeFormatter.ofPattern(DATE_PATTERN).format(reportParams.getFinalDate()) + "; NOT IN: " + reportParams.getNotIn() + "; RESPONSES TYPES: " + reportParams.getResponsesTypes() + "; STATUS: " + reportParams.getStatus());
+            LOGGER.info("STARTING " + eReport.getId() + " BASIC REPORT!     REQUESTER:" + eReport.getRequester() + "; INSTITUTION: " + eReport.getInstitution() + "; SERVICE CONTRACT: " + eReport.getServiceContract() + "; INITIAL DATE: " + DateTimeFormatter.ofPattern(DATE_PATTERN).format(eReport.getInitialDate()) + "; FINAL DATE: " + DateTimeFormatter.ofPattern(DATE_PATTERN).format(eReport.getFinalDate()) + "; NOT IN: " + eReport.getNotIn() + "; RESPONSES TYPES: " + eReport.getResponsesTypes() + "; STATUS: " + eReport.getStatus());
 
-            final Stream<BasicReport> stream = proposalRepository.getBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
+            final Stream<?> stream = proposalRepository.getBasicReport(eReport.getInstitution(), eReport.getServiceContract(), eReport.getInitialDate(), eReport.getFinalDate(), eReport.getNotIn(), eReport.getResponsesTypes(), eReport.getStatus());
 
-            reportProcessorService.convertToCSV(stream, reportParams, eReport, this::next, this::done);
+            reportProcessorService.convertToCSV((Stream<AbstractReport>) stream, eReport, this::next, this::done);
         } catch (final Exception e) {
             e.printStackTrace();
             eReport.setError(cropMessage(e.getMessage(), 254));
@@ -122,19 +118,18 @@ public class ReportService {
     }
 
     /**
-     * @param reportParams ReportParams
-     * @param eReport      EReport
+     * @param eReport EReport
      */
     @Transactional(timeout = 9999999)
-    public void createCompleteReport(final ReportParams reportParams, final EReport eReport) {
+    public void createCompleteReport(final EReport eReport) {
 
         try {
 
-            LOGGER.info("STARTING " + eReport.getId() + " COMPLETE REPORT!     REQUESTER:" + reportParams.getRequester() + "; INSTITUTION: " + reportParams.getInstitution() + "; SERVICE CONTRACT: " + reportParams.getServiceContract() + "; INITIAL DATE: " + DateTimeFormatter.ofPattern(DATE_PATTERN).format(reportParams.getInitialDate()) + "; FINAL DATE: " + DateTimeFormatter.ofPattern(DATE_PATTERN).format(reportParams.getFinalDate()) + "; NOT IN: " + reportParams.getNotIn() + "; RESPONSES TYPES: " + reportParams.getResponsesTypes() + "; STATUS: " + reportParams.getStatus());
+            LOGGER.info("STARTING " + eReport.getId() + " COMPLETE REPORT!     REQUESTER:" + eReport.getRequester() + "; INSTITUTION: " + eReport.getInstitution() + "; SERVICE CONTRACT: " + eReport.getServiceContract() + "; INITIAL DATE: " + DateTimeFormatter.ofPattern(DATE_PATTERN).format(eReport.getInitialDate()) + "; FINAL DATE: " + DateTimeFormatter.ofPattern(DATE_PATTERN).format(eReport.getFinalDate()) + "; NOT IN: " + eReport.getNotIn() + "; RESPONSES TYPES: " + eReport.getResponsesTypes() + "; STATUS: " + eReport.getStatus());
 
-            final Stream<CompleteReport> stream = proposalRepository.getCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
+            final Stream<?> stream = proposalRepository.getCompleteReport(eReport.getInstitution(), eReport.getServiceContract(), eReport.getInitialDate(), eReport.getFinalDate(), eReport.getNotIn(), eReport.getResponsesTypes(), eReport.getStatus());
 
-            reportProcessorService.convertToCSV(stream, reportParams, eReport, this::next, this::done);
+            reportProcessorService.convertToCSV((Stream<AbstractReport>) stream, eReport, this::next, this::done);
         } catch (final Exception e) {
             e.printStackTrace();
             eReport.setError(cropMessage(e.getMessage(), 254));
@@ -143,19 +138,18 @@ public class ReportService {
     }
 
     /**
-     * @param reportParams ReportParams
-     * @param eReport      EReport
+     * @param eReport EReport
      */
     @Transactional(timeout = 9999999)
-    public void createQuantitativeReport(final ReportParams reportParams, final EReport eReport) {
+    public void createQuantitativeReport(final EReport eReport) {
 
         try {
 
-            LOGGER.info("STARTING " + eReport.getId() + " QUANTITATIVE REPORT!     REQUESTER:" + reportParams.getRequester() + "; INSTITUTION: " + reportParams.getInstitution() + "; SERVICE CONTRACT: " + reportParams.getServiceContract() + "; INITIAL DATE: " + DateTimeFormatter.ofPattern(DATE_PATTERN).format(reportParams.getInitialDate()) + "; FINAL DATE: " + DateTimeFormatter.ofPattern(DATE_PATTERN).format(reportParams.getFinalDate()) + "; NOT IN: " + reportParams.getNotIn() + "; RESPONSES TYPES: " + reportParams.getResponsesTypes() + "; STATUS: " + reportParams.getStatus());
+            LOGGER.info("STARTING " + eReport.getId() + " QUANTITATIVE REPORT!     REQUESTER:" + eReport.getRequester() + "; INSTITUTION: " + eReport.getInstitution() + "; SERVICE CONTRACT: " + eReport.getServiceContract() + "; INITIAL DATE: " + DateTimeFormatter.ofPattern(DATE_PATTERN).format(eReport.getInitialDate()) + "; FINAL DATE: " + DateTimeFormatter.ofPattern(DATE_PATTERN).format(eReport.getFinalDate()) + "; NOT IN: " + eReport.getNotIn() + "; RESPONSES TYPES: " + eReport.getResponsesTypes() + "; STATUS: " + eReport.getStatus());
 
-            final Stream<QuantitativeReport> quantitativeStream = proposalRepository.getQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus());
+            final Stream<?> stream = proposalRepository.getQuantitativeReport(eReport.getInstitution(), eReport.getServiceContract(), eReport.getInitialDate(), eReport.getFinalDate(), eReport.getNotIn(), eReport.getResponsesTypes(), eReport.getStatus());
 
-            reportProcessorService.convertToCSV(quantitativeStream, reportParams, eReport, this::next, this::done);
+            reportProcessorService.convertToCSV((Stream<AbstractReport>) stream, eReport, this::next, this::done);
         } catch (final Exception e) {
             e.printStackTrace();
             eReport.setError(cropMessage(e.getMessage(), 254));
@@ -287,31 +281,28 @@ public class ReportService {
 
         LOGGER.info("GENERATING DAILY REPORTS");
 
-        final ReportParams reportParams = new ReportParams();
-        reportParams.setInitialDate(now.minusDays(daysToExpire));
-        reportParams.setFinalDate(now);
-        reportParams.setRequester(SYSTEM_USER);
-        reportParams.setServiceContract(SERVICE_CONTRACT);
-        reportParams.setInstitution(INSTITUTION);
-        reportParams.setResponsesTypes(Arrays.asList("FISERV_ONLINE", "LEAD", "LEAD_FISERV", "LNK_PAYMENT", "MANUAL_PROC"));
+        final EReport eReport = new EReport();
+        eReport.setInitialDate(now.minusDays(daysToExpire));
+        eReport.setFinalDate(now);
+        eReport.setRequester(SYSTEM_USER);
+        eReport.setServiceContract(SERVICE_CONTRACT);
+        eReport.setInstitution(INSTITUTION);
+        eReport.setResponsesTypes(Arrays.asList("FISERV_ONLINE", "LEAD", "LEAD_FISERV", "LNK_PAYMENT", "MANUAL_PROC"));
 
-        reportParams.setType(TypeReport.BASIC);
-        reportParams.setFields(new BasicReport().extractLabels());
-        final EReport basicReport = save(EReport.createFrom(reportParams));
-        basicReport.setCountLines(getCountBasicReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
-        execute(() -> createBasicReport(reportParams, save(basicReport)));
+        eReport.setType(TypeReport.BASIC);
+        eReport.setFields(new BasicReport().extractLabels());
+        eReport.setCountLines(getCountBasicReport(eReport.getInstitution(), eReport.getServiceContract(), eReport.getInitialDate(), eReport.getFinalDate(), eReport.getNotIn(), eReport.getResponsesTypes(), eReport.getStatus()));
+        execute(() -> createBasicReport(save(eReport)));
 
-        reportParams.setType(TypeReport.COMPLETE);
-        reportParams.setFields(new CompleteReport().extractLabels());
-        final EReport completeReport = save(EReport.createFrom(reportParams));
-        completeReport.setCountLines(getCountCompleteReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
-        execute(() -> createCompleteReport(reportParams, save(completeReport)));
+        eReport.setType(TypeReport.COMPLETE);
+        eReport.setFields(new CompleteReport().extractLabels());
+        eReport.setCountLines(getCountCompleteReport(eReport.getInstitution(), eReport.getServiceContract(), eReport.getInitialDate(), eReport.getFinalDate(), eReport.getNotIn(), eReport.getResponsesTypes(), eReport.getStatus()));
+        execute(() -> createCompleteReport(save(eReport)));
 
-        reportParams.setType(TypeReport.QUANTITATIVE);
-        reportParams.setFields(new QuantitativeReport().extractLabels());
-        final EReport quantitativeReport = save(EReport.createFrom(reportParams));
-        quantitativeReport.setCountLines(getCountQuantitativeReport(reportParams.getInstitution(), reportParams.getServiceContract(), reportParams.getInitialDate(), reportParams.getFinalDate(), reportParams.getNotIn(), reportParams.getResponsesTypes(), reportParams.getStatus()));
-        execute(() -> createQuantitativeReport(reportParams, save(quantitativeReport)));
+        eReport.setType(TypeReport.QUANTITATIVE);
+        eReport.setFields(new QuantitativeReport().extractLabels());
+        eReport.setCountLines(getCountQuantitativeReport(eReport.getInstitution(), eReport.getServiceContract(), eReport.getInitialDate(), eReport.getFinalDate(), eReport.getNotIn(), eReport.getResponsesTypes(), eReport.getStatus()));
+        execute(() -> createQuantitativeReport(save(eReport)));
 
     }
 
@@ -326,8 +317,8 @@ public class ReportService {
     /**
      * @return HashMap<String, Set < String>>
      */
-    public HashMap<String, Set<String>> getFieldsFromReports() {
-        final HashMap<String, Set<String>> fieldsFromReports = new HashMap<>();
+    public HashMap<String, Collection<String>> getFieldsFromReports() {
+        final HashMap<String, Collection<String>> fieldsFromReports = new HashMap<>();
         fieldsFromReports.put(TypeReport.BASIC_VALUE, new BasicReport().extractLabels());
         fieldsFromReports.put(TypeReport.COMPLETE_VALUE, new CompleteReport().extractLabels());
         fieldsFromReports.put(TypeReport.QUANTITATIVE_VALUE, new QuantitativeReport().extractLabels());
