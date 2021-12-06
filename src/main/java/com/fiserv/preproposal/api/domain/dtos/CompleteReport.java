@@ -160,14 +160,14 @@ public class CompleteReport extends AbstractReport implements Serializable {
     )
     private String caixaMessage;
 
-//    @Index(13)
-//    @Parsed(field = "Erros")
-//    @Schema(
-//            description = "Erros de processamento dos bulks",
-//            example = "Errors",
-//            type = "String"
-//    )
-//    private String errors;
+    @Index(13)
+    @Parsed(field = "Erros")
+    @Schema(
+            description = "Erros de processamento dos bulks",
+            example = "Errors",
+            type = "String"
+    )
+    private String errors;
 
     @Index(16)
     @Parsed(field = "Inclusao em")

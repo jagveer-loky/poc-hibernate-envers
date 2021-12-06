@@ -34,6 +34,33 @@ public abstract class AbstractReport {
     }
 
     /**
+     * @return Set<String>
+     */
+    public List<String> extractLabels(final Collection<String> labels) {
+
+        final Set<Field> fields = new HashSet<>();
+
+        final Set<String> attributes = Reflection.getAttributesFromClass(this.getClass());
+
+        try {
+            for (final String attribute : attributes) {
+                for (final String label : labels) {
+                    final Parsed parsedAnnotation = this.getClass().getDeclaredField(attribute).getAnnotation(Parsed.class);
+                    final Index indexAnnotation = this.getClass().getDeclaredField(attribute).getAnnotation(Index.class);
+
+                    final Field field = new Field(parsedAnnotation.field()[0], Objects.isNull(indexAnnotation) ? attributes.size() : indexAnnotation.value());
+                    if (label.equals(field.getLabel()))
+                        fields.add(field);
+                }
+            }
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+
+        return fields.stream().sorted(Comparator.comparing(Field::getIndex)).map(Field::getLabel).collect(Collectors.toList());
+    }
+
+    /**
      * @return Set<Integer>
      */
     public List<Integer> extractIndexes() {

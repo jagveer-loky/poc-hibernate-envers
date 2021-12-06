@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.fiserv.preproposal.api.domain.service.report.ReportProcessorService.getFile;
 import static com.fiserv.preproposal.api.infrastrucutre.normalizer.Normalizer.normalize;
 import static org.apache.commons.lang3.StringUtils.join;
 
@@ -551,7 +552,7 @@ class ReportProcessorServiceTests {
             list.add(completeReport);
         }
 
-        final File file = getFile("file.csv");
+        final File file = getFile("target/tmp/pre-proposal-api", "file.csv");
         final FileWriter fileWriter = new FileWriter(file, true);
         final BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
 
@@ -562,14 +563,5 @@ class ReportProcessorServiceTests {
         bufferWriter.close();
         fileWriter.close();
     }
-
-    private File getFile(final String path) throws IOException {
-        final File file = new File(path);
-        if (!file.exists()) {
-            file.createNewFile();
-        }
-        return file;
-    }
-
 
 }

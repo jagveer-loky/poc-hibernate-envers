@@ -60,11 +60,10 @@ public class ReportProcessorService {
 
     /**
      * @param stream                 Stream<T> To running when writing file. At each new iteration, a new register is written in file.
-     * @param eRport                  IReport implementation from ReportParams
+     * @param eRport                 IReport implementation from ReportParams
      * @param nextLineOutputReport   Consumer<IReport>
      * @param doneReportOutputReport Consumer<IReport> in the end of the process, update EReport register on database with the file saved in the system file.
      */
-    @Transactional
     public void convertToCSV(@NonNull final Stream<AbstractReport> stream, final EReport eRport, final Consumer<IOutputReport> nextLineOutputReport, final Consumer<IOutputReport> doneReportOutputReport) throws IOException, InstantiationException, IllegalAccessException {
 
         if (eRport.getCountLines() == 0) {
@@ -73,12 +72,12 @@ public class ReportProcessorService {
             throw new RuntimeException("Nenhum registro encontrado para essa solicitação, revise os filtros e tente novamente!");
         }
 
-        final File file = new File(tempOutput + "/" + UUID.randomUUID() + ".csv");
+        final File file = getFile(tempOutput);
         final FileWriter fileWriter = new FileWriter(file, true);
         final BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
 
         // Writing header in file
-        bufferWriter.write(normalize(join(((AbstractReport) eRport.getBeanType().newInstance()).extractLabels(), ";")) + "\n");
+        bufferWriter.write(normalize(join(((AbstractReport) eRport.getBeanType().newInstance()).extractLabels(eRport.getFields()), ";")) + "\n");
 
         // Count lines
         final AtomicInteger i = new AtomicInteger();
@@ -129,5 +128,29 @@ public class ReportProcessorService {
 //        csvWriter.close();
         // Delete de tmp file
         Files.deleteIfExists(file.toPath());
+    }
+
+    /**
+     * @param path String
+     * @return File
+     * @throws IOException
+     */
+    public static File getFile(final String path) throws IOException {
+        final File file = new File(path);
+        if (!file.exists())
+            file.mkdirs();
+        return new File(path + "/" + UUID.randomUUID() + ".csv");
+    }
+
+    /**
+     * @param path String
+     * @return File
+     * @throws IOException
+     */
+    public static File getFile(final String path, final String file) throws IOException {
+        final File filee = new File(path);
+        if (!filee.exists())
+            filee.mkdirs();
+        return new File(path + "/" + file);
     }
 }

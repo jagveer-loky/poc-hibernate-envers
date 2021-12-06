@@ -172,7 +172,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
+        <dependency><!-- todo remover-->
             <groupId>com.univocity</groupId>
             <artifactId>univocity-parsers</artifactId>
             <version>${univocity-parsers.version}</version>

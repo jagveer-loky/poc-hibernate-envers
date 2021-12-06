@@ -133,7 +133,7 @@ public class ReportResource {
     }
 
     /**
-     * @return HashMap<String, Set < String>>
+     * @return HashMap<String, Collection < String>>
      */
     @GetMapping("pre-proposal-fields")
     public HashMap<String, Collection<String>> getFieldsFromReports() {

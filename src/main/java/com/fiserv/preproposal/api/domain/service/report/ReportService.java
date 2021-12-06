@@ -281,28 +281,41 @@ public class ReportService {
 
         LOGGER.info("GENERATING DAILY REPORTS");
 
-        final EReport eReport = new EReport();
-        eReport.setInitialDate(now.minusDays(daysToExpire));
-        eReport.setFinalDate(now);
-        eReport.setRequester(SYSTEM_USER);
-        eReport.setServiceContract(SERVICE_CONTRACT);
-        eReport.setInstitution(INSTITUTION);
-        eReport.setResponsesTypes(Arrays.asList("FISERV_ONLINE", "LEAD", "LEAD_FISERV", "LNK_PAYMENT", "MANUAL_PROC"));
+        final EReport basicReport = new EReport();
+        basicReport.setInitialDate(now.minusDays(daysToExpire));
+        basicReport.setFinalDate(now);
+        basicReport.setRequester(SYSTEM_USER);
+        basicReport.setServiceContract(SERVICE_CONTRACT);
+        basicReport.setInstitution(INSTITUTION);
+        basicReport.setResponsesTypes(Arrays.asList("FISERV_ONLINE", "LEAD", "LEAD_FISERV", "LNK_PAYMENT", "MANUAL_PROC"));
+        basicReport.setType(TypeReport.BASIC);
+        basicReport.setFields(new BasicReport().extractLabels());
+        basicReport.setCountLines(getCountBasicReport(basicReport.getInstitution(), basicReport.getServiceContract(), basicReport.getInitialDate(), basicReport.getFinalDate(), basicReport.getNotIn(), basicReport.getResponsesTypes(), basicReport.getStatus()));
+        createBasicReport(save(basicReport));
 
-        eReport.setType(TypeReport.BASIC);
-        eReport.setFields(new BasicReport().extractLabels());
-        eReport.setCountLines(getCountBasicReport(eReport.getInstitution(), eReport.getServiceContract(), eReport.getInitialDate(), eReport.getFinalDate(), eReport.getNotIn(), eReport.getResponsesTypes(), eReport.getStatus()));
-        execute(() -> createBasicReport(save(eReport)));
+        final EReport completeReport = new EReport();
+        completeReport.setInitialDate(now.minusDays(daysToExpire));
+        completeReport.setFinalDate(now);
+        completeReport.setRequester(SYSTEM_USER);
+        completeReport.setServiceContract(SERVICE_CONTRACT);
+        completeReport.setInstitution(INSTITUTION);
+        completeReport.setResponsesTypes(Arrays.asList("FISERV_ONLINE", "LEAD", "LEAD_FISERV", "LNK_PAYMENT", "MANUAL_PROC"));
+        completeReport.setType(TypeReport.COMPLETE);
+        completeReport.setFields(new CompleteReport().extractLabels());
+        completeReport.setCountLines(getCountCompleteReport(completeReport.getInstitution(), completeReport.getServiceContract(), completeReport.getInitialDate(), completeReport.getFinalDate(), completeReport.getNotIn(), completeReport.getResponsesTypes(), completeReport.getStatus()));
+        createCompleteReport(save(completeReport));
 
-        eReport.setType(TypeReport.COMPLETE);
-        eReport.setFields(new CompleteReport().extractLabels());
-        eReport.setCountLines(getCountCompleteReport(eReport.getInstitution(), eReport.getServiceContract(), eReport.getInitialDate(), eReport.getFinalDate(), eReport.getNotIn(), eReport.getResponsesTypes(), eReport.getStatus()));
-        execute(() -> createCompleteReport(save(eReport)));
-
-        eReport.setType(TypeReport.QUANTITATIVE);
-        eReport.setFields(new QuantitativeReport().extractLabels());
-        eReport.setCountLines(getCountQuantitativeReport(eReport.getInstitution(), eReport.getServiceContract(), eReport.getInitialDate(), eReport.getFinalDate(), eReport.getNotIn(), eReport.getResponsesTypes(), eReport.getStatus()));
-        execute(() -> createQuantitativeReport(save(eReport)));
+        final EReport quantitativeReport = new EReport();
+        quantitativeReport.setInitialDate(now.minusDays(daysToExpire));
+        quantitativeReport.setFinalDate(now);
+        quantitativeReport.setRequester(SYSTEM_USER);
+        quantitativeReport.setServiceContract(SERVICE_CONTRACT);
+        quantitativeReport.setInstitution(INSTITUTION);
+        quantitativeReport.setResponsesTypes(Arrays.asList("FISERV_ONLINE", "LEAD", "LEAD_FISERV", "LNK_PAYMENT", "MANUAL_PROC"));
+        quantitativeReport.setType(TypeReport.QUANTITATIVE);
+        quantitativeReport.setFields(new QuantitativeReport().extractLabels());
+        quantitativeReport.setCountLines(getCountQuantitativeReport(quantitativeReport.getInstitution(), quantitativeReport.getServiceContract(), quantitativeReport.getInitialDate(), quantitativeReport.getFinalDate(), quantitativeReport.getNotIn(), quantitativeReport.getResponsesTypes(), quantitativeReport.getStatus()));
+        createQuantitativeReport(save(quantitativeReport));
 
     }
 

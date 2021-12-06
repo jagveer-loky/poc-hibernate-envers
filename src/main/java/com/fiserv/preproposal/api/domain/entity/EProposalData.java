@@ -102,7 +102,7 @@ import javax.persistence.*;
                                         @ColumnResult(name = "FISERVSTATUS", type = String.class),
                                         @ColumnResult(name = "CAIXASTATUS", type = String.class),
                                         @ColumnResult(name = "CAIXAMESSAGE", type = String.class),
-//                                        @ColumnResult(name = "ERRORS", type = String.class),
+                                        @ColumnResult(name = "ERRORS", type = String.class),
                                         @ColumnResult(name = "INCLUDEIN", type = String.class),
                                         @ColumnResult(name = "FINISHEDIN", type = String.class),
                                         @ColumnResult(name = "SUBMISSIONONLINEDATE", type = String.class),
