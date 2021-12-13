@@ -37,8 +37,8 @@
         <javassist.version>3.20.0-GA</javassist.version>
         <hibernate.version>5.6.1.Final</hibernate.version>
 
-        <univocity-parsers.version>2.9.1</univocity-parsers.version>
-
+        <univocity-parsers.version>2.9.1</univocity-parsers.version> <!--todo remover-->
+        <log4j2.version>2.15.0</log4j2.version>
     </properties>
 
     <dependencyManagement>
