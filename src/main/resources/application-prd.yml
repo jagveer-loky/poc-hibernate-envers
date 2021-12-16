@@ -7,7 +7,7 @@ application:
   jenkins.build.version: @build.number@
 
 fdsecurity:
-  url: https://rbpvwb1006.1dc.com/fd-security/permission-check
+  url: https://sba-web.1dc.com/fd-security/permission-check
 
 hibernate:
   show_sql: false
