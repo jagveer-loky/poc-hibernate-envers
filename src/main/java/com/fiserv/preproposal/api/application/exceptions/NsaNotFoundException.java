@@ -1,7 +1,0 @@
-package com.fiserv.preproposal.api.application.exceptions;
-
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor
-public class NsaNotFoundException extends RuntimeException{
-}

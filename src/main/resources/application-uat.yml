@@ -1,37 +1,9 @@
-#put specific configuration in this file
-application:
-  name: pre-proposal-api
-  description: @project.description@
-  version: @project.version@
-  path.pkg: com.fiserv.preproposal.api
-  jenkins.build.version: @build.number@
-
 fdsecurity:
   url: https://cat-webfarm.1dc.com/fd-security/permission-check
-
-hibernate:
-  show_sql: false
-
-jdbc:
-  driver-class-name: oracle.jdbc.driver.OracleDriver
-  show-sql: true
 
 spring:
   datasource:
     jndi-name: java:/PRE_PROPOSAL_DS
-  jooq:
-    sql-dialect: org.hibernate.dialect.Oracle10gDialect
-  jpa:
-    database-platform: org.hibernate.dialect.Oracle10gDialect
-    properties:
-      hibernate:
-        format_sql: false
-        order_inserts: true
-        show_sql: true
-        use_sql_comments: true
-  redis:
-    host: lacvap1019.1dc.com
-    password: uatRedis#01
 
 cors:
   enabled: true

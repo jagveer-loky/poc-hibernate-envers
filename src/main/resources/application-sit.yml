@@ -1,9 +1,9 @@
 #put specific configuration in this file
 application:
-  name: pre-proposal-api
+  name: poc-hibernate-envers
   description: @project.description@
   version: @project.version@
-  path.pkg: com.fiserv.preproposal.api
+  path.pkg: com.fiserv.luc.api
   jenkins.build.version: @build.number@
 
 spring:

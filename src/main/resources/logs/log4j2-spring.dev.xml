@@ -9,7 +9,7 @@
             %style{%d{MM-dd-yyyy HH:mm:ss}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow} | %m%n%throwable
         </Property>
         <Property name="PROJECT_NAME">
-            pre-proposal-api
+            poc-hibernate-envers
         </Property>
     </Properties>
 
