@@ -2,24 +2,20 @@ package com.fiserv.luc.api.domain.repository;
 
 import com.fiserv.luc.api.domain.entity.brazil.BRPhysicPerson;
 import com.fiserv.luc.api.domain.repository.brazil.BRPhysicPersonRepository;
-import org.junit.jupiter.api.BeforeEach;
+import com.fiserv.luc.api.infrastructure.database.audited.revision.FiservRevision;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.RevisionMetadata.RevisionType;
 import org.springframework.data.history.Revisions;
-import org.springframework.security.config.annotation.authentication.configurers.provisioning.UserDetailsManagerConfigurer;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.jdbc.Sql;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.Iterator;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,6 +23,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class BRPhysicPersonRepositoryTests {
 
+    /**
+     *
+     */
     private static final String USERNAME = "f5wwb40";
 
     /**
@@ -45,8 +44,9 @@ class BRPhysicPersonRepositoryTests {
      *
      */
     @PostConstruct
-    public void beforeEach() {
-        userDetailsManager.createUser(User.builder().username(USERNAME).password("password").authorities("ROLE").build());
+    public void postConstruct() {
+        if (!userDetailsManager.userExists(USERNAME))
+            userDetailsManager.createUser(User.builder().username(USERNAME).password("password").authorities("ROLE").build());
     }
 
     /**
@@ -121,7 +121,7 @@ class BRPhysicPersonRepositoryTests {
         final Revision<Long, BRPhysicPerson> revision = revisionIterator.next();
         assertThat(revision.getEntity().getName()).isEqualTo(name);
         assertThat(revision.getMetadata().getRevisionType()).isEqualTo(revisionType);
-        assertThat(((com.fiserv.luc.api.infrastructure.database.audited.revision.Revision) revision.getMetadata().getDelegate()).getUsername()).isEqualTo(username.toUpperCase());
+        assertThat(((FiservRevision) revision.getMetadata().getDelegate()).getUsername()).isEqualTo(username.toUpperCase());
 
     }
 

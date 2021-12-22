@@ -8,7 +8,7 @@ import org.hibernate.envers.RevisionTimestamp;
 import javax.persistence.*;
 import java.io.Serializable;
 
-import static com.fiserv.luc.api.infrastructure.database.audited.revision.Revision.TABLE_NAME;
+import static com.fiserv.luc.api.infrastructure.database.audited.revision.FiservRevision.TABLE_NAME;
 
 
 /**
@@ -20,7 +20,7 @@ import static com.fiserv.luc.api.infrastructure.database.audited.revision.Revisi
 @lombok.EqualsAndHashCode
 @Table(name = Application.PREFIX /*TODO ACOPLAMENTO*/+ TABLE_NAME)
 @org.hibernate.envers.RevisionEntity(EntityTrackingRevisionListener.class)
-public class Revision<T extends IEntity<ID>, ID extends Serializable> implements Serializable {
+public class FiservRevision<T extends IEntity<ID>, ID extends Serializable> implements Serializable {
 
     /**
      *
@@ -33,7 +33,7 @@ public class Revision<T extends IEntity<ID>, ID extends Serializable> implements
     public static final String TABLE_NAME = "REVISION";
 
     /**
-     * id da {@link Revision}
+     * id da {@link FiservRevision}
      */
     @Id
     @RevisionNumber
@@ -41,18 +41,18 @@ public class Revision<T extends IEntity<ID>, ID extends Serializable> implements
     private long id;
 
     /**
-     * data da {@link Revision}
+     * data da {@link FiservRevision}
      */
     @RevisionTimestamp
     private long timestamp;
 
     /**
-     * Username do usuário logado {@link Revision}
+     * Username do usuário logado {@link FiservRevision}
      */
     private String username;
 
     /**
-     * entidade da {@link Revision}
+     * entidade da {@link FiservRevision}
      */
     @Transient
     private T entity;

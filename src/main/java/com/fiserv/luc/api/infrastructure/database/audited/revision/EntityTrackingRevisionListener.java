@@ -4,6 +4,8 @@ import org.hibernate.envers.RevisionType;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * @version 1.0
@@ -14,8 +16,9 @@ public class EntityTrackingRevisionListener implements org.hibernate.envers.Enti
      */
     @Override
     public void newRevision(final Object revisionEntity) {
-        final String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        ((Revision<?, ?>) revisionEntity).setUsername(username.toUpperCase());
+
+        final String username = SecurityContextHolder.getContext() == null ? null : (SecurityContextHolder.getContext().getAuthentication() == null ? null : SecurityContextHolder.getContext().getAuthentication().getName().toUpperCase());
+        ((FiservRevision<?, ?>) revisionEntity).setUsername(username);
     }
 
     /*
@@ -25,6 +28,8 @@ public class EntityTrackingRevisionListener implements org.hibernate.envers.Enti
     @Override
     @SuppressWarnings("rawtypes")
     public void entityChanged(Class entityClass, String entityName, Serializable entityId, RevisionType revisionType, Object revisionEntity) {
+        final String username = SecurityContextHolder.getContext() == null ? null : (SecurityContextHolder.getContext().getAuthentication() == null ? null : SecurityContextHolder.getContext().getAuthentication().getName().toUpperCase());
+        ((FiservRevision<?, ?>) revisionEntity).setUsername(username);
     }
 
 }
