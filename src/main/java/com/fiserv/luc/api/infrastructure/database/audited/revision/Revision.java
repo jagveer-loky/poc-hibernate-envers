@@ -20,7 +20,7 @@ import static com.fiserv.luc.api.infrastructure.database.audited.revision.Revisi
 @lombok.EqualsAndHashCode
 @Table(name = Application.PREFIX /*TODO ACOPLAMENTO*/+ TABLE_NAME)
 @org.hibernate.envers.RevisionEntity(EntityTrackingRevisionListener.class)
-class Revision<T extends IEntity<ID>, ID extends Serializable> implements Serializable {
+public class Revision<T extends IEntity<ID>, ID extends Serializable> implements Serializable {
 
     /**
      *
@@ -45,11 +45,6 @@ class Revision<T extends IEntity<ID>, ID extends Serializable> implements Serial
      */
     @RevisionTimestamp
     private long timestamp;
-
-    /**
-     * esquema da revisão
-     */
-    private String schema;
 
     /**
      * Username do usuário logado {@link Revision}

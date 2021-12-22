@@ -1,7 +1,7 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
   datasource:
     url: jdbc:oracle:thin:@recdbq1.1dc.com:1521:RECQA?cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
     username: PRE_PROPOSAL_SIT

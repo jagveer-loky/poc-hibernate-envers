@@ -1,6 +1,7 @@
 package com.fiserv.luc.api.infrastructure.database.audited.revision;
 
 import org.hibernate.envers.RevisionType;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.Serializable;
 
@@ -12,11 +13,9 @@ public class EntityTrackingRevisionListener implements org.hibernate.envers.Enti
      *
      */
     @Override
-    public void newRevision(Object revisionEntity) {
-//        final String schema = PublicTenant.getCurrentScheme();
-//        final String username = PublicTenant.getCurrentUsername();
-//        ((Revision<?, ?>) revisionEntity).setSchema(schema);
-//        ((Revision<?, ?>) revisionEntity).setUsername(username);
+    public void newRevision(final Object revisionEntity) {
+        final String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        ((Revision<?, ?>) revisionEntity).setUsername(username.toUpperCase());
     }
 
     /*
