@@ -1,4 +1,4 @@
-package com.fiserv.luc.api.application.exceptions;
+package com.fiserv.luc.api.application.aspect.exceptions;
 
 public class InvalidTokenKeycloakException extends RuntimeException {
 

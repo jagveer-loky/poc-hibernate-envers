@@ -2,6 +2,10 @@ package com.fiserv.luc.api.infrastructure.database.audited.revision;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RevisionEntity;
+import org.hibernate.envers.RevisionNumber;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,31 +14,33 @@ import java.time.LocalDateTime;
  *
  */
 @Data
+@Audited
 @MappedSuperclass
 public abstract class AbstractEntity implements IEntity<Long> {
 
-    private static final long serialVersionUID = -3875941859616104733L;
+    private static final long serialVersionUID = -3875946542616104733L;
 
     /**
      *
      */
     @Id
-    @GeneratedValue(strategy=GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     protected Long id;
 
     /**
      *
      */
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Column(nullable = false, updatable = false)
-    protected LocalDateTime created;
+    public LocalDateTime created;
 
     /**
      *
      */
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-    protected LocalDateTime updated;
-
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    public LocalDateTime updated;
 
     /**
      *
@@ -43,9 +49,9 @@ public abstract class AbstractEntity implements IEntity<Long> {
     }
 
     /**
-     * @param id
+     * @param id Long
      */
-    public AbstractEntity(Long id) {
+    public AbstractEntity(final Long id) {
         this.setId(id);
     }
 
@@ -53,18 +59,15 @@ public abstract class AbstractEntity implements IEntity<Long> {
      *
      */
     @PrePersist
-    protected void refreshCreated() {
-        if (this.getCreated() == null) {
-            this.setCreated(LocalDateTime.now());
-        }
+    protected void prePersist() {
+        this.created = LocalDateTime.now();
     }
 
     /**
      *
      */
     @PreUpdate
-    protected void refreshUpdated() {
-        this.refreshCreated();
-        this.setUpdated(LocalDateTime.now());
+    protected void preUpdate() {
+        this.updated = LocalDateTime.now();
     }
 }

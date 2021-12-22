@@ -1,4 +1,4 @@
-package com.fiserv.luc.api.application.exceptions;
+package com.fiserv.luc.api.application.aspect.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

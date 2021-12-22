@@ -1,6 +1,6 @@
-package com.fiserv.luc.api.application.exceptions.handlers;
+package com.fiserv.luc.api.application.aspect;
 
-import com.fiserv.luc.api.application.exceptions.*;
+import com.fiserv.luc.api.application.aspect.exceptions.*;
 import com.fiserv.luc.api.infrastructure.pagination.DResponse;
 import com.fiserv.luc.api.infrastructure.aid.enums.ApplicationEnum;
 import com.fiserv.luc.api.infrastructure.aid.enums.EventActivityEnum;

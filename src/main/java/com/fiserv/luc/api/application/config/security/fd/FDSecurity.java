@@ -1,9 +1,8 @@
 package com.fiserv.luc.api.application.config.security.fd;
 
-import com.fiserv.luc.api.application.exceptions.FDSecurityException;
-import com.fiserv.luc.api.application.exceptions.UnauthorizedException;
+import com.fiserv.luc.api.application.aspect.exceptions.FDSecurityException;
+import com.fiserv.luc.api.application.aspect.exceptions.UnauthorizedException;
 import com.fiserv.luc.api.infrastructure.aid.enums.ResponsesAndExceptionEnum;
-import com.fiserv.luc.api.infrastructure.pagination.DSecurity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

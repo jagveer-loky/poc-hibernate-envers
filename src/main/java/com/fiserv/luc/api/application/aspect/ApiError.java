@@ -1,4 +1,4 @@
-package com.fiserv.luc.api.application.exceptions.handlers;
+package com.fiserv.luc.api.application.aspect;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

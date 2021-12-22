@@ -45,7 +45,7 @@ public class DResponse<T> {
     public static <T>  DResponse<T> notOk(String message) {
         return new DResponse<>(1, message, null);
     }
-    
+
     public static <T>  DResponse<T> notOk(Integer codigo, String message) {
         if(null == codigo) {
             notOk(message);

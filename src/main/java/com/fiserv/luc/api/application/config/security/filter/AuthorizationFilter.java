@@ -2,8 +2,8 @@ package com.fiserv.luc.api.application.config.security.filter;
 
 import com.fiserv.luc.api.application.config.security.fd.FDSecurity;
 import com.fiserv.luc.api.application.config.security.fd.FDSecurityEnum;
-import com.fiserv.luc.api.application.exceptions.FDSecurityException;
-import com.fiserv.luc.api.infrastructure.pagination.DSecurity;
+import com.fiserv.luc.api.application.aspect.exceptions.FDSecurityException;
+import com.fiserv.luc.api.application.config.security.fd.DSecurity;
 import com.fiserv.luc.api.infrastructure.aid.enums.ApplicationEnum;
 import com.fiserv.luc.api.infrastructure.aid.enums.EventActivityEnum;
 import com.fiserv.luc.api.infrastructure.aid.util.LogUtil;

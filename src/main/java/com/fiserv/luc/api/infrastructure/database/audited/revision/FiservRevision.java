@@ -1,5 +1,6 @@
 package com.fiserv.luc.api.infrastructure.database.audited.revision;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fiserv.luc.api.Application;
 import lombok.Data;
 import org.hibernate.envers.RevisionNumber;
@@ -18,6 +19,7 @@ import static com.fiserv.luc.api.infrastructure.database.audited.revision.Fiserv
 @Data
 @Entity
 @lombok.EqualsAndHashCode
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @Table(name = Application.PREFIX /*TODO ACOPLAMENTO*/+ TABLE_NAME)
 @org.hibernate.envers.RevisionEntity(EntityTrackingRevisionListener.class)
 public class FiservRevision<T extends IEntity<ID>, ID extends Serializable> implements Serializable {
@@ -51,10 +53,5 @@ public class FiservRevision<T extends IEntity<ID>, ID extends Serializable> impl
      */
     private String username;
 
-    /**
-     * entidade da {@link FiservRevision}
-     */
-    @Transient
-    private T entity;
 
 }

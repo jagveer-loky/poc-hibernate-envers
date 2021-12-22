@@ -1,4 +1,4 @@
-package com.fiserv.luc.api.infrastructure.pagination;
+package com.fiserv.luc.api.application.config.security.fd;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
