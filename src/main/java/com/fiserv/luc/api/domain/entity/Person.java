@@ -17,7 +17,7 @@ import static com.fiserv.luc.api.domain.entity.Person.TABLE_NAME;
 
 @Data
 @Entity
-@Audited
+@Audited(withModifiedFlag = true)
 @lombok.EqualsAndHashCode(callSuper = true)
 @Table(name = Application.PREFIX + TABLE_NAME)
 @Inheritance(strategy = InheritanceType.JOINED)

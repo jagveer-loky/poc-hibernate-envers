@@ -13,7 +13,7 @@ import static com.fiserv.luc.api.domain.entity.brazil.BRPerson.TABLE_NAME;
 
 @Data
 @Entity
-@Audited
+@Audited(withModifiedFlag = true)
 @EqualsAndHashCode(callSuper = true)
 @Table(name = Application.PREFIX + TABLE_NAME)
 @Inheritance(strategy = InheritanceType.JOINED)

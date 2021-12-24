@@ -18,9 +18,9 @@ import static com.fiserv.luc.api.domain.entity.brazil.BRPhysicPerson.TABLE_NAME;
 
 @Data
 @Entity
-@Audited
 @NoArgsConstructor
 @AllArgsConstructor
+@Audited(withModifiedFlag = true)
 @EqualsAndHashCode(callSuper = true)
 @Table(name = Application.PREFIX + TABLE_NAME)
 public class BRPhysicPerson extends BRPerson implements Serializable {

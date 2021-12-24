@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
  *
  */
 @Data
-@Audited
 @MappedSuperclass
+@Audited(withModifiedFlag = true)
 public abstract class AbstractEntity implements IEntity<Long> {
 
     private static final long serialVersionUID = -3875946542616104733L;
@@ -31,33 +31,6 @@ public abstract class AbstractEntity implements IEntity<Long> {
     /**
      *
      */
-    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @Column(nullable = false, updatable = false)
-    public LocalDateTime created;
-
-    /**
-     *
-     */
-    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    public LocalDateTime updated;
-
-    /**
-     * Username of who update or create register {@link FiservRevision}
-     */
-    @Transient
-    private String username;
-
-    /**
-     * Username of who update or create register {@link FiservRevision}
-     */
-    @Transient
-    private RevisionMetadata.RevisionType revisionType;
-
-    /**
-     *
-     */
     public AbstractEntity() {
     }
 
@@ -66,21 +39,5 @@ public abstract class AbstractEntity implements IEntity<Long> {
      */
     public AbstractEntity(final Long id) {
         this.setId(id);
-    }
-
-    /**
-     *
-     */
-    @PrePersist
-    protected void prePersist() {
-        this.created = LocalDateTime.now();
-    }
-
-    /**
-     *
-     */
-    @PreUpdate
-    protected void preUpdate() {
-        this.updated = LocalDateTime.now();
     }
 }
