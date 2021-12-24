@@ -19,8 +19,8 @@ import static com.fiserv.luc.api.infrastructure.database.audited.revision.Fiserv
 @Data
 @Entity
 @lombok.EqualsAndHashCode
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
-@Table(name = Application.PREFIX /*TODO ACOPLAMENTO*/+ TABLE_NAME)
+//@JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+@Table(name = Application.PREFIX /*TODO ACOPLAMENTO*/ + TABLE_NAME)
 @org.hibernate.envers.RevisionEntity(EntityTrackingRevisionListener.class)
 public class FiservRevision<T extends IEntity<ID>, ID extends Serializable> implements Serializable {
 
@@ -49,7 +49,7 @@ public class FiservRevision<T extends IEntity<ID>, ID extends Serializable> impl
     private long timestamp;
 
     /**
-     * Username do usuário logado {@link FiservRevision}
+     * Username of the logged user {@link FiservRevision}
      */
     private String username;
 

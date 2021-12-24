@@ -5,6 +5,7 @@ import lombok.Data;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RevisionEntity;
 import org.hibernate.envers.RevisionNumber;
+import org.springframework.data.history.RevisionMetadata;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -41,6 +42,18 @@ public abstract class AbstractEntity implements IEntity<Long> {
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     public LocalDateTime updated;
+
+    /**
+     * Username of who update or create register {@link FiservRevision}
+     */
+    @Transient
+    private String username;
+
+    /**
+     * Username of who update or create register {@link FiservRevision}
+     */
+    @Transient
+    private RevisionMetadata.RevisionType revisionType;
 
     /**
      *

@@ -2,13 +2,12 @@ package com.fiserv.luc.api.application.resource;
 
 import com.fiserv.luc.api.application.aspect.exceptions.NotFoundException;
 import com.fiserv.luc.api.domain.entity.brazil.BRPhysicPerson;
-import com.fiserv.luc.api.domain.service.brazil.BRPhysicPersonService;
+import com.fiserv.luc.api.domain.service.brazil.BRPhysicPersonRevisionService;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.history.Revision;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -20,12 +19,10 @@ import java.util.List;
 @RequestMapping("/br/physic-persons")
 public class BRPhysicPersonResource {
 
-    private static final Logger LOGGER = LogManager.getLogger();
-
     /**
      *
      */
-    private final BRPhysicPersonService physicPersonService;
+    private final BRPhysicPersonRevisionService physicPersonService;
 
     /**
      * @param filters  String
@@ -47,11 +44,38 @@ public class BRPhysicPersonResource {
     }
 
     /**
+     * @param physicPerson BRPhysicPerson
+     * @return BRPhysicPerson
+     */
+    @PostMapping
+    public BRPhysicPerson save(final @RequestBody BRPhysicPerson physicPerson) {
+        return physicPersonService.save(physicPerson);
+    }
+
+    /**
+     * @param physicPerson BRPhysicPerson
+     * @return BRPhysicPerson
+     */
+    @PutMapping("{id}")
+    public BRPhysicPerson save(final @PathVariable Long id, final @RequestBody BRPhysicPerson physicPerson) {
+        physicPerson.setId(id);
+        return physicPersonService.save(physicPerson);
+    }
+
+    /**
+     * @param id Long
+     */
+    @DeleteMapping("{id}")
+    public void deleteById(final @PathVariable Long id) {
+        physicPersonService.deleteById(id);
+    }
+
+    /**
      * @param id Long
      * @return BRPhysicPerson
      */
     @GetMapping("{id}/revisions")
-    public List<Revision<Long, BRPhysicPerson>> findRevisionsById(final @PathVariable Long id) {
+    public List<BRPhysicPerson> findRevisionsById(final @PathVariable Long id) {
         return physicPersonService.findRevisionsById(id);
     }
 }
