@@ -35,6 +35,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Qualifier("handlerExceptionResolver")
     private HandlerExceptionResolver resolver;
 
+    @Bean
+    public AuthorizationFilter authorizationFilter(){
+        return new AuthorizationFilter(fdSecurity, resolver);
+    }
+
     public SecurityConfig(CorsProperties corsProperties) {
         this.corsProperties = corsProperties;
     }
@@ -52,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers("/v*/token/**").anonymous()
                         .antMatchers("/isAlive**").permitAll()
                         .antMatchers("/v*/**").permitAll()
-                        .anyRequest().permitAll().and().addFilterBefore(new AuthorizationFilter(fdSecurity, resolver), UsernamePasswordAuthenticationFilter.class))
+                        .anyRequest().permitAll().and().addFilterBefore(authorizationFilter(), UsernamePasswordAuthenticationFilter.class))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 //        r.antMatchers("/**").permitAll());
     }
