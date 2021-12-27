@@ -2,7 +2,7 @@ package com.fiserv.luc.api.application.resource;
 
 import com.fiserv.luc.api.application.aspect.exceptions.NotFoundException;
 import com.fiserv.luc.api.domain.entity.brazil.BRPhysicPerson;
-import com.fiserv.luc.api.domain.service.brazil.BRPhysicPersonRevisionService;
+import com.fiserv.luc.api.domain.service.brazil.BRPhysicPersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +20,7 @@ public class BRPhysicPersonResource {
     /**
      *
      */
-    private final BRPhysicPersonRevisionService physicPersonService;
+    private final BRPhysicPersonService physicPersonService;
 
     /**
      * @param filters  String
