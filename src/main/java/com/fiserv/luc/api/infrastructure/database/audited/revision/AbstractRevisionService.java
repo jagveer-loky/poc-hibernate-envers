@@ -146,7 +146,7 @@ public abstract class AbstractRevisionService<T> {
          * @param username String
          */
         public void setUsername(final String username) {
-            if (username.length() != 0)
+            if (username!= null && username.length() != 0)
                 this.username = username;
         }
 
@@ -154,7 +154,7 @@ public abstract class AbstractRevisionService<T> {
          * @param changedProps String
          */
         public void setChangedProps(final String changedProps) {
-            if (changedProps.length() != 0)
+            if (changedProps != null && changedProps.length() != 0)
                 this.changedProps = changedProps;
         }
     }

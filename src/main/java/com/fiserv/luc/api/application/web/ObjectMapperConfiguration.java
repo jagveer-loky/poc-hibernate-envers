@@ -1,4 +1,4 @@
-package com.fiserv.luc.api.application.config.common;
+package com.fiserv.luc.api.application.web;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 @Configuration
-public class CommonBeansConfigurations {
+public class ObjectMapperConfiguration {
 
     /**
      * @param builder Jackson2ObjectMapperBuilder

@@ -62,3 +62,19 @@ management:
       enabled: true
     logfile:
       enabled: true
+
+amazonProperties:
+  endpointUrl: https://s3.us-east-2.amazonaws.com
+  accessKey: XXXXXXXXXXXXXXXXX
+  secretKey: XXXXXXXXXXXXXXXXXXXXXXXXXX
+  bucketName: your-bucket-name
+
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIAW5FQBKE2A6QD6FWF
+      secretKey: RZ8YB3hRPThnSjLpLxjZGPEPBV2TRtaa2sBmIH6h
+#    region:
+#      auto: true TODO
+    s3:
+      bucketName: emanuelvictor

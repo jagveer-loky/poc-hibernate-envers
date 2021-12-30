@@ -22,7 +22,7 @@ internal class BRPhysicPersonServiceTests {
      */
     @Test
     @Sql("/dataset/truncate-all-tables.sql")
-    fun insertBRPhysicPersonMustPass() {
+    fun `Test Insert BRPhysicPerson Must Pass`() {
         val pep = false
         val fatherName = "Israel"
         val motherName = "Valdina"
